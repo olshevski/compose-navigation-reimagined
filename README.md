@@ -52,7 +52,7 @@ fun NavHostScreen() {
 
     NavHost(controller = navController) { screen ->
         when (screen) {
-            Screen.First -> {
+            Screen.First -> Column {
                 Text("First screen")
                 Button(onClick = {
                     navController.navigate(Screen.Second(id = 42))
@@ -60,7 +60,7 @@ fun NavHostScreen() {
                     Text("To Second screen")
                 }
             }
-            is Screen.Second -> {
+            is Screen.Second -> Column {
                 Text("Second screen: ${screen.id}")
                 Button(onClick = {
                     navController.navigate(Screen.Third(text = "Hello"))
