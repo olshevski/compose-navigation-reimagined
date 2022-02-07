@@ -113,7 +113,7 @@ If your use-case calls for some advanced backstack manipulations, you may use `s
 
 ### NavBackstack
 
-This is a read-only class that you may use to access current backstack entries. It is backed up by [MutableState](https://developer.android.com/reference/kotlin/androidx/compose/runtime/MutableState), so it will notify Compose about changes.
+This is a read-only class that you may use to access current backstack entries and the last NavAction. The properties are backed up by [MutableState](https://developer.android.com/reference/kotlin/androidx/compose/runtime/MutableState), so Compose will be notified about the changes.
 
 If you want to listen for backstack changes outside of composition you may set `onBackstackChange` listener in NavController.
 
@@ -172,9 +172,13 @@ This information is plenty enough to choose a transition for every possible comb
 
 #### NavAction
 
-There are three default NavAction types: `Pop`, `Replace` and `Navigate` - objects that correspond to `pop…`, `replace…`, `navigate` methods of NavController
+There are four default NavAction types:
+- `Pop`, `Replace` and `Navigate` - objects that correspond to `pop…`, `replace…`, `navigate` methods of NavController
+- `Idle` - the default action of a newly created NavController
 
-You can also create new action types by extending `NavAction` interface. Pass these new types into `setNewBackstackEntries` method of NavController and handle them in AnimatedNavHostTransitionSpec.
+You can also create a new action type by extending abstract `NavAction` class. Pass this new type into `setNewBackstackEntries` method of NavController and handle it in AnimatedNavHostTransitionSpec.
+
+The last action can be also accessed through `action` property of NavBackstack.
 
 #### DialogNavHost
 

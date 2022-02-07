@@ -14,12 +14,9 @@ abstract class NavAction : Parcelable {
 
     /**
      * The default action for every new instance of [NavController].
-     *
-     * The only instance of this class is internal, so the action cannot be passed into
-     * [NavController.setNewBackstackEntries].
      */
     @Parcelize
-    internal object Idle : NavAction() {
+    object Idle : NavAction() {
         override fun toString() = this::class.simpleName!!
     }
 

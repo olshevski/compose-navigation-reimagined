@@ -191,6 +191,8 @@ class NavBackstack<T> internal constructor(
 
     /**
      * The action of the last [NavController.setNewBackstackEntries] call.
+     *
+     * The initial value of every new instance of [NavController] is [NavAction.Idle]
      */
     val action: NavAction by actionState
 
