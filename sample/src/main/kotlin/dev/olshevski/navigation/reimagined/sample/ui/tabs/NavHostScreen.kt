@@ -76,10 +76,11 @@ fun NavHostScreen() {
                     text = text,
                     onTextChange = { text = it },
                     backToForthScreenButtonClick = {
-                        val forthDestination = navController.backstack.entries.findLast {
-                            it.destination is NavHostDestination.Forth
-                        }!!.destination as NavHostDestination.Forth
-                        forthDestination.resultFromFifth.value = text
+                        val previousDestination = navController.backstack.entries.let {
+                            it[it.lastIndex - 1].destination
+                        }
+                        check(previousDestination is AcceptsResultFromFifth)
+                        previousDestination.resultFromFifth.value = text
                         navController.pop()
                     },
                     goBackButtonClick = {

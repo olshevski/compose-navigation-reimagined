@@ -208,9 +208,9 @@ You may go as many layers deep as you want. It's like [fractals](https://en.wiki
 
 ### Return values to previous destinations
 
-As destination types are not strictly required to be Immutable, you may change them while they are in the backstack. This may be used for returning values from other destinations. Just make a mutable property backed up by `mutableStateOf` and change it when required. Again, you may see demo of this in the [sample](https://github.com/olshevski/compose-navigation-reimagined/blob/master/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/tabs/NavHostScreen.kt).
+As destination types are not strictly required to be Immutable, you may change them while they are in the backstack. This may be used for returning values from other destinations. Just make a mutable property backed up by `mutableStateOf` and change it when required. You may see the demo [here](https://github.com/olshevski/compose-navigation-reimagined/blob/master/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/tabs/NavHostScreen.kt).
 
-**Note:** In general, returning values to the previous destination makes the navigation logic more complicated, so use it with caution and when you are sure what you are doing. Sometimes it may be easier to use a shared state holder. 
+**Note:** In general, returning values to the previous destination makes the navigation logic more complicated. Also, this approach doesn't guarantee compile time type-safety. Use it with caution and when you are sure what you are doing. Sometimes it may be easier to use a shared state holder. 
 
 ## Documentation and sample
 

@@ -34,11 +34,16 @@ sealed class NavHostDestination : Parcelable {
      */
     @Stable
     @Parcelize
-    data class Forth(val resultFromFifth: @RawValue MutableState<String?> = mutableStateOf(null)) :
-        NavHostDestination()
+    data class Forth(
+        override val resultFromFifth: @RawValue MutableState<String?> = mutableStateOf(null)
+    ) : NavHostDestination(), AcceptsResultFromFifth
 
     @Immutable
     @Parcelize
     object Fifth : NavHostDestination()
 
+}
+
+interface AcceptsResultFromFifth {
+    val resultFromFifth: MutableState<String?>
 }
