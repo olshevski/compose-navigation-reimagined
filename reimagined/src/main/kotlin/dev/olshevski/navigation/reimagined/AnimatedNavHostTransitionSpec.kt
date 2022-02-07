@@ -41,8 +41,8 @@ fun interface AnimatedNavHostTransitionSpec<in T> {
      *
      * @param action the hint of the last change done through the [NavController]. May be used
      * to select an animation that better corresponds to the action. A simple example would be
-     * a "forward" sliding animation for [NavAction.Forward] and "backward" sliding animation
-     * for [NavAction.Backward].
+     * a "backward" sliding animation for [NavAction.Pop] and "forward" sliding animation
+     * in all other cases.
      *
      * @param to the previous visible destination
      *

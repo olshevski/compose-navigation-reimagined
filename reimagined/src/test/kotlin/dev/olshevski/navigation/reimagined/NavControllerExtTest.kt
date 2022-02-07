@@ -57,7 +57,7 @@ class NavControllerExtTest : FunSpec({
             navController.backstack.destinations shouldContainInOrder listOf(
                 TestDestination.A
             )
-            navController.backstack.action shouldBe NavAction.Replace
+            navController.backstack.action shouldBe NavAction.Idle
         }
 
     }
@@ -90,7 +90,7 @@ class NavControllerExtTest : FunSpec({
             )
             navController.pop() shouldBe false
             navController.backstack.destinations shouldHaveSize 0
-            navController.backstack.action shouldBe NavAction.Replace
+            navController.backstack.action shouldBe NavAction.Idle
         }
 
     }
@@ -121,7 +121,7 @@ class NavControllerExtTest : FunSpec({
             )
             navController.popAll() shouldBe false
             navController.backstack.destinations shouldHaveSize 0
-            navController.backstack.action shouldBe NavAction.Replace
+            navController.backstack.action shouldBe NavAction.Idle
         }
 
     }
@@ -139,7 +139,7 @@ class NavControllerExtTest : FunSpec({
                     TestDestination.A,
                     TestDestination.B,
                 )
-                navController.backstack.action shouldBe NavAction.Replace
+                navController.backstack.action shouldBe NavAction.Idle
             }
 
             test("when 'upTo' item in backstack is last") {
@@ -151,7 +151,7 @@ class NavControllerExtTest : FunSpec({
                     TestDestination.A,
                     TestDestination.B,
                 )
-                navController.backstack.action shouldBe NavAction.Replace
+                navController.backstack.action shouldBe NavAction.Idle
             }
 
             test("when 'upTo' item in backstack is not last") {
@@ -211,7 +211,7 @@ class NavControllerExtTest : FunSpec({
                     TestDestination.A,
                     TestDestination.B,
                 )
-                navController.backstack.action shouldBe NavAction.Replace
+                navController.backstack.action shouldBe NavAction.Idle
             }
 
             test("when 'upTo' item in backstack is last") {
@@ -302,7 +302,7 @@ class NavControllerExtTest : FunSpec({
             )
             navController.replaceLast(TestDestination.B) shouldBe false
             navController.backstack.destinations shouldHaveSize 0
-            navController.backstack.action shouldBe NavAction.Replace
+            navController.backstack.action shouldBe NavAction.Idle
         }
 
         test("collection") {
@@ -404,7 +404,7 @@ class NavControllerExtTest : FunSpec({
                     TestDestination.A,
                     TestDestination.B,
                 )
-                navController.backstack.action shouldBe NavAction.Replace
+                navController.backstack.action shouldBe NavAction.Idle
             }
 
             test("when 'upTo' item in backstack is last") {
@@ -518,7 +518,7 @@ class NavControllerExtTest : FunSpec({
                     TestDestination.A,
                     TestDestination.B,
                 )
-                navController.backstack.action shouldBe NavAction.Replace
+                navController.backstack.action shouldBe NavAction.Idle
             }
 
             test("when 'upTo' item in backstack is last") {

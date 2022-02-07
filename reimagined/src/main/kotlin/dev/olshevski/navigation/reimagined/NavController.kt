@@ -95,7 +95,7 @@ class NavController<T> internal constructor(
 
     private val entries = mutableStateOf(initialEntries)
 
-    private val action = mutableStateOf<NavAction>(NavAction.Replace)
+    private val action = mutableStateOf<NavAction>(NavAction.Idle)
 
     /**
      * The property to access current backstack entries.
@@ -132,8 +132,8 @@ class NavController<T> internal constructor(
      * @param action optional parameter, used as a hint for [AnimatedNavHost] to select
      * a transition animation. In all other cases it doesn't affect anything. Existing types
      * of actions may be used: [NavAction.Navigate], [NavAction.Replace] or [NavAction.Pop].
-     * You may also extend abstract types [NavAction.Forward]  and [NavAction.Backward] to create
-     * new actions appropriate for your use case.
+     * You may also extend [NavAction] interface to create new actions appropriate for your use
+     * case.
      */
     @MainThread
     fun setNewBackstackEntries(entries: List<NavEntry<T>>, action: NavAction = NavAction.Navigate) {
@@ -187,8 +187,7 @@ class NavBackstack<T> internal constructor(
     val entries: List<NavEntry<T>> by entriesState
 
     /**
-     * The action of the last [NavController.setNewBackstackEntries] call. If the [NavController]
-     * has just been created or restored from saved state the action will be [NavAction.Navigate].
+     * The action of the last [NavController.setNewBackstackEntries] call.
      */
     internal val action: NavAction by actionState
 }

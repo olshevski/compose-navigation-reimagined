@@ -18,18 +18,18 @@ import dev.olshevski.navigation.reimagined.sample.ui.SubScreenLayout
 private val AnimatedNavHostTransitionSpec = AnimatedNavHostTransitionSpec<Int> { action, from, to ->
     val directionsCount = 4
     val direction = when (action) {
-        is NavAction.Forward -> when (to.mod(directionsCount)) {
-            0 -> AnimatedContentScope.SlideDirection.Start
-            1 -> AnimatedContentScope.SlideDirection.Up
-            2 -> AnimatedContentScope.SlideDirection.End
-            else -> AnimatedContentScope.SlideDirection.Down
-        }
-        is NavAction.Backward -> when (from.mod(directionsCount)) {
-            // opposite directions
+        NavAction.Pop -> when (from.mod(directionsCount)) {
             0 -> AnimatedContentScope.SlideDirection.End
             1 -> AnimatedContentScope.SlideDirection.Down
             2 -> AnimatedContentScope.SlideDirection.Start
             else -> AnimatedContentScope.SlideDirection.Up
+        }
+        else -> when (to.mod(directionsCount)) {
+            // opposite directions
+            0 -> AnimatedContentScope.SlideDirection.Start
+            1 -> AnimatedContentScope.SlideDirection.Up
+            2 -> AnimatedContentScope.SlideDirection.End
+            else -> AnimatedContentScope.SlideDirection.Down
         }
     }
     slideIntoContainer(direction) with slideOutOfContainer(direction)

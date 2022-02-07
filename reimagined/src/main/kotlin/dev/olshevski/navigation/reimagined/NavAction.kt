@@ -4,47 +4,34 @@ package dev.olshevski.navigation.reimagined
  * The navigation action hint. It is passed as a parameter into
  * [NavController.setNewBackstackEntries] and then used in
  * [AnimatedNavHostTransitionSpec.getContentTransform] to select some animation.
+ *
+ * May be extended to provide more specific action types.
  */
-sealed interface NavAction {
+abstract class NavAction {
 
     /**
-     * The logical "forward" action. Usually means that some new destination was added
-     * to the backstack.
+     * The default action for every new instance of [NavController].
      *
-     * May be extended to provide more specific action types.
+     * The only instance of this class is internal, so the action cannot be passed into
+     * [NavController.setNewBackstackEntries].
      */
-    abstract class Forward : NavAction
-
-    /**
-     * The logical "backward" action. Usually means that some existing destination was removed
-     * from the backstack.
-     *
-     * May be extended to provide more specific action types.
-     */
-    abstract class Backward : NavAction
+    internal object Idle : NavAction()
 
     /**
      * The action type that tells [NavController.navigate] was the last successful call.
-     *
-     * May be used as a default type for any logical "forward" action.
      */
-    object Navigate : Forward()
+    object Navigate : NavAction()
 
     /**
      * The action type that tells [NavController.replaceLast], [NavController.replaceAll] or
      * [NavController.replaceUpTo] was the last successful call.
-     *
-     * Also, this will be the action for replacing the whole [NavController] in [NavHost] with
-     * another `NavController` instance. Same stands for replacing the [NavBackstack] as it's linked
-     * to the instance of `NavController`.
      */
-    object Replace : Forward()
+    object Replace : NavAction()
 
     /**
      * The action type that tells [NavController.pop], [NavController.popAll] or
      * [NavController.popUpTo] was the last successful call.
-     *
-     * May be used as a default type for any logical "backward" action.
      */
-    object Pop : Backward()
+    object Pop : NavAction()
+
 }

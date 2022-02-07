@@ -137,9 +137,10 @@ Here is one possible implementation of AnimatedNavHostTransitionSpec:
 
 ```kotlin
 val CustomTransitionSpec = AnimatedNavHostTransitionSpec<Any?> { action, from, to ->
-    val direction = when (action) {
-        is NavAction.Backward -> AnimatedContentScope.SlideDirection.End
-        is NavAction.Forward -> AnimatedContentScope.SlideDirection.Start
+    val direction = if (action == NavAction.Pop) {
+        AnimatedContentScope.SlideDirection.End
+    } else {
+        AnimatedContentScope.SlideDirection.Start
     }
     slideIntoContainer(direction) with slideOutOfContainer(direction)
 }
@@ -171,15 +172,9 @@ This information is plenty enough to choose a transition for every possible comb
 
 #### NavAction
 
-Here is the diagram of NavAction type hierarchy:
+There are three default NavAction types: `Pop`, `Replace` and `Navigate` - objects that correspond to `pop…`, `replace…`, `navigate` methods of NavController
 
-<p align="center">
-    <img width="700" src="https://user-images.githubusercontent.com/5606565/152329241-d792ee2c-eb43-4c96-b778-07ab3af5cf96.svg" />
-</p>
-
-`Pop`, `Replace` and `Navigate` are objects that correspond to `pop…`, `replace…`, `navigate` methods of NavController. You may either check for these specific types or handle general `Forward` and `Backward` actions.
-
-You can also create new action types by extending abstract classes `Forward` and `Backward`. Pass these new types into `setNewBackstackEntries` method of NavController and handle them in AnimatedNavHostTransitionSpec.
+You can also create new action types by extending `NavAction` interface. Pass these new types into `setNewBackstackEntries` method of NavController and handle them in AnimatedNavHostTransitionSpec.
 
 #### DialogNavHost
 
