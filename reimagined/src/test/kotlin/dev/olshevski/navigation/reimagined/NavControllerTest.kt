@@ -18,6 +18,7 @@ class NavControllerTest : FunSpec({
                 action = NavAction.Pop
             )
             navController.backstack.destinations shouldHaveSize 0
+            navController.backstack.action shouldBe NavAction.Pop
         }
 
         test("set new list") {
@@ -29,6 +30,7 @@ class NavControllerTest : FunSpec({
             navController.backstack.destinations shouldContainInOrder listOf(
                 TestDestination.B,
             )
+            navController.backstack.action shouldBe NavAction.Navigate
         }
 
         test("modify existing list") {
@@ -41,6 +43,7 @@ class NavControllerTest : FunSpec({
                 TestDestination.A,
                 TestDestination.B,
             )
+            navController.backstack.action shouldBe NavAction.Navigate
         }
 
     }
@@ -56,8 +59,9 @@ class NavControllerTest : FunSpec({
                 action = NavAction.Pop
             )
             onBackstackChangeCallback.isCalled shouldBe true
-            onBackstackChangeCallback.entries shouldNotBe null
-            onBackstackChangeCallback.entries!! shouldHaveSize 0
+            onBackstackChangeCallback.backstack shouldNotBe null
+            onBackstackChangeCallback.backstack!!.entries shouldHaveSize 0
+            onBackstackChangeCallback.backstack!!.action shouldBe NavAction.Pop
         }
 
         test("new entry") {
@@ -69,28 +73,29 @@ class NavControllerTest : FunSpec({
                 action = NavAction.Navigate
             )
             onBackstackChangeCallback.isCalled shouldBe true
-            onBackstackChangeCallback.entries shouldNotBe null
-            onBackstackChangeCallback.entries!!.map { it.destination } shouldContainInOrder listOf(
+            onBackstackChangeCallback.backstack shouldNotBe null
+            onBackstackChangeCallback.backstack!!.entries.map { it.destination } shouldContainInOrder listOf(
                 TestDestination.A,
                 TestDestination.B,
             )
+            onBackstackChangeCallback.backstack!!.action shouldBe NavAction.Navigate
         }
 
     }
 
 })
 
-private class OnBackstackChangeCallback<T> : (List<NavEntry<T>>) -> Unit {
+private class OnBackstackChangeCallback<T> : (NavBackstack<T>) -> Unit {
 
     var isCalled = false
         private set
 
-    var entries: List<NavEntry<T>>? = null
+    var backstack: NavBackstack<T>? = null
         private set
 
-    override fun invoke(entries: List<NavEntry<T>>) {
+    override fun invoke(backstack: NavBackstack<T>) {
         isCalled = true
-        this.entries = entries
+        this.backstack = backstack
     }
 
 }

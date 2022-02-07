@@ -14,7 +14,6 @@ class NavControllerExtTest : FunSpec({
             val navController = navController(
                 startDestination = TestDestination.A
             )
-            val previousEntries = navController.backstack.destinations.toList()
             navController.navigate(TestDestination.B)
             navController.backstack.destinations shouldContainInOrder listOf(
                 TestDestination.B

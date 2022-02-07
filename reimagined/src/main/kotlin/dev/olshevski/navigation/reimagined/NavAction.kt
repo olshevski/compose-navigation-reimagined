@@ -1,5 +1,8 @@
 package dev.olshevski.navigation.reimagined
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 /**
  * The navigation action hint. It is passed as a parameter into
  * [NavController.setNewBackstackEntries] and then used in
@@ -7,7 +10,7 @@ package dev.olshevski.navigation.reimagined
  *
  * May be extended to provide more specific action types.
  */
-abstract class NavAction {
+abstract class NavAction : Parcelable {
 
     /**
      * The default action for every new instance of [NavController].
@@ -15,23 +18,35 @@ abstract class NavAction {
      * The only instance of this class is internal, so the action cannot be passed into
      * [NavController.setNewBackstackEntries].
      */
-    internal object Idle : NavAction()
+    @Parcelize
+    internal object Idle : NavAction() {
+        override fun toString() = this::class.simpleName!!
+    }
 
     /**
      * The action type that tells [NavController.navigate] was the last successful call.
      */
-    object Navigate : NavAction()
+    @Parcelize
+    object Navigate : NavAction() {
+        override fun toString() = this::class.simpleName!!
+    }
 
     /**
      * The action type that tells [NavController.replaceLast], [NavController.replaceAll] or
      * [NavController.replaceUpTo] was the last successful call.
      */
-    object Replace : NavAction()
+    @Parcelize
+    object Replace : NavAction() {
+        override fun toString() = this::class.simpleName!!
+    }
 
     /**
      * The action type that tells [NavController.pop], [NavController.popAll] or
      * [NavController.popUpTo] was the last successful call.
      */
-    object Pop : NavAction()
+    @Parcelize
+    object Pop : NavAction() {
+        override fun toString() = this::class.simpleName!!
+    }
 
 }

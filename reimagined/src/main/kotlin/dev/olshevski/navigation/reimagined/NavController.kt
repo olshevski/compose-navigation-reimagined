@@ -84,18 +84,20 @@ fun <T> navController(startDestination: T) =
  */
 @Stable
 class NavController<T> internal constructor(
-    initialEntries: List<NavEntry<T>>
+    initialEntries: List<NavEntry<T>>,
+    initialAction: NavAction = NavAction.Idle
 ) : Parcelable {
 
     private constructor(parcel: Parcel) : this(
         initialEntries = List(parcel.readInt()) {
             parcel.readParcelable(NavEntry::class.java.classLoader)!!
-        }
+        },
+        initialAction = parcel.readParcelable(NavAction::class.java.classLoader)!!
     )
 
     private val entries = mutableStateOf(initialEntries)
 
-    private val action = mutableStateOf<NavAction>(NavAction.Idle)
+    private val action = mutableStateOf<NavAction>(initialAction)
 
     /**
      * The property to access current backstack entries.
@@ -110,11 +112,11 @@ class NavController<T> internal constructor(
     val backstack = NavBackstack(entries, action)
 
     /**
-     * Optional listener for changes of current backstack entries. It will be invoked after
-     * every call to [setNewBackstackEntries].
+     * Optional listener of backstack changes. It will be invoked after every call
+     * to [setNewBackstackEntries].
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    var onBackstackChange: ((entries: List<NavEntry<T>>) -> Unit)? = null
+    var onBackstackChange: ((backstack: NavBackstack<T>) -> Unit)? = null
 
     /**
      * Sets new backstack [entries] and an [action] describing the change. You should use
@@ -139,7 +141,7 @@ class NavController<T> internal constructor(
     fun setNewBackstackEntries(entries: List<NavEntry<T>>, action: NavAction = NavAction.Navigate) {
         this.entries.value = entries.toList() // protection from outer modifications
         this.action.value = action
-        onBackstackChange?.invoke(this.entries.value)
+        onBackstackChange?.invoke(backstack)
     }
 
     override fun toString(): String {
@@ -153,6 +155,7 @@ class NavController<T> internal constructor(
                 parcel.writeParcelable(it, flags)
             }
         }
+        parcel.writeParcelable(action.value, flags)
     }
 
     override fun describeContents() = 0
@@ -170,8 +173,8 @@ class NavController<T> internal constructor(
 }
 
 /**
- * The read-only class to access the current backstack [entries]. This property is backed up
- * by [MutableState], so Compose will get notified about its changes.
+ * The read-only class to access the current backstack [entries] and the last [action]. This
+ * property is backed up by [MutableState], so Compose will get notified about its changes.
  */
 @Stable
 class NavBackstack<T> internal constructor(
@@ -189,5 +192,10 @@ class NavBackstack<T> internal constructor(
     /**
      * The action of the last [NavController.setNewBackstackEntries] call.
      */
-    internal val action: NavAction by actionState
+    val action: NavAction by actionState
+
+    override fun toString(): String {
+        return "NavBackstack(entries=$entries, action=$action)"
+    }
+
 }
