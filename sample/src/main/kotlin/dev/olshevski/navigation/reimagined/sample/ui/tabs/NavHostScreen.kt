@@ -39,8 +39,7 @@ fun NavHostScreen() {
                 toSecondScreenButtonClick = {
                     navController.navigate(NavHostDestination.Second(id = 0))
                 },
-
-                )
+            )
             is NavHostDestination.Second -> SecondScreen(
                 id = destination.id,
                 toSecondScreenButtonClick = {

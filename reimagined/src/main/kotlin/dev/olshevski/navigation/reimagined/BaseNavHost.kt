@@ -13,11 +13,20 @@ internal fun <T> BaseNavHost(
     // so it is hoistable. But I need to see reasonable use-cases for this.
     val componentHolder = rememberNavComponentHolder(backstack)
 
-    val currentEntry = key(componentHolder.id) {
-        entryTransition(componentHolder.lastEntry.value)
-        // For NavHost: currentEntry is the same as lastEntry.
-        // For AnimatedNavHost: currentEntry is the entry in transition. When transition finishes,
-        // currentEntry will become the same as lastEntry.
+    val currentComponentEntry = key(componentHolder.id) {
+        entryTransition(componentHolder.lastComponentEntry.value)
+
+        // For NavHost: currentComponentEntry is the same as lastComponentEntry.
+        //
+        // For AnimatedNavHost: currentComponentEntry is the entry in transition. When transition
+        // finishes, currentComponentEntry will become the same as currentComponentEntry.
+    }
+
+    DisposableEffect(componentHolder, currentComponentEntry) {
+        onDispose {
+            // should be called only in onDispose, because it affects lifecycle events
+            componentHolder.onTransitionFinish()
+        }
     }
 
     DisposableEffect(componentHolder) {
@@ -25,10 +34,5 @@ internal fun <T> BaseNavHost(
         onDispose {
             componentHolder.onDispose()
         }
-    }
-
-    DisposableEffect(componentHolder, currentEntry) {
-        componentHolder.onTransitionFinish()
-        onDispose {}
     }
 }

@@ -94,15 +94,21 @@ internal class NavComponentHolder<T>(
 
     private val componentEntries = mutableMapOf<NavId, NavComponentEntry<T>>()
 
-    val lastEntry = derivedStateOf {
+    val lastComponentEntry = derivedStateOf {
         backstack.entries.lastOrNull()?.let { lastEntry ->
             managedEntryIds.add(lastEntry.id)
             componentEntries.getOrPut(lastEntry.id) {
                 newComponentEntry(lastEntry)
-            }.apply {
-                maxLifecycleState = Lifecycle.State.RESUMED
-                // previous entry will be paused and stopped only when transition finishes
             }
+        }.also { lastComponentEntry ->
+            // Before transition all  entries are capped at STARTED state, and the new last entry
+            // gets promoted to STARTED state. Further state changes will be done after transition.
+            componentEntries.values
+                .filter { it != lastComponentEntry }
+                .forEach {
+                    it.maxLifecycleState = minOf(it.maxLifecycleState, Lifecycle.State.STARTED)
+                }
+            lastComponentEntry?.maxLifecycleState = Lifecycle.State.STARTED
         }
     }
 
@@ -123,6 +129,8 @@ internal class NavComponentHolder<T>(
     }
 
     fun onCreate() {
+        cleanupComponentEntries()
+        setPostTransitionLifecycleStates()
         navHostLifecycle.addObserver(lifecycleEventObserver)
     }
 
@@ -147,19 +155,27 @@ internal class NavComponentHolder<T>(
     }
 
     fun onTransitionFinish() {
+        cleanupComponentEntries()
+        setPostTransitionLifecycleStates()
+        // https://www.youtube.com/watch?v=cwyTleTL06Y
+    }
+
+    /**
+     * Last entry is resumed, everything else is stopped.
+     */
+    private fun setPostTransitionLifecycleStates() {
         componentEntries.values
-            .filter { it != lastEntry.value }
+            .filter { it != lastComponentEntry.value }
             .forEach {
                 it.maxLifecycleState = Lifecycle.State.CREATED
             }
-        removeUnusedEntries()
-        // https://www.youtube.com/watch?v=cwyTleTL06Y
+        lastComponentEntry.value?.maxLifecycleState = Lifecycle.State.RESUMED
     }
 
     /**
      * Remove entries that are no longer in backstack.
      */
-    private fun removeUnusedEntries() {
+    private fun cleanupComponentEntries() {
         val unusedIds = managedEntryIds.filter { it !in backstackIds.value }
         unusedIds.forEach { id ->
             componentEntries.remove(id)?.let { componentEntry ->
@@ -175,7 +191,6 @@ internal class NavComponentHolder<T>(
     }
 
     fun onDispose() {
-        removeUnusedEntries()
         navHostLifecycle.removeObserver(lifecycleEventObserver)
         componentEntries.values.forEach {
             it.navHostLifecycleState = Lifecycle.State.DESTROYED

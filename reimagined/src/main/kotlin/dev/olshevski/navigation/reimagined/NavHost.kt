@@ -66,15 +66,15 @@ fun <T> NavHost(
     backstack: NavBackstack<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable (T) -> Unit
-) = BaseNavHost(backstack) { lastEntry ->
-    key(lastEntry?.id) {
-        if (lastEntry != null) {
-            lastEntry.ComponentProvider {
-                contentSelector(lastEntry.destination)
+) = BaseNavHost(backstack) { lastComponentEntry ->
+    key(lastComponentEntry?.id) {
+        if (lastComponentEntry != null) {
+            lastComponentEntry.ComponentProvider {
+                contentSelector(lastComponentEntry.destination)
             }
         } else {
             emptyBackstackPlaceholder()
         }
     }
-    lastEntry
+    lastComponentEntry
 }
