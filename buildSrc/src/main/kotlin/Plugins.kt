@@ -9,7 +9,7 @@ fun PluginDependenciesSpec.plugin(pluginSpec: PluginSpec) {
 
 object Plugins {
     object Android {
-        private const val Version = "7.1.0"
+        private const val Version = "7.1.1"
         val Application = PluginSpec("com.android.application", Version)
         val Library = PluginSpec("com.android.library", Version)
     }
@@ -20,7 +20,7 @@ object Plugins {
         val Parcelize = PluginSpec("org.jetbrains.kotlin.plugin.parcelize", Version)
     }
 
-    val BenManesVersions = PluginSpec("com.github.ben-manes.versions", "0.41.0")
+    val BenManesVersions = PluginSpec("com.github.ben-manes.versions", "0.42.0")
     val Dokka = PluginSpec("org.jetbrains.dokka", "1.6.10")
     val NexusPublishing = PluginSpec("io.github.gradle-nexus.publish-plugin", "1.1.0")
 

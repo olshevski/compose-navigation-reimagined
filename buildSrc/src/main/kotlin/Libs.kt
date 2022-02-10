@@ -7,10 +7,11 @@ object Libs {
         }
 
         object Compose {
-            private const val Version = "1.1.0-rc03"
+            private const val Version = "1.1.0"
 
             @Suppress("MemberVisibilityCanBePrivate")
             const val CompilerVersion = Version
+
             const val Material = "androidx.compose.material:material:$Version"
             const val UiTooling = "androidx.compose.ui:ui-tooling:$Version"
             const val UiToolingPreview = "androidx.compose.ui:ui-tooling-preview:$Version"
@@ -19,7 +20,7 @@ object Libs {
         }
 
         object Lifecycle {
-            private const val Version = "2.4.0"
+            private const val Version = "2.4.1"
 
             object ViewModel {
                 const val Ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$Version"

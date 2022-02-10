@@ -102,7 +102,7 @@ interface AnimatedNavHostTransitionScope {
      * [animationSpec] defines the animation that will be used to animate the slide-out.
      */
     fun slideOutOfContainer(
-        towards: AnimatedContentScope.SlideDirection,
+        towards: SlideDirection,
         animationSpec: FiniteAnimationSpec<IntOffset> = spring(
             visibilityThreshold = IntOffset.VisibilityThreshold
         ),
@@ -126,7 +126,7 @@ interface AnimatedNavHostTransitionScope {
      * [animationSpec] defines the animation that will be used to animate the slide-in.
      */
     fun slideIntoContainer(
-        towards: AnimatedContentScope.SlideDirection,
+        towards: SlideDirection,
         animationSpec: FiniteAnimationSpec<IntOffset> = spring(
             visibilityThreshold = IntOffset.VisibilityThreshold
         ),
@@ -146,13 +146,13 @@ internal class AnimatedNavHostTransitionScopeImpl<S>(
 ) : AnimatedNavHostTransitionScope {
 
     override fun slideOutOfContainer(
-        towards: AnimatedContentScope.SlideDirection,
+        towards: SlideDirection,
         animationSpec: FiniteAnimationSpec<IntOffset>,
         targetOffset: (offsetForFullSlide: Int) -> Int
     ) = animatedContentScope.slideOutOfContainer(towards, animationSpec, targetOffset)
 
     override fun slideIntoContainer(
-        towards: AnimatedContentScope.SlideDirection,
+        towards: SlideDirection,
         animationSpec: FiniteAnimationSpec<IntOffset>,
         initialOffset: (offsetForFullSlide: Int) -> Int
     ) = animatedContentScope.slideIntoContainer(towards, animationSpec, initialOffset)
