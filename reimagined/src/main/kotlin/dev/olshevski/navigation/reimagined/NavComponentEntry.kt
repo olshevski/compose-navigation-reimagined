@@ -24,7 +24,7 @@ import kotlin.properties.Delegates
  * Wraps around [NavEntry] and serves as an owner of its associated components ([Lifecycle],
  * [SavedStateRegistry], [ViewModelStore]).
  */
-internal class NavComponentEntry<T>(
+class NavComponentEntry<T>(
     private val entry: NavEntry<T>,
     private val saveableStateHolder: SaveableStateHolder,
     private val viewModelStore: ViewModelStore,
@@ -35,17 +35,17 @@ internal class NavComponentEntry<T>(
     SavedStateRegistry.SavedStateProvider,
     HasDefaultViewModelProviderFactory {
 
-    val id get() = entry.id
+    internal val id get() = entry.id
 
-    val destination get() = entry.destination
+    internal val destination get() = entry.destination
 
     private val lifecycleRegistry = LifecycleRegistry(this)
 
-    var navHostLifecycleState by Delegates.observable(Lifecycle.State.INITIALIZED) { _, _, _ ->
+    internal var navHostLifecycleState by Delegates.observable(Lifecycle.State.INITIALIZED) { _, _, _ ->
         updateLifecycleRegistry()
     }
 
-    var maxLifecycleState by Delegates.observable(Lifecycle.State.INITIALIZED) { _, _, _ ->
+    internal var maxLifecycleState by Delegates.observable(Lifecycle.State.INITIALIZED) { _, _, _ ->
         updateLifecycleRegistry()
     }
 
@@ -66,7 +66,7 @@ internal class NavComponentEntry<T>(
     override fun getSavedStateRegistry(): SavedStateRegistry =
         savedStateRegistryController.savedStateRegistry
 
-    fun restoreState(savedState: Bundle) {
+    internal fun restoreState(savedState: Bundle) {
         savedStateRegistryController.performRestore(savedState)
     }
 
@@ -77,7 +77,7 @@ internal class NavComponentEntry<T>(
     override fun getDefaultViewModelProviderFactory() = defaultFactory
 
     @Composable
-    fun SaveableStateProvider(content: @Composable () -> Unit) =
+    internal fun SaveableStateProvider(content: @Composable () -> Unit) =
         saveableStateHolder.SaveableStateProvider(
             key = id,
             content = content
