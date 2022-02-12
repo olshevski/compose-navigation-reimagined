@@ -4,7 +4,6 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.with
-import androidx.compose.material.AlertDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.window.Dialog
@@ -24,7 +23,7 @@ private val NoneTransitionSpec = AnimatedNavHostTransitionSpec<Any?> { _, _, _ -
  * for every unique [NavEntry] in the [controller's][controller] backstack.
  *
  * Note that [DialogNavHost] doesn't wrap your composables in a [Dialog]. You need to use
- * use either [Dialog] or [AlertDialog] composable inside a [contentSelector] yourself.
+ * use either `Dialog` or `AlertDialog` composable inside a [contentSelector] yourself.
  *
  * @param controller the navigation controller that will provide its backstack to this
  * `DialogNavHost`. The last entry of the backstack is always the currently displayed entry.
@@ -60,7 +59,7 @@ fun <T> DialogNavHost(
  * for every unique [NavEntry] in the [backstack].
  *
  * Note that [DialogNavHost] doesn't wrap your composables in a [Dialog]. You need to use
- * use either [Dialog] or [AlertDialog] composable inside a [contentSelector] yourself.
+ * use either `Dialog` or `AlertDialog` composable inside a [contentSelector] yourself.
  *
  * @param backstack the backstack from a [NavController] that will be used to observe navigation
  * changes. The last entry of the backstack is always the currently displayed entry.

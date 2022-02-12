@@ -50,9 +50,8 @@ android {
 
 dependencies {
     api(Libs.AndroidX.Activity.Compose)
-    api(Libs.AndroidX.Compose.Material)
-    debugApi(Libs.AndroidX.Compose.UiTooling)
-    api(Libs.AndroidX.Compose.UiToolingPreview)
+    api(Libs.AndroidX.Compose.Ui)
+    api(Libs.AndroidX.Compose.Animation)
     api(Libs.AndroidX.Lifecycle.ViewModel.Ktx)
     api(Libs.AndroidX.Lifecycle.ViewModel.Compose)
     api(Libs.AndroidX.Lifecycle.ViewModel.SavedState)

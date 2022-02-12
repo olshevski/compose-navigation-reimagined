@@ -12,6 +12,8 @@ object Libs {
             @Suppress("MemberVisibilityCanBePrivate")
             const val CompilerVersion = Version
 
+            const val Ui = "androidx.compose.ui:ui:$Version"
+            const val Animation = "androidx.compose.animation:animation:$Version"
             const val Material = "androidx.compose.material:material:$Version"
             const val UiTooling = "androidx.compose.ui:ui-tooling:$Version"
             const val UiToolingPreview = "androidx.compose.ui:ui-tooling-preview:$Version"
