@@ -241,5 +241,5 @@ Making it in the form of a public library closes a gestalt for me. I'm finally d
 *If you like this library and find it useful, please star the project and share it with your fellow developers. A little bit of promotion never hurts.*
 
 <p align="center">
-    <img width="600" src="https://user-images.githubusercontent.com/5606565/153758412-08a058ef-28e5-437a-b41f-45e6b7bfc719.svg" />
+    <img width="600" src="https://user-images.githubusercontent.com/5606565/153759049-730a864f-b8d0-4783-ada7-cf52d344a850.svg" />
 </p>
