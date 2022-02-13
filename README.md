@@ -19,7 +19,7 @@ A small and simple, yet fully fledged and customizable navigation library for [J
 Add a single dependency to your project:
 
 ```kotlin
-implementation("dev.olshevski.navigation:reimagined:1.0.0-beta02")
+implementation("dev.olshevski.navigation:reimagined:1.0.0-beta01")
 ```
 
 Define a set of screens, for example, as a sealed class:
@@ -239,3 +239,7 @@ I've been thinking about Android app architecture and navigation in particular f
 Making it in the form of a public library closes a gestalt for me. I'm finally done with it. Onto new projects!
 
 *If you like this library and find it useful, please star the project and share it with your fellow developers. A little bit of promotion never hurts.*
+
+<p align="center">
+    <img width="600" src="https://user-images.githubusercontent.com/5606565/153758412-08a058ef-28e5-437a-b41f-45e6b7bfc719.svg" />
+</p>
