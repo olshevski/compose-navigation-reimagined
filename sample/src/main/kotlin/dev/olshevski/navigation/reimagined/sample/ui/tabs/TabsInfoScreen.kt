@@ -34,15 +34,15 @@ fun TabsInfoScreen() {
         )
 
         Text(
-            text = """Here every tab appears in backstack only once and preserves its saved state
-                until explicitly popped from backstack. Also, the first screen is always the last
-                one to be closed by back button.""".singleLine(),
+            text = """Here every tab appears in the backstack only once and preserves its saved
+                state until explicitly popped off the backstack. Also, the first screen is always
+                the last one to be closed by the back button.""".singleLine(),
             textAlign = TextAlign.Center
         )
 
         Text(
-            text = """Every tab has its own nested navigation with back handling. Back button of
-                nested navigation always takes precedence over the tabs back handling.
+            text = """Every tab has its own nested navigation with back handling. The back button
+                handling of a nested navigation always takes precedence over the tabs back handling.
                 """.singleLine(),
             textAlign = TextAlign.Center
         )

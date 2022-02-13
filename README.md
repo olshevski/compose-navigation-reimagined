@@ -83,7 +83,7 @@ As you can see, `NavController` is used for switching between screens, `NavBackH
 Here is the general workflow of the library:
 
 <p align="center">
-    <img width="700" src="https://user-images.githubusercontent.com/5606565/152329249-055868e6-beff-4f1f-91e3-9a931827215e.svg" />
+    <img width="700" src="https://user-images.githubusercontent.com/5606565/153843646-19b1b518-5c9f-4bdb-90ce-587ce69c5c0a.svg" />
 </p>
 
 Let's go into details about each of them.
@@ -92,7 +92,7 @@ Let's go into details about each of them.
 
 This is the main control point of navigation. It keeps record of all current backstack entries and preserves them on activity/process recreation.
 
-NavController may be created with `rememberNavController` within composition or with `navController` outside of it. The latter may be used for storing NavController in a ViewModel. As it implements Parcelable interface, it may be (and should be) stored in [SavedStateHandle](https://developer.android.com/reference/androidx/lifecycle/SavedStateHandle).
+NavController may be created with `rememberNavController` method within composition or with `navController` outside of it. The latter may be used for storing NavController in a ViewModel. As it implements Parcelable interface, it may be (and should be) stored in [SavedStateHandle](https://developer.android.com/reference/androidx/lifecycle/SavedStateHandle).
 
 Both `rememberNavController` and `navController` methods accept `startDestination` as a parameter. If you want to create NavController with an arbitrary number of backstack items, you may use `initialBackstack` parameter instead.
 
@@ -100,15 +100,15 @@ Both `rememberNavController` and `navController` methods accept `startDestinatio
 
 NavController accepts all types meeting the requirements as destinations. The requirements are:
 
-1. The type must be either Parcelable, or Serializable, or primitive, or of any other type that can be written to [Parcel](https://developer.android.com/reference/android/os/Parcel).
+1. The type must be writable to [Parcel](https://developer.android.com/reference/android/os/Parcel) - it could be Parcelable, Serializable, string/primitive or other supported type.
 
-2. The type must be either [Stable](https://developer.android.com/reference/kotlin/androidx/compose/runtime/Stable), or [Immutable](https://developer.android.com/reference/kotlin/androidx/compose/runtime/Immutable), or primitive.
+2. The type must be either [Stable](https://developer.android.com/reference/kotlin/androidx/compose/runtime/Stable), or [Immutable](https://developer.android.com/reference/kotlin/androidx/compose/runtime/Immutable), or string/primitive type.
 
 #### Navigation methods
 
 There is a handful of pre-defined methods suitable for a basic app navigation: `navigate`, `pop`, `popUpTo`, `popAll`, `replaceLast`, `replaceUpTo`, `replaceAll`. They all are pretty much self-explanatory.
 
-If your use-case calls for some advanced backstack manipulations, you may use `setNewBackstackEntries` method. In fact, this is the only public method defined in NavController, all other methods are provided as extensions and use `setNewBackstackEntries` under the hood. You may see how a new extension method `navigateToTab` is implemented in the [sample](https://github.com/olshevski/compose-navigation-reimagined/blob/master/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/TabsScreen.kt).
+If your use-case calls for some advanced backstack manipulations, you may use `setNewBackstackEntries` method. It is in fact the only public method defined in NavController, all other methods are provided as extensions and use `setNewBackstackEntries` under the hood. You may see how a new extension method `navigateToTab` is implemented in the [sample](https://github.com/olshevski/compose-navigation-reimagined/blob/master/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/TabsScreen.kt).
 
 
 ### NavBackstack
@@ -119,11 +119,11 @@ If you want to listen for backstack changes outside of composition you may set `
 
 ### NavHost
 
-NavHost is a composable that shows the last entry of a backstack and provides all components associated with this particular entry: [Lifecycle](https://developer.android.com/reference/androidx/lifecycle/Lifecycle), [SavedStateRegistry](https://developer.android.com/reference/androidx/savedstate/SavedStateRegistry) and [ViewModelStore](https://developer.android.com/reference/androidx/lifecycle/ViewModelStore). All these components are provided through [CompositionLocalProvider](https://developer.android.com/jetpack/compose/compositionlocal) inside the corresponding owners `LocalLifecycleOwner`, `LocalSavedStateRegistryOwner` and `LocalViewModelStoreOwner`.
+NavHost is a composable that shows the last entry of a backstack and provides all components associated with this particular entry: [Lifecycle](https://developer.android.com/reference/androidx/lifecycle/Lifecycle), [SavedStateRegistry](https://developer.android.com/reference/androidx/savedstate/SavedStateRegistry) and [ViewModelStore](https://developer.android.com/reference/androidx/lifecycle/ViewModelStore). All these components are provided through [CompositionLocalProvider](https://developer.android.com/jetpack/compose/compositionlocal) within their corresponding owners `LocalLifecycleOwner`, `LocalSavedStateRegistryOwner` and `LocalViewModelStoreOwner`.
 
 The components are kept around until its associated entry is removed from the backstack (or until the parent entry containing the current child NavHost is removed).
 
-NavHost by itself doesn't provide any animated transitions, it simply jump-cuts to the next destination.
+NavHost by itself doesn't provide any animated transitions, it simply jump-cuts to the next destination:
 
 <p align="center">
     <img width="240" src="https://user-images.githubusercontent.com/5606565/152329130-7a90c412-197a-4930-baac-8af81ef16fee.gif" />
@@ -131,7 +131,7 @@ NavHost by itself doesn't provide any animated transitions, it simply jump-cuts 
 
 #### AnimatedNavHost
 
-AnimatedNavHost includes all functionality of the regular NavHost, but also supports animated transitions. Default transition is a simple crossfade, but you can granularly customize every transition with your own `AnimatedNavHostTransitionSpec` implementation.
+AnimatedNavHost includes all functionality of the regular NavHost, but also supports animated transitions. The default transition is a simple crossfade, but you can granularly customize every transition with your own `AnimatedNavHostTransitionSpec` implementation.
 
 Here is one possible implementation of AnimatedNavHostTransitionSpec:
 
@@ -164,9 +164,9 @@ and it'll end up looking like this:
 </p>
 
 In AnimatedNavHostTransitionSpec you get the parameters:
-- `action` - the hint about the last NavController method that changed the backstack
-- `from` - the previous visible destination
-- `to` - the target visible destination
+- `action` - a hint about the last NavController method that changed the backstack
+- `from` - a previous visible destination
+- `to` - a target visible destination
 
 This information is plenty enough to choose a transition for every possible combination of screens and navigation actions.
 
@@ -176,27 +176,27 @@ There are four default NavAction types:
 - `Pop`, `Replace` and `Navigate` - objects that correspond to `pop…`, `replace…`, `navigate` methods of NavController
 - `Idle` - the default action of a newly created NavController
 
-You can also create a new action type by extending abstract `NavAction` class. Pass this new type into `setNewBackstackEntries` method of NavController and handle it in AnimatedNavHostTransitionSpec.
+You can also create new action types by extending abstract `NavAction` class. Pass any of the type into `setNewBackstackEntries` method of NavController and handle it in AnimatedNavHostTransitionSpec.
 
-The last action can be also accessed through `action` property of NavBackstack.
+The last action can also be accessed through `action` property of NavBackstack.
 
 #### DialogNavHost
 
-The version of NavHost that is better suited for showing dialogs. It is based on AnimatedNavHost and provides smoother transition between dialogs without scrim/fade flickering.
+The version of NavHost that is better suited for showing dialogs. It is based on AnimatedNavHost and provides smoother transition between dialogs without any scrim/fade flickering:
 
 <p align="center">
     <img width="240" src="https://user-images.githubusercontent.com/5606565/152329122-b1631692-8b38-4397-a81a-dad5bbfa85e7.gif" />
 </p>
 
-If you want to see how you can implement dialogs navigation explore the [sample](https://github.com/olshevski/compose-navigation-reimagined/blob/master/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/tabs/NavHostScreen.kt).
+If you want to see how you can implement dialog navigation, explore the [sample](https://github.com/olshevski/compose-navigation-reimagined/blob/master/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/tabs/NavHostScreen.kt).
 
-Note that DialogNavHost doesn't wrap your composables in a Dialog. You need to use use either Dialog or AlertDialog composable inside a `contentSelector` yourself.
+Note that DialogNavHost doesn't wrap your composables into a Dialog. You need to use either Dialog or AlertDialog composable inside a `contentSelector` yourself.
 
 ### Back handling
 
-Back handling in the library is opt-in, rather than opt-out. By itself, neither NavController nor NavHost handles the back button press. You can add `NavBackHandler` or usual `BackHandler` in order to react to the back presses where you need to.
+Back handling in the library is opt-in, rather than opt-out. By itself, neither NavController nor NavHost handles the back button press. You can add `NavBackHandler` or usual `BackHandler` in order to react to back presses where you need to.
 
-NavBackHandler is the most basic implementation of BackHandler that calls `pop` until one item in the backstack is left. Then it is disabled, so any upper-level BackHandler may react to the back button press.
+NavBackHandler is the most basic implementation of BackHandler - it calls `pop` only when there are more than one item in the backstack. When there is only one backstack item left, NavBackHandler is disabled, and any upper-level BackHandler may take its turn to react to back button presses.
 
 **Important note:** always place your NavBackHandler/BackHandler **before** the corresponding NavHost. Read the explanation [here](https://github.com/olshevski/compose-navigation-reimagined/blob/master/reimagined/src/main/kotlin/dev/olshevski/navigation/reimagined/NavBackHandler.kt).
 
@@ -210,36 +210,36 @@ You may go as many layers deep as you want. It's like [fractals](https://en.wiki
 
 As destination types are not strictly required to be Immutable, you may change them while they are in the backstack. This may be used for returning values from other destinations. Just make a mutable property backed up by `mutableStateOf` and change it when required. You may see the demo [here](https://github.com/olshevski/compose-navigation-reimagined/blob/master/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/tabs/NavHostScreen.kt).
 
-**Note:** In general, returning values to the previous destination makes the navigation logic more complicated. Also, this approach doesn't guarantee compile time type-safety. Use it with caution and when you are sure what you are doing. Sometimes it may be easier to use a shared state holder. 
+**Note:** In general, returning values to previous destinations makes the navigation logic more complicated. Also, this approach doesn't guarantee full compile time type-safety. Use it with caution and when you are sure what you are doing. Sometimes it may be easier to use a shared state holder. 
 
 ## Documentation and sample
 
 Explore the KDoc documentation of the library for more details about every component and every supported features.
 
-Also, explore the sample. It provides demos of all the functionality mentioned above and even more. The sample shows:
+Also, explore the [sample](https://github.com/olshevski/compose-navigation-reimagined/tree/main/sample). It provides demos of all the functionality mentioned above and even more. The sample shows:
 
 - nested navigation
 - tab navigation
 - NavHost/AnimatedNavHost usage
-- dialogs
+- dialog navigation
 - passing and returning values
-- ViewModels
-- hoisting NavController to the ViewModel layer
+- usage of ViewModels
+- how to hoist NavController to the ViewModel layer
 
 ## Why beta
 
 I'm very satisfied with the shape and form of the library. I have spent long sleepless nights debugging and polishing all corner cases.
 
-For now I'll be glad to hear a feedback and do a minor fine-tunings of the API (if any at all). If there are any changes you may expect a notice in release notes.
+For now, I'll be glad to hear feedback and do minor fine-tuning of the API (if any at all). If there are any changes, you may expect a notice in release notes.
 
 ## About
 
-I've been thinking about Android app architecture and navigation in particular for the longest time. When introduced to Compose I could finally create the navigation structure that fits perfectly all my needs.
+I've been thinking about Android app architecture and navigation in particular for the longest time. After being introduced to Compose I could finally create the navigation structure that satisfies all my needs perfectly.
 
 Making it in the form of a public library closes a gestalt for me. I'm finally done with it. Onto new projects!
 
-*If you like this library and find it useful, please star the project and share it with your fellow developers. A little bit of promotion never hurts.*
-
 <p align="center">
-    <img width="600" src="https://user-images.githubusercontent.com/5606565/153759049-730a864f-b8d0-4783-ada7-cf52d344a850.svg" />
+    <img width="600" src="https://user-images.githubusercontent.com/5606565/153843642-7eb6252f-cabc-4f80-9377-4c66567c98a4.svg" />
 </p>
+
+*If you like this library and find it useful, please star the project and share it with your fellow developers. A little bit of promotion never hurts.*

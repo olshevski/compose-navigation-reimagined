@@ -15,10 +15,10 @@ import androidx.lifecycle.SavedStateHandle
 
 /**
  * Creates and remembers a new [NavController] instance. Its backstack will be prefilled with
- * the destinations from the [initialBackstack].
+ * destinations from the [initialBackstack].
  *
- * The order of the items in the list is interpreted as going from the bottom of the backstack
- * to the top. That means that the last item of the list will become the currently displayed item
+ * The order of items in the list is interpreted as going from the bottom of the backstack
+ * to the top. This means that the last item of the list will become the currently displayed item
  * in [NavHost]. The first item of the list will be the last item that can be popped of
  * the backstack.
  *
@@ -44,11 +44,11 @@ fun <T> rememberNavController(startDestination: T) =
     rememberNavController(initialBackstack = listOf(startDestination))
 
 /**
- * Creates a new [NavController] instance. Its backstack will be prefilled with the destinations
- * from [initialBackstack].
+ * Creates a new [NavController] instance. Its backstack will be prefilled with destinations
+ * from the [initialBackstack].
  *
- * The order of the items in the list is interpreted as going from the bottom of the backstack
- * to the top. That means that the last item of the list will become the currently displayed item
+ * The order of items in the list is interpreted as going from the bottom of the backstack
+ * to the top. This means that the last item of the list will become the currently displayed item
  * in [NavHost]. The first item of the list will be the last item that can be popped of
  * the backstack.
  *
@@ -77,7 +77,7 @@ fun <T> navController(startDestination: T) =
  * The type specified in the type parameter must comply with the next requirements:
  *
  * 1) It must be possible to write the instances of the type into [Parcel]. Which means
- * it should be either [Parcelable] or [Serializable], or of any natively supported data type
+ * it should be either [Parcelable], or [Serializable], or of any natively supported data type
  * (e.g. primitive or string).
  *
  * 2) It must be [Stable] or [Immutable].
@@ -93,13 +93,13 @@ class NavController<T> internal constructor(
     private val action = mutableStateOf<NavAction>(initialAction)
 
     /**
-     * The property to access current backstack entries.
+     * A property to access the current backstack entries.
      *
      * The instance of [NavBackstack] in the same [NavController] never changes. However,
      * the properties of NavBackstack itself are backed up by [MutableState] and they will change
      * and notify Compose about.
      *
-     * If you want to listen to changes outside of composition you may set [onBackstackChange]
+     * If you want to listen for changes outside of composition, you may set [onBackstackChange]
      * listener.
      */
     val backstack = NavBackstack(entries, action)
@@ -112,19 +112,19 @@ class NavController<T> internal constructor(
     var onBackstackChange: ((backstack: NavBackstack<T>) -> Unit)? = null
 
     /**
-     * Sets new backstack [entries] and an [action] describing the change. You should use
+     * Sets new backstack [entries] and the [action] describing the change. You should use
      * existing entries from [backstack] to preserve their identities and associated components
      * (lifecycles, saved states, view models). New entries can be created with [navEntry] method.
      *
      * Any new rearrangement, duplication and removal of existing entries is a valid change.
      *
      * Use this method when none of the built-in extension methods ([navigate], [pop],
-     * [replaceLast] and their variations) suit your need.
+     * [replaceLast] and their variations) suits your need.
      *
      * This function does not guarantee thread-safety and is intended to be called only
-     * from main/UI thread.
+     * from the main thread.
      *
-     * @param action optional parameter, used as a hint for [AnimatedNavHost] to select
+     * @param action an optional parameter, used as a hint for [AnimatedNavHost] to select
      * a transition animation. In all other cases it doesn't affect anything. Existing types
      * of actions may be used: [NavAction.Navigate], [NavAction.Replace] or [NavAction.Pop].
      * You may also extend [NavAction] interface to create new actions appropriate for your use
@@ -201,8 +201,8 @@ class NavController<T> internal constructor(
 }
 
 /**
- * The read-only class to access the current backstack [entries] and the last [action]. This
- * property is backed up by [MutableState], so Compose will get notified about its changes.
+ * A read-only class to access the current backstack [entries] and the last [action]. These
+ * properties are backed up by [MutableState], so Compose will get notified about their changes.
  */
 @Stable
 class NavBackstack<T> internal constructor(
@@ -213,14 +213,14 @@ class NavBackstack<T> internal constructor(
      * The list of current entries in the backstack. The last item in this list is the item that
      * will be displayed by [NavHost].
      *
-     * May become empty if you pop all the items from the backstack.
+     * May become empty if you pop all the items off the backstack.
      */
     val entries: List<NavEntry<T>> by entriesState
 
     /**
      * The action of the last [NavController.setNewBackstackEntries] call.
      *
-     * The initial value of every new instance of [NavController] is [NavAction.Idle]
+     * The initial value of every new instance of [NavController] is [NavAction.Idle].
      */
     val action: NavAction by actionState
 

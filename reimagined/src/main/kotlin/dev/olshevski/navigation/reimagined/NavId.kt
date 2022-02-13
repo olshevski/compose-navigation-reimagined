@@ -8,7 +8,7 @@ import java.nio.ByteBuffer
 import java.util.*
 
 /**
- * The unique identifier of a navigation unit. Uses [UUID] internally, so it inherits the same
+ * A unique identifier of a navigation unit. Uses [UUID] internally, so it inherits the same
  * guarantees of uniqueness.
  *
  * In addition to the [UUID] uniqueness implements [Parcelable] interface and provides shorter

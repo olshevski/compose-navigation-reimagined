@@ -3,8 +3,8 @@ package dev.olshevski.navigation.reimagined
 /**
  * Adds the [destinations] to the backstack.
  *
- * The order of the items in the list is interpreted as going from the bottom of the backstack
- * to the top. That means that the last item of the list will become the currently displayed item
+ * The order of items in the list is interpreted as going from the bottom of the backstack
+ * to the top. This means that the last item of the list will become the currently displayed item
  * in [NavHost].
  *
  * The [destinations] list may be empty and in this case nothing is changed.
@@ -94,8 +94,8 @@ fun <T> NavController<T>.popUpTo(
 /**
  * Pops the last destination off the backstack and replaces it with the [newDestinations].
  *
- * The order of the items in the list is interpreted as going from the bottom of the backstack
- * to the top. That means that the last item of the list will become the currently displayed item
+ * The order of items in the list is interpreted as going from the bottom of the backstack
+ * to the top. This means that the last item of the list will become the currently displayed item
  * in [NavHost].
  *
  * The [newDestinations] list may be empty.
@@ -128,8 +128,8 @@ fun <T> NavController<T>.replaceLast(newDestination: T): Boolean =
 /**
  * Pops all destinations off the backstack and replaces them with the [newDestinations].
  *
- * The order of the items in the list is interpreted as going from the bottom of the backstack
- * to the top. That means that the last item of the list will become the currently displayed item
+ * The order of items in the list is interpreted as going from the bottom of the backstack
+ * to the top. This means that the last item of the list will become the currently displayed item
  * in [NavHost].
  *
  * The [newDestinations] list may be empty.
@@ -155,8 +155,8 @@ fun <T> NavController<T>.replaceAll(newDestination: T) =
  * Pops all destinations off the backstack up to the item that meets the condition
  * of the [upToPredicate] and replaces them with the [newDestinations].
  *
- * The order of the items in the list is interpreted as going from the bottom of the backstack
- * to the top. That means that the last item of the list will become the currently displayed item
+ * The order of items in the list is interpreted as going from the bottom of the backstack
+ * to the top. This means that the last item of the list will become the currently displayed item
  * in [NavHost].
  *
  * The [newDestinations] list may be empty.

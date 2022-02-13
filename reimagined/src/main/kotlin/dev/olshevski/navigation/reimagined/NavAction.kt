@@ -4,11 +4,11 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 /**
- * The navigation action hint. It is passed as a parameter into
+ * A navigation action hint. It is passed as a parameter into
  * [NavController.setNewBackstackEntries] and then used in
  * [AnimatedNavHostTransitionSpec.getContentTransform] to select some animation.
  *
- * May be extended to provide more specific action types.
+ * May be extended to create more action types.
  */
 abstract class NavAction : Parcelable {
 
@@ -21,7 +21,7 @@ abstract class NavAction : Parcelable {
     }
 
     /**
-     * The action type that tells [NavController.navigate] was the last successful call.
+     * An action type that tells [NavController.navigate] was the last successful call.
      */
     @Parcelize
     object Navigate : NavAction() {
@@ -29,7 +29,7 @@ abstract class NavAction : Parcelable {
     }
 
     /**
-     * The action type that tells [NavController.replaceLast], [NavController.replaceAll] or
+     * An action type that tells [NavController.replaceLast], [NavController.replaceAll] or
      * [NavController.replaceUpTo] was the last successful call.
      */
     @Parcelize
@@ -38,7 +38,7 @@ abstract class NavAction : Parcelable {
     }
 
     /**
-     * The action type that tells [NavController.pop], [NavController.popAll] or
+     * An action type that tells [NavController.pop], [NavController.popAll] or
      * [NavController.popUpTo] was the last successful call.
      */
     @Parcelize

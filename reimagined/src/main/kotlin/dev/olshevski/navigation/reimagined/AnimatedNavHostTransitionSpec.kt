@@ -26,27 +26,28 @@ fun interface AnimatedNavHostTransitionSpec<in T> {
 
     /**
      * Returns a [ContentTransform] that describes the desired transition between
-     * two destinations: [to] and [from].
+     * destinations [to] and [from].
      *
      * This method is called in [AnimatedNavHostTransitionScope] and provides convenient
      * methods [AnimatedNavHostTransitionScope.slideOutOfContainer],
      * [AnimatedNavHostTransitionScope.slideIntoContainer]
      * and [AnimatedNavHostTransitionScope.using]. This is the same methods that you would be
-     * usually using in [AnimatedContentScope] from [AnimatedContent] composable. In fact,
+     * using in [AnimatedContentScope] from [AnimatedContent] composable. In fact,
      * [AnimatedNavHost] uses `AnimatedContent` under the hood, so you may explore documentation
      * of `AnimatedContent` for better understanding of the API.
      *
-     * If you want to provide specific transition to and from the empty backstack state,
-     * additionally override methods [toEmptyBackstack] and [fromEmptyBackstack].
+     * If you want to provide a specific transition to and from an empty backstack state,
+     * override methods [toEmptyBackstack] and [fromEmptyBackstack] of
+     * [AnimatedNavHostTransitionSpec].
      *
-     * @param action the hint of the last change done through the [NavController]. May be used
+     * @param action a hint about the last change done through a [NavController]. May be used
      * to select an animation that better corresponds to the action. A simple example would be
      * a "backward" sliding animation for [NavAction.Pop] and "forward" sliding animation
      * in all other cases.
      *
-     * @param to the previous visible destination
+     * @param to a previous visible destination
      *
-     * @param from the target visible destination
+     * @param from a target visible destination
      *
      * @see AnimatedContent
      * @see AnimatedContentScope
@@ -59,10 +60,10 @@ fun interface AnimatedNavHostTransitionSpec<in T> {
 
     /**
      * Returns a [ContentTransform] that describes the desired transition between
-     * the previous destination and the empty backstack state.
+     * a previous destination and an empty backstack state.
      *
-     * You should also set some non-zero width/height composable as `emptyBackstackPlaceholder`
-     * in [AnimatedNavHost] in order for animation to run.
+     * Note: you may need set some non-zero width/height composable as
+     * `emptyBackstackPlaceholder` in [AnimatedNavHost] in order for a transition to run correctly.
      */
     fun AnimatedNavHostTransitionScope.toEmptyBackstack(
         action: NavAction,
@@ -71,10 +72,10 @@ fun interface AnimatedNavHostTransitionSpec<in T> {
 
     /**
      * Returns a [ContentTransform] that describes the desired transition between
-     * the empty backstack state and a new destination
+     * an empty backstack state and a new destination
      *
-     * You should also set some non-zero width/height composable as `emptyBackstackPlaceholder`
-     * in [AnimatedNavHost] in order for animation to run.
+     * Note: you may need set some non-zero width/height composable as
+     * `emptyBackstackPlaceholder` in [AnimatedNavHost] in order for a transition to run correctly.
      */
     fun AnimatedNavHostTransitionScope.fromEmptyBackstack(
         action: NavAction,

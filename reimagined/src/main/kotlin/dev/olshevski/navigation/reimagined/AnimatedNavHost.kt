@@ -39,25 +39,25 @@ private val CrossfadeTransitionSpec = object : AnimatedNavHostTransitionSpec<Any
 }
 
 /**
- * The animated navigation host that selects UI for every destination and provides necessary
+ * An animated navigation host that selects UI for every destination and provides necessary
  * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
  * for every unique [NavEntry] in the [controller's][controller] backstack.
  *
- * This composable uses animated transitions to switch between destinations. You may set custom
+ * This composable uses animated transitions to switch between destinations. You may set a custom
  * [AnimatedNavHostTransitionSpec] to specify the desired transitions.
  *
  * If you don't need animated transitions use [NavHost] instead.
  *
- * @param controller the navigation controller that will provide its backstack to this
+ * @param controller a navigation controller that will provide its backstack to this
  * `AnimatedNavHost`. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but setting a different [NavController] will be handled correctly.
  *
- * @param transitionSpec specifies the desired transitions. If not set - the default transition
+ * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
- * be displayed in case you leave the backstack empty. In majority of cases you don't need
+ * be displayed when the backstack is empty. In the majority of cases you don't need
  * to set this. Note that the provided composable wouldn't get its own scoped components.
  *
  * @param contentSelector provides a composable that corresponds to the current last destination
@@ -78,11 +78,11 @@ fun <T> AnimatedNavHost(
 )
 
 /**
- * The animated navigation host that selects UI for every destination and provides necessary
+ * An animated navigation host that selects UI for every destination and provides necessary
  * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
  * for every unique [NavEntry] in the [backstack].
  *
- * This composable uses animated transitions to switch between destinations. You may set custom
+ * This composable uses animated transitions to switch between destinations. You may set a custom
  * [AnimatedNavHostTransitionSpec] to specify the desired transitions.
  *
  * If you don't need animated transitions use [NavHost] instead.
@@ -92,11 +92,11 @@ fun <T> AnimatedNavHost(
  * You should do all backstack modifications through the same instance of [NavController],
  * but using a different [NavController] and setting its backstack will be handled correctly.
  *
- * @param transitionSpec specifies the desired transitions. If not set - the default transition
+ * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
- * be displayed in case you leave the backstack empty. In majority of cases you don't need
+ * be displayed when the backstack is empty. In the majority of cases you don't need
  * to set this. Note that the provided composable wouldn't get its own scoped components.
  *
  * @param contentSelector provides a composable that corresponds to the current last destination
