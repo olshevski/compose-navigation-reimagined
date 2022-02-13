@@ -1,12 +1,9 @@
 package dev.olshevski.navigation.reimagined
 
-import android.os.Parcelable
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStore
 import androidx.savedstate.SavedStateRegistry
-import kotlinx.parcelize.Parcelize
-import kotlinx.parcelize.RawValue
 
 /**
  * A single item in a backstack with its own identity. The backstack may contain several equal
@@ -16,13 +13,8 @@ import kotlinx.parcelize.RawValue
  * be served its own set of components such as a [Lifecycle], a [SavedStateRegistry] and
  * a [ViewModelStore]. Additionally, it will be able to remember all saveable structures
  * within composition (`rememberSaveable`).
- *
- * Always compare [NavEntry] instances by id. Even if you place the same instance into
- * the backstack twice, after a process/activity recreation it will be restored as two independent
- * instances with the same id.
  */
 @Stable
-@Parcelize
 class NavEntry<T> internal constructor(
 
     /**
@@ -35,8 +27,8 @@ class NavEntry<T> internal constructor(
      * Or if you've used [NavController.setNewBackstackEntries] directly this is the destination
      * you've passed into [navEntry] method.
      */
-    val destination: @RawValue T
-) : Parcelable {
+    val destination: T
+) {
 
     override fun toString(): String {
         return "NavEntry(id=$id, destination=$destination)"

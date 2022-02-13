@@ -88,13 +88,6 @@ class NavController<T> internal constructor(
     initialAction: NavAction = NavAction.Idle
 ) : Parcelable {
 
-    private constructor(parcel: Parcel) : this(
-        initialEntries = List(parcel.readInt()) {
-            parcel.readParcelable(NavEntry::class.java.classLoader)!!
-        },
-        initialAction = parcel.readParcelable(NavAction::class.java.classLoader)!!
-    )
-
     private val entries = mutableStateOf(initialEntries)
 
     private val action = mutableStateOf<NavAction>(initialAction)
@@ -145,14 +138,24 @@ class NavController<T> internal constructor(
     }
 
     override fun toString(): String {
-        return "NavController(entries=$entries, action=$action)"
+        return "NavController(entries=${entries.value}, action=${action.value})"
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         entries.value.let { backstack ->
+            // This handles the case when some NavEntries instance appear in the backstack several
+            // times. After the restoration their instances must not be duplicated.
+            val ids = hashSetOf<NavId>()
             parcel.writeInt(backstack.size)
             backstack.forEach {
-                parcel.writeParcelable(it, flags)
+                // write every id to preserve the order
+                parcel.writeParcelable(it.id, flags)
+                if (it.id !in ids) {
+                    ids.add(it.id)
+                    // but write a destination only once, because there is no need to duplicate
+                    // existing data
+                    parcel.writeValue(it.destination)
+                }
             }
         }
         parcel.writeParcelable(action.value, flags)
@@ -160,14 +163,39 @@ class NavController<T> internal constructor(
 
     override fun describeContents() = 0
 
-    companion object CREATOR : Parcelable.Creator<NavController<*>> {
-        override fun createFromParcel(parcel: Parcel): NavController<*> {
-            return NavController<Any>(parcel)
+    companion object CREATOR : Parcelable.ClassLoaderCreator<NavController<*>> {
+
+        override fun createFromParcel(
+            parcel: Parcel,
+            nullableClassLoader: ClassLoader?
+        ): NavController<*> {
+            val classLoader = nullableClassLoader ?: this::class.java.classLoader
+            val entryMap = hashMapOf<NavId, NavEntry<Any?>>()
+            return NavController(
+                initialEntries = List(parcel.readInt()) {
+                    val id = parcel.readParcelable<NavId>(classLoader)!!
+                    entryMap.getOrPut(id) {
+                        // Here we do the opposite to "writeToParcel" method and read
+                        // the destination value only if its id appears for the first time.
+                        //
+                        // This way we don't duplicate instances with same unique ids.
+                        NavEntry(
+                            id = id,
+                            destination = parcel.readValue(classLoader)
+                        )
+                    }
+                },
+                initialAction = parcel.readParcelable(classLoader)!!
+            )
         }
+
+        override fun createFromParcel(parcel: Parcel): NavController<*> =
+            createFromParcel(parcel, null)
 
         override fun newArray(size: Int): Array<NavController<*>?> {
             return arrayOfNulls(size)
         }
+
     }
 
 }

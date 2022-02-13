@@ -139,11 +139,7 @@ fun NavController<TabsDestination>.navigateToTab(tab: TabsDestination) {
 
         // If we moved all other entries to the top, the start entry may appears twice
         // at the start of the backstack. Leave only one copy of the entry.
-        //
-        // IMPORTANT: Always compare entries by their unique id. Even if you placed the same
-        // instance yourself twice in the backstack, it may become different instances after
-        // the process/activity recreation. The id is what guarantees the identity.
-        if (newEntries[0].id == newEntries[1].id) {
+        if (newEntries[0] == newEntries[1]) {
             newEntries.removeFirst()
         }
         setNewBackstackEntries(
