@@ -86,7 +86,7 @@ Here is the general workflow of the library:
     <img width="700" src="https://user-images.githubusercontent.com/5606565/153843646-19b1b518-5c9f-4bdb-90ce-587ce69c5c0a.svg" />
 </p>
 
-Let's go into details about each of them.
+Let's go into details about each of the components.
 
 ### NavController
 
