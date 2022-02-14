@@ -32,7 +32,6 @@ class NavComponentEntry<T>(
 ) : ViewModelStoreOwner,
     LifecycleOwner,
     SavedStateRegistryOwner,
-    SavedStateRegistry.SavedStateProvider,
     HasDefaultViewModelProviderFactory {
 
     internal val id get() = entry.id
@@ -51,6 +50,12 @@ class NavComponentEntry<T>(
 
     private val savedStateRegistryController = SavedStateRegistryController.create(this)
 
+    internal val savedStateProvider = SavedStateRegistry.SavedStateProvider {
+        Bundle().also { bundle ->
+            savedStateRegistryController.performSave(bundle)
+        }
+    }
+
     private val defaultFactory by lazy {
         SavedStateViewModelFactory(application, this, null)
     }
@@ -68,10 +73,6 @@ class NavComponentEntry<T>(
 
     internal fun restoreState(savedState: Bundle) {
         savedStateRegistryController.performRestore(savedState)
-    }
-
-    override fun saveState() = Bundle().also { bundle ->
-        savedStateRegistryController.performSave(bundle)
     }
 
     override fun getDefaultViewModelProviderFactory() = defaultFactory

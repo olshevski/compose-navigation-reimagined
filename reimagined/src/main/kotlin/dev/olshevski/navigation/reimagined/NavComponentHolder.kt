@@ -148,7 +148,10 @@ internal class NavComponentHolder<T>(
                 componentEntry.restoreState(savedState ?: Bundle())
             }
             navHostSavedStateRegistry.unregisterSavedStateProvider(key)
-            navHostSavedStateRegistry.registerSavedStateProvider(key, componentEntry)
+            navHostSavedStateRegistry.registerSavedStateProvider(
+                key,
+                componentEntry.savedStateProvider
+            )
         }
 
         return componentEntry
