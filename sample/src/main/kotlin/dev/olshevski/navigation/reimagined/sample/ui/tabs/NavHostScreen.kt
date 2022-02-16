@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import dev.olshevski.navigation.reimagined.DialogNavHost
 import dev.olshevski.navigation.reimagined.NavBackHandler
@@ -19,6 +18,7 @@ import dev.olshevski.navigation.reimagined.popUpTo
 import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.replaceLast
 import dev.olshevski.navigation.reimagined.sample.singleLine
+import dev.olshevski.navigation.reimagined.sample.ui.CenteredText
 import dev.olshevski.navigation.reimagined.sample.ui.DialogLayout
 import dev.olshevski.navigation.reimagined.sample.ui.SubScreenLayout
 
@@ -109,10 +109,9 @@ private fun FirstScreen(
     toSecondScreenButtonClick: () -> Unit,
 ) = SubScreenLayout(title = "First screen") {
 
-    Text(
+    CenteredText(
         text = """NavHost switches between destinations without any animations.
-                Go to Second screen and see how it works.""".singleLine(),
-        textAlign = TextAlign.Center
+            Go to Second screen and see how it works.""".singleLine(),
     )
 
     Button(onClick = toSecondScreenButtonClick) {
@@ -127,20 +126,18 @@ private fun SecondScreen(
     toSecondScreenButtonClick: () -> Unit,
     toThirdScreenButtonClick: () -> Unit
 ) = SubScreenLayout(title = "Second screen id=$id") {
-    Text(
+    CenteredText(
         text = """You can pass any serializable/parcelable data you want. Here you
             can keep opening more Second screens with incrementing 'id' parameter.
             """.singleLine(),
-        textAlign = TextAlign.Center
     )
 
     Button(onClick = toSecondScreenButtonClick) {
         Text("To Second screen + 1")
     }
 
-    Text(
+    CenteredText(
         text = "Also try pressing back. Or just go to the third screen.",
-        textAlign = TextAlign.Center
     )
 
     Button(onClick = toThirdScreenButtonClick) {
@@ -152,18 +149,16 @@ private fun SecondScreen(
 private fun ThirdScreen(
     toForthScreenButtonClick: () -> Unit
 ) = SubScreenLayout(title = "Third screen") {
-    Text(
+    CenteredText(
         text = "Now enter some text. This text will be saved while the screen is in the backstack.",
-        textAlign = TextAlign.Center
     )
 
     var text by rememberSaveable { mutableStateOf("") }
     OutlinedTextField(value = text, onValueChange = { text = it })
 
-    Text(
+    CenteredText(
         text = """To test it go to the Forth screen and return back. You can also rotate the 
             screen to test saved state restoration.""".singleLine(),
-        textAlign = TextAlign.Center
     )
 
     Button(onClick = toForthScreenButtonClick) {
@@ -179,18 +174,16 @@ private fun ForthScreen(
     onClearResultClick: () -> Unit
 ) = SubScreenLayout(title = "Forth screen") {
 
-    Text(
+    CenteredText(
         text = "You can also use a separate DialogNavHost for managing dialogs.",
-        textAlign = TextAlign.Center
     )
 
     Button(onClick = toFirstDialogButtonClick) {
         Text("To First dialog")
     }
 
-    Text(
+    CenteredText(
         text = "To check out how you can return values from destinations go to the next screen.",
-        textAlign = TextAlign.Center
     )
 
     Button(onClick = toFifthScreenButtonClick) {
@@ -233,9 +226,8 @@ private fun FifthScreen(
     goBackButtonClick: () -> Unit,
 ) = SubScreenLayout(title = "Fifth screen") {
 
-    Text(
+    CenteredText(
         text = "Here you can enter some text and pass it back to the previous screen.",
-        textAlign = TextAlign.Center
     )
 
     OutlinedTextField(value = text, onValueChange = onTextChange)
@@ -244,17 +236,15 @@ private fun FifthScreen(
         Text("Return result to Forth screen")
     }
 
-    Text(
+    CenteredText(
         text = """Note: use it carefully. Mutable state increases the complexity of the backstack 
             logic. Sometimes it is more reasonable to have a hoisted data holder.""".singleLine(),
-        textAlign = TextAlign.Center
     )
 
-    Text(
+    CenteredText(
         text = """Finally when you are done, you may go back to the very beginning.
             All previous screens will be removed from the backstack.
             """.singleLine(),
-        textAlign = TextAlign.Center
     )
 
     Button(onClick = goBackButtonClick) {

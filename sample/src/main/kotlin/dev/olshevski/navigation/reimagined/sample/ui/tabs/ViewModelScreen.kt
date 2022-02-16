@@ -7,7 +7,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -17,6 +16,7 @@ import dev.olshevski.navigation.reimagined.navController
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.sample.singleLine
+import dev.olshevski.navigation.reimagined.sample.ui.CenteredText
 import dev.olshevski.navigation.reimagined.sample.ui.SubScreenLayout
 
 @Composable
@@ -89,22 +89,19 @@ private fun FirstScreen(
     toSecondScreenButtonClick: () -> Unit,
 ) = SubScreenLayout(title = "First screen") {
 
-    Text(
+    CenteredText(
         text = "This demo shows two use cases:",
-        textAlign = TextAlign.Center
     )
 
-    Text(
+    CenteredText(
         text = """1) the ability to hoist NavController to ViewModel,
             effectively bringing all the navigation logic to that level;""".singleLine(),
-        textAlign = TextAlign.Center
     )
 
-    Text(
+    CenteredText(
         text = """2) the usage of scoped ViewModels:
             every ViewModel within NavHost is scoped to its backstack entry and
             gets cleared only when the entry is removed from backstack.""".singleLine(),
-        textAlign = TextAlign.Center
     )
 
     Button(onClick = toSecondScreenButtonClick) {
@@ -131,10 +128,9 @@ private fun SecondScreen(
     toThirdScreenButtonClick: () -> Unit,
 ) = SubScreenLayout(title = "Second screen") {
 
-    Text(
+    CenteredText(
         text = """Please enter some text. It will be stored in ViewModel as well as its state
             preserved by SavedStateHandle.""".singleLine(),
-        textAlign = TextAlign.Center
     )
 
 
@@ -147,8 +143,7 @@ private fun SecondScreen(
 
 @Composable
 private fun ThirdScreen(text: String) = SubScreenLayout(title = "Third screen") {
-    Text(
+    CenteredText(
         text = "Text from previous screen: $text",
-        textAlign = TextAlign.Center
     )
 }

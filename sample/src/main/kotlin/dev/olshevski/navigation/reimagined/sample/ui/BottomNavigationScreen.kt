@@ -102,7 +102,7 @@ private val BottomNavigationDestination.tabIcon
     }
 
 @Composable
-fun BottomNavigationBackHandler(
+private fun BottomNavigationBackHandler(
     navController: NavController<BottomNavigationDestination>
 ) {
     BackHandler(enabled = navController.backstack.entries.size > 1) {

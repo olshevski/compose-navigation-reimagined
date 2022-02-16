@@ -76,3 +76,8 @@ fun DialogLayout(
 
     }
 }
+
+@Composable
+fun CenteredText(text: String) {
+    Text(text, textAlign = TextAlign.Center)
+}
