@@ -19,6 +19,8 @@ object Libs {
             const val UiToolingPreview = "androidx.compose.ui:ui-tooling-preview:$Version"
             const val UiTestJunit4 = "androidx.compose.ui:ui-test-junit4:$Version"
             const val RuntimeLivedata = "androidx.compose.runtime:runtime-livedata:$Version"
+            const val MaterialIconsExtended =
+                "androidx.compose.material:material-icons-extended:$Version"
         }
 
         object Lifecycle {

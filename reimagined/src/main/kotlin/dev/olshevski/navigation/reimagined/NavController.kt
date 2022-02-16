@@ -17,8 +17,8 @@ import androidx.lifecycle.SavedStateHandle
  * Creates and remembers a new [NavController] instance. Its backstack will be prefilled with
  * destinations from the [initialBackstack].
  *
- * The order of items in the list is interpreted as going from the bottom of the backstack
- * to the top. This means that the last item of the list will become the currently displayed item
+ * The order of the items in the list is interpreted as going from the bottom of the backstack
+ * to the top. It means that the last item of the list will become the currently displayed item
  * in [NavHost]. The first item of the list will be the last item that can be popped of
  * the backstack.
  *
@@ -47,8 +47,8 @@ fun <T> rememberNavController(startDestination: T) =
  * Creates a new [NavController] instance. Its backstack will be prefilled with destinations
  * from the [initialBackstack].
  *
- * The order of items in the list is interpreted as going from the bottom of the backstack
- * to the top. This means that the last item of the list will become the currently displayed item
+ * The order of the items in the list is interpreted as going from the bottom of the backstack
+ * to the top. It means that the last item of the list will become the currently displayed item
  * in [NavHost]. The first item of the list will be the last item that can be popped of
  * the backstack.
  *

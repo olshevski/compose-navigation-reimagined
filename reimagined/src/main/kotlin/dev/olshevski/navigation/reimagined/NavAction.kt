@@ -21,7 +21,8 @@ abstract class NavAction : Parcelable {
     }
 
     /**
-     * An action type that tells [NavController.navigate] was the last successful call.
+     * An action type that tells [NavController.navigate] or [NavController.moveToTop] was
+     * the last successful call.
      */
     @Parcelize
     object Navigate : NavAction() {

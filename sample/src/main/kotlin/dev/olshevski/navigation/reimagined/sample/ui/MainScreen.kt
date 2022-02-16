@@ -39,9 +39,9 @@ fun MainScreen() {
     ) { destination ->
         when (destination) {
             MainDestination.Splash -> SplashScreen(onFinishedShowing = {
-                navController.replaceAll(MainDestination.Tabs)
+                navController.replaceAll(MainDestination.BottomNavigation)
             })
-            MainDestination.Tabs -> TabsScreen()
+            MainDestination.BottomNavigation -> BottomNavigationScreen()
         }
     }
 }

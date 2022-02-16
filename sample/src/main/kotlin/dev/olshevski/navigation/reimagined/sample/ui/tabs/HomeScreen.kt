@@ -17,7 +17,7 @@ import dev.olshevski.navigation.reimagined.sample.singleLine
 
 @Preview
 @Composable
-fun TabsInfoScreen() {
+fun HomeScreen() {
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
@@ -28,27 +28,28 @@ fun TabsInfoScreen() {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = """This is a simple use case of custom tabs navigation as see in the Youtube
-                app.""".singleLine(),
+            text = """This is a simple implementation of BottomNavigation with same backstack logic
+                as in the official Youtube app.""".singleLine(),
             textAlign = TextAlign.Center
         )
 
         Text(
-            text = """Here every tab appears in the backstack only once and preserves its saved
-                state until explicitly popped off the backstack. Also, the first screen is always
-                the last one to be closed by the back button.""".singleLine(),
+            text = """Here every destination appears in the backstack only once and preserves
+                its saved state until explicitly popped off the backstack. Also, the home
+                destination is always the last one to be closed by the back button.""".singleLine(),
             textAlign = TextAlign.Center
         )
 
         Text(
-            text = """Every tab has its own nested navigation with back handling. The back button
-                handling of a nested navigation always takes precedence over the tabs back handling.
+            text = """Every screen has its own nested navigation with its own back handling.
+                The back handling of a nested navigation always takes precedence over
+                the BottomNavigation back handling.
                 """.singleLine(),
             textAlign = TextAlign.Center
         )
 
         Text(
-            text = "Check out other tabs for more supported features.",
+            text = "Check out other screens for more supported features.",
             textAlign = TextAlign.Center
         )
     }

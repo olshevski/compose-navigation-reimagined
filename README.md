@@ -106,9 +106,9 @@ NavController accepts all types meeting the requirements as destinations. The re
 
 #### Navigation methods
 
-There is a handful of pre-defined methods suitable for a basic app navigation: `navigate`, `pop`, `popUpTo`, `popAll`, `replaceLast`, `replaceUpTo`, `replaceAll`. They all are pretty much self-explanatory.
+There is a handful of pre-defined methods suitable for a basic app navigation: `navigate`, `moveToTop`, `pop`, `popUpTo`, `popAll`, `replaceLast`, `replaceUpTo`, `replaceAll`. They all are pretty much self-explanatory.
 
-If your use-case calls for some advanced backstack manipulations, you may use `setNewBackstackEntries` method. It is in fact the only public method defined in NavController, all other methods are provided as extensions and use `setNewBackstackEntries` under the hood. You may see how a new extension method `navigateToTab` is implemented in the [sample](https://github.com/olshevski/compose-navigation-reimagined/blob/master/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/TabsScreen.kt).
+If your use-case calls for some advanced backstack manipulations, you may use `setNewBackstackEntries` method. It is in fact the only public method defined in NavController, all other methods are provided as extensions and use `setNewBackstackEntries` under the hood. You may see how a new extension method `moveLastEntryToStart` is implemented in the [sample](https://github.com/olshevski/compose-navigation-reimagined/blob/master/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/BottomNavigationScreen.kt).
 
 
 ### NavBackstack
@@ -219,7 +219,7 @@ Explore the KDoc documentation of the library for more details about every compo
 Also, explore the [sample](https://github.com/olshevski/compose-navigation-reimagined/tree/main/sample). It provides demos of all the functionality mentioned above and even more. The sample shows:
 
 - nested navigation
-- tab navigation
+- BottomNavigation
 - NavHost/AnimatedNavHost usage
 - dialog navigation
 - passing and returning values

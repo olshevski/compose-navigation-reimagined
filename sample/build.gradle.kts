@@ -56,6 +56,7 @@ dependencies {
     debugImplementation(Libs.AndroidX.Compose.UiTooling)
     implementation(Libs.AndroidX.Compose.UiToolingPreview)
     implementation(Libs.AndroidX.Compose.RuntimeLivedata)
+    implementation(Libs.AndroidX.Compose.MaterialIconsExtended)
     implementation(Libs.AndroidX.Lifecycle.ViewModel.Ktx)
     implementation(Libs.AndroidX.Lifecycle.ViewModel.Compose)
     implementation(Libs.AndroidX.Lifecycle.ViewModel.SavedState)
