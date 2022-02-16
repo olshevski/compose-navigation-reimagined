@@ -66,7 +66,7 @@ fun BottomNavigationScreen() {
                     onClick = {
                         // keep only one instance of a destination in the backstack
                         if (!navController.moveToTop { it == destination }) {
-                            // if there are no existing instance, add it
+                            // if there is no existing instance, add it
                             navController.navigate(destination)
                         }
                     }
@@ -90,7 +90,7 @@ private val BottomNavigationDestination.tabTitle
         BottomNavigationDestination.Home -> "Home"
         BottomNavigationDestination.NavHost -> "NavHost"
         BottomNavigationDestination.AnimatedNavHost -> "Animations"
-        BottomNavigationDestination.ViewModel -> "ViewModel"
+        BottomNavigationDestination.ViewModel -> "ViewModels"
     }
 
 private val BottomNavigationDestination.tabIcon
