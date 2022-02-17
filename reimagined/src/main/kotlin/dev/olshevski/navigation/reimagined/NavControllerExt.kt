@@ -25,9 +25,9 @@ fun <T> NavController<T>.navigate(destination: T) =
 
 /**
  * Looks for the destination that meet the condition of the [predicate] and moves this destination
- * to the top of the backstack, effectively becoming the currently displayed item in [NavHost].
+ * to the top of the backstack, effectively making it the currently displayed item in [NavHost].
  *
- * In most cases this operation should be used together with [navigate]:
+ * In most cases this method should be used in pair with [navigate]:
  *
  * ```
  * if (!navController.moveToTop { it is SomeDestination }) {
