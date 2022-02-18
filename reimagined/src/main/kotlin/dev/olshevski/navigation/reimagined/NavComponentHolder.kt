@@ -69,6 +69,8 @@ internal fun <T> rememberNavComponentHolder(
     }
 }
 
+private const val PACKAGE_KEY = "dev.olshevski.navigation.reimagined.key"
+
 /**
  * Stores and manages all components (lifecycles, saved states, view models).
  */
@@ -117,7 +119,7 @@ internal class NavComponentHolder<T>(
     }
 
     private val viewModelStoreProvider: ViewModelStoreProvider =
-        ViewModelProvider(navHostViewModelStoreOwner)[id.toString(), NavHostViewModel::class.java]
+        ViewModelProvider(navHostViewModelStoreOwner)["$PACKAGE_KEY:$id", NavHostViewModel::class.java]
 
     private var navHostLifecycleState: Lifecycle.State = Lifecycle.State.INITIALIZED
 
@@ -211,7 +213,7 @@ internal class NavComponentHolder<T>(
     }
 
     private fun <T> savedStateKey(componentEntry: NavComponentEntry<T>) =
-        "dev.olshevski.navigation.reimagined.key:$id:${componentEntry.id}"
+        "$PACKAGE_KEY:$id:${componentEntry.id}"
 
 }
 
