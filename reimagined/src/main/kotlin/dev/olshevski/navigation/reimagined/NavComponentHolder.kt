@@ -143,15 +143,25 @@ internal class NavComponentHolder<T>(
         )
         componentEntry.navHostLifecycleState = navHostLifecycleState
 
-        savedStateKey(componentEntry).let { key ->
-            navHostSavedStateRegistry.consumeRestoredStateForKey(key).let { savedState ->
-                componentEntry.restoreState(savedState ?: Bundle())
+        // This is extremely rare, but if it still happens and the parent LifecycleOwner gets
+        // destroyed exactly at the same time we navigate to a new destination, do not touch
+        // the saved state. The DESTROYED state will crash SavedStateRegistry one way or another.
+        //
+        // It is safe to skip it, because the composable of the destination never actually gets
+        // created in this particular case.
+        if (navHostLifecycleState != Lifecycle.State.DESTROYED) {
+
+            savedStateKey(componentEntry).let { key ->
+                navHostSavedStateRegistry.consumeRestoredStateForKey(key).let { savedState ->
+                    componentEntry.restoreState(savedState ?: Bundle())
+                }
+                navHostSavedStateRegistry.unregisterSavedStateProvider(key)
+                navHostSavedStateRegistry.registerSavedStateProvider(
+                    key,
+                    componentEntry.savedStateProvider
+                )
             }
-            navHostSavedStateRegistry.unregisterSavedStateProvider(key)
-            navHostSavedStateRegistry.registerSavedStateProvider(
-                key,
-                componentEntry.savedStateProvider
-            )
+
         }
 
         return componentEntry
