@@ -1,10 +1,10 @@
-name: Build MkDocs
+name: Deploy MkDocs
 on:
   push:
     branches:
       - main
 jobs:
-  mkdocs:
+  deploy-mkdocs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -12,4 +12,5 @@ jobs:
         with:
           python-version: 3.x
       - run: pip install mkdocs-material
+      - run: pip install mkdocs-minify-plugin
       - run: mkdocs gh-deploy --force

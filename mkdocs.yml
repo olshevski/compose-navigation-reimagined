@@ -1,0 +1,50 @@
+site_name: Compose Navigation Reimagined
+site_description: "Type-safe navigation library for Jetpack Compose"
+site_author: "Vitali Olshevski"
+site_url: "https://olshevski.github.io/compose-navigation-reimagined"
+edit_uri: ""
+copyright: Copyright &copy; 2022 Vitali Olshevski
+repo_name: "olshevski/compose-navigation-reimagined"
+repo_url: "https://github.com/olshevski/compose-navigation-reimagined"
+
+theme:
+  name: material
+  logo: assets/logo.svg
+  favicon: assets/favicon.png
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/olshevski
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/olshevski
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/olshevski_dev
+    - icon: fontawesome/solid/envelope
+      link: mailto:tech@olshevski.dev
+
+extra_css:
+  - assets/stylesheets/extra.css
+
+plugins:
+  - search
+  - minify:
+      minify_html: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+nav:
+  - "Overview": index.md
+  - "Quick start": quick-start.md
+  - "NavController": nav-controller.md
+  - "NavHost": nav-host.md
+  - "Animations": animations.md
+  - "Dialogs": dialogs.md
+  - "Back handling": back-handling.md
+  - "Return results": return-results.md
