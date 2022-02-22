@@ -40,7 +40,7 @@ In AnimatedNavHostTransitionSpec you get the parameters:
 
 This information is plenty enough to choose a transition for every possible combination of screens and navigation actions.
 
-#### NavAction
+## NavAction
 
 There are four default NavAction types:
 
