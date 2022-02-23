@@ -1,6 +1,6 @@
 # Dialogs
 
-If you need to handle a backstack of dialogs in your application, simply add a DialogNavHost to the same composition layer your regular NavHost is placed. This way you may show and control the backstack of regular screen destination, as well as a second backstack of Dialogs:
+If you need to handle a backstack of dialogs in your application, simply add a DialogNavHost to the same composition layer where your regular NavHost lives. This way you may show and control the backstack of regular screen destination, as well as a second backstack of Dialogs:
 
 ```kotlin
 @Composable
@@ -15,16 +15,14 @@ fun NavHostScreen() {
 
     NavBackHandler(navController)
 
-    NavHost(controller = navController) { destination ->
+    NavHost(navController) { destination ->
         when (destination) {
             ScreenDestination.First -> { /* ... */ }
             ScreenDestination.Second -> { /* ... */ }
         }
     }
 
-    DialogNavHost(
-        controller = dialogController,
-    ) { destination ->
+    DialogNavHost(dialogController) { destination ->
         Dialog(onDismissRequest = { dialogController.pop() }) {
             when (destination) {
                 DialogDestination.First -> { /* ... */ }

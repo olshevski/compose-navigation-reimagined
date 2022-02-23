@@ -49,7 +49,7 @@ fun NavHostScreen() {
 
     NavBackHandler(navController)
 
-    NavHost(controller = navController) { screen ->
+    NavHost(navController) { screen ->
         when (screen) {
             Screen.First -> Column {
                 Text("First screen")
@@ -98,12 +98,6 @@ Explore the [sample](https://github.com/olshevski/compose-navigation-reimagined/
 <p align="center">
     <img width="240" src="https://user-images.githubusercontent.com/5606565/155094899-7cb20a5a-c5e4-4235-8fe0-e22218ddef35.gif" />
 </p>
-
-## Why beta
-
-I'm very satisfied with the shape and form of the library. I have spent long sleepless nights debugging and polishing all corner cases.
-
-For now, I'll be glad to hear feedback and do minor fine-tuning of the API (if any at all). If there are any changes, you may expect a notice in release notes.
 
 ## About
 

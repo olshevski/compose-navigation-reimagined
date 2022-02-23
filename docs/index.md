@@ -49,7 +49,7 @@ fun NavHostScreen() {
 
     NavBackHandler(navController)
 
-    NavHost(controller = navController) { screen ->
+    NavHost(navController) { screen ->
         when (screen) {
             Screen.First -> Column {
                 Text("First screen")
