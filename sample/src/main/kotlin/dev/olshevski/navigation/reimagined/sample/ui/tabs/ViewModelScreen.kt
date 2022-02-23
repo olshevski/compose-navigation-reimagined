@@ -50,9 +50,9 @@ fun ViewModelScreen() {
 
 class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
-    private val navController = savedStateHandle.getOrCreateNew("navController") {
-        navController<ViewModelDestination>(startDestination = ViewModelDestination.First)
-    }
+    private val navController by savedStateHandle.navController<ViewModelDestination>(
+        startDestination = ViewModelDestination.First
+    )
 
     // You may expose only read-only NavBackstack as it is done here, but it doesn't matter
     // to you, just make navController public and use NavBackHandler.
@@ -71,17 +71,6 @@ class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         navController.navigate(ViewModelDestination.Third(text))
     }
 
-}
-
-private fun <T> SavedStateHandle.getOrCreateNew(key: String, block: () -> T): T {
-    val item = get<T>(key)
-    return if (item != null) {
-        item
-    } else {
-        val newItem = block()
-        set(key, newItem)
-        newItem
-    }
 }
 
 @Composable

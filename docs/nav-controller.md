@@ -24,29 +24,14 @@ val navController = rememberNavController<Screen>(
 
 ## NavController in a ViewModel
 
-In order to store NavController inside a ViewModel it is convenient to declare an extension method for SavedStateHandle:
-
-```kotlin
-fun <T> SavedStateHandle.getOrCreateNew(key: String, block: () -> T): T {
-    val item = get<T>(key)
-    return if (item != null) {
-        item
-    } else {
-        val newItem = block()
-        set(key, newItem)
-        newItem
-    }
-}
-```
-
-And then in your ViewModel you can initialize NavController like this:
+The library provides a property delegate for creating and saving NavController in a SavedStateHandle:
 
 ```kotlin
 class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
-    val navController = savedStateHandle.getOrCreateNew("navController") {
-        navController<Screen>(startDestination = Screen.First)
-    }
+    val navController by savedStateHandle.navController<Screen>(
+        startDestination = Screen.First
+    )
 
 }
 ```
