@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.savedstate.SavedStateRegistry
+import kotlinx.parcelize.Parcelize
 
 @Composable
 internal fun <T> rememberNavComponentHolder(
@@ -38,12 +39,13 @@ internal fun <T> rememberNavComponentHolder(
 
     return rememberSaveable(
         saver = listSaver(
-            save = { listOf(it.id, it.managedEntryIds.toTypedArray()) },
+            save = { listOf(it.id, it.componentIds.toTypedArray()) },
             restore = { restored ->
                 @Suppress("UNCHECKED_CAST")
                 NavComponentHolder(
-                    id = restored[0] as NavId,
-                    initialManagedEntryIds = (restored[1] as Array<Parcelable>).map { it as NavId },
+                    id = restored[0] as NavHolderId,
+                    restoredComponentIds = (restored[1] as Array<Parcelable>).map { it as NavId }
+                        .toSet(),
                     initialBackstack = backstack,
                     saveableStateHolder = saveableStateHolder,
                     navHostViewModelStoreOwner = viewModelStoreOwner,
@@ -55,9 +57,8 @@ internal fun <T> rememberNavComponentHolder(
         )
     ) {
         NavComponentHolder(
-            initialManagedEntryIds = emptyList(),
-            saveableStateHolder = saveableStateHolder,
             initialBackstack = backstack,
+            saveableStateHolder = saveableStateHolder,
             navHostViewModelStoreOwner = viewModelStoreOwner,
             navHostLifecycle = lifecycle,
             navHostSavedStateRegistry = savedStateRegistry,
@@ -71,12 +72,19 @@ internal fun <T> rememberNavComponentHolder(
 
 private const val PACKAGE_KEY = "dev.olshevski.navigation.reimagined.key"
 
+/** Just to differentiate from entry ids, because it is easy to misuse. */
+@Parcelize
+@JvmInline
+internal value class NavHolderId(private val id: NavId = NavId()) : Parcelable {
+    override fun toString(): String = id.toString()
+}
+
 /**
  * Stores and manages all components (lifecycles, saved states, view models).
  */
 internal class NavComponentHolder<T>(
-    val id: NavId = NavId(),
-    initialManagedEntryIds: List<NavId>,
+    val id: NavHolderId = NavHolderId(),
+    restoredComponentIds: Set<NavId> = emptySet(),
     initialBackstack: NavBackstack<T>,
     private val saveableStateHolder: SaveableStateHolder,
     navHostViewModelStoreOwner: ViewModelStoreOwner,
@@ -85,36 +93,9 @@ internal class NavComponentHolder<T>(
     private val application: Application?
 ) {
 
-    /**
-     * We need to keep track of all [NavComponentEntry] ids we've created, so this info can
-     * be used to remove redundant ViewModelStores from [ViewModelStoreProvider] and states
-     * from [SaveableStateHolder].
-     */
-    val managedEntryIds = initialManagedEntryIds.toMutableSet()
-
     var backstack by mutableStateOf(initialBackstack)
 
-    private val componentEntries = mutableMapOf<NavId, NavComponentEntry<T>>()
-
-    val lastComponentEntry = derivedStateOf {
-        backstack.entries.lastOrNull()?.let { lastEntry ->
-            managedEntryIds.add(lastEntry.id)
-            componentEntries.getOrPut(lastEntry.id) {
-                newComponentEntry(lastEntry)
-            }
-        }.also { lastComponentEntry ->
-            // Before transition all  entries are capped at STARTED state, and the new last entry
-            // gets promoted to STARTED state. Further state changes will be done after transition.
-            componentEntries.values
-                .filter { it != lastComponentEntry }
-                .forEach {
-                    it.maxLifecycleState = minOf(it.maxLifecycleState, Lifecycle.State.STARTED)
-                }
-            lastComponentEntry?.maxLifecycleState = Lifecycle.State.STARTED
-        }
-    }
-
-    private val backstackIds = derivedStateOf {
+    private val backstackIds by derivedStateOf {
         backstack.entries.map { it.id }.toHashSet()
     }
 
@@ -123,6 +104,23 @@ internal class NavComponentHolder<T>(
 
     private var navHostLifecycleState: Lifecycle.State = Lifecycle.State.INITIALIZED
 
+    private val componentEntries = mutableMapOf<NavId, NavComponentEntry<T>>()
+
+    val componentIds get() = componentEntries.keys as Set<NavId>
+
+    init {
+        // Do not restore components that are no longer present in the backstack.
+        // Remove their associated components instead.
+        restoredComponentIds.filter { it !in backstackIds }.forEach { removeComponents(it) }
+
+        // Everything else is recreated.
+        backstack.entries.filter { it.id in restoredComponentIds }.forEach { entry ->
+            componentEntries.getOrPut(entry.id) {
+                newComponentEntry(entry)
+            }
+        }
+    }
+
     private val lifecycleEventObserver = LifecycleEventObserver { _, event ->
         navHostLifecycleState = event.targetState
         componentEntries.values.forEach {
@@ -130,10 +128,24 @@ internal class NavComponentHolder<T>(
         }
     }
 
-    fun onCreate() {
-        cleanupComponentEntries()
-        setPostTransitionLifecycleStates()
-        navHostLifecycle.addObserver(lifecycleEventObserver)
+    val lastComponentEntry = derivedStateOf {
+        backstack.entries.lastOrNull()?.let { lastEntry ->
+            componentEntries.getOrPut(lastEntry.id) {
+                newComponentEntry(lastEntry)
+            }
+        }.also { lastComponentEntry ->
+            // Before transition:
+            // - all entries except lastComponentEntry are capped at STARTED state
+            // - lastComponentEntry gets promoted to STARTED state
+            //
+            // Further state changes will be done when transition finishes.
+            componentEntries.values
+                .filter { it != lastComponentEntry }
+                .forEach {
+                    it.maxLifecycleState = minOf(it.maxLifecycleState, Lifecycle.State.STARTED)
+                }
+            lastComponentEntry?.maxLifecycleState = Lifecycle.State.STARTED
+        }
     }
 
     private fun newComponentEntry(entry: NavEntry<T>): NavComponentEntry<T> {
@@ -144,9 +156,9 @@ internal class NavComponentHolder<T>(
             application = application
         )
 
-        savedStateKey(componentEntry).let { key ->
+        // state should be restored only in INITIALIZED state
+        savedStateKey(componentEntry.id).let { key ->
             navHostSavedStateRegistry.consumeRestoredStateForKey(key).let { savedState ->
-                // this should be called only in INITIALIZED state
                 componentEntry.restoreState(savedState ?: Bundle())
             }
             navHostSavedStateRegistry.unregisterSavedStateProvider(key)
@@ -156,15 +168,46 @@ internal class NavComponentHolder<T>(
             )
         }
 
+        // apply actual states only after state restoration
         componentEntry.navHostLifecycleState = navHostLifecycleState
+        componentEntry.maxLifecycleState = Lifecycle.State.STARTED
 
         return componentEntry
+    }
+
+    private fun savedStateKey(entryId: NavId) = "$PACKAGE_KEY:$id:$entryId"
+
+    fun onCreate() {
+        cleanupComponentEntries()
+        setPostTransitionLifecycleStates()
+        navHostLifecycle.addObserver(lifecycleEventObserver)
     }
 
     fun onTransitionFinish() {
         cleanupComponentEntries()
         setPostTransitionLifecycleStates()
         // https://www.youtube.com/watch?v=cwyTleTL06Y
+    }
+
+    /**
+     * Remove entries that are no longer in the backstack.
+     */
+    private fun cleanupComponentEntries() {
+        componentEntries.keys.filter { it !in backstackIds }.forEach { entryId ->
+            componentEntries.remove(entryId)?.let { componentEntry ->
+                componentEntry.maxLifecycleState = Lifecycle.State.DESTROYED
+            }
+            removeComponents(entryId)
+        }
+    }
+
+    /**
+     * Unregister saved state provider and cleanup view models for the specified entry id.
+     */
+    private fun removeComponents(entryId: NavId) {
+        navHostSavedStateRegistry.unregisterSavedStateProvider(savedStateKey(entryId))
+        viewModelStoreProvider.removeViewModelStore(entryId)
+        saveableStateHolder.removeState(entryId)
     }
 
     /**
@@ -179,33 +222,12 @@ internal class NavComponentHolder<T>(
         lastComponentEntry.value?.maxLifecycleState = Lifecycle.State.RESUMED
     }
 
-    /**
-     * Remove entries that are no longer in backstack.
-     */
-    private fun cleanupComponentEntries() {
-        val unusedIds = managedEntryIds.filter { it !in backstackIds.value }
-        unusedIds.forEach { id ->
-            componentEntries.remove(id)?.let { componentEntry ->
-                componentEntry.maxLifecycleState = Lifecycle.State.DESTROYED
-                navHostSavedStateRegistry.unregisterSavedStateProvider(
-                    savedStateKey(componentEntry)
-                )
-            }
-            viewModelStoreProvider.removeViewModelStore(id)
-            saveableStateHolder.removeState(id)
-        }
-        managedEntryIds.removeAll(unusedIds.toSet())
-    }
-
     fun onDispose() {
         navHostLifecycle.removeObserver(lifecycleEventObserver)
         componentEntries.values.forEach {
             it.navHostLifecycleState = Lifecycle.State.DESTROYED
         }
     }
-
-    private fun <T> savedStateKey(componentEntry: NavComponentEntry<T>) =
-        "$PACKAGE_KEY:$id:${componentEntry.id}"
 
 }
 
