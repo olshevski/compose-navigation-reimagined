@@ -90,7 +90,7 @@ fun <T> NavController<T>.popAll() {
 
 /**
  * Pops all destinations off the backstack up to the destination that meets the condition
- * of the [upToPredicate].
+ * of the [predicate].
  *
  * @param inclusive whether the item itself should be popped or not, default value is `false`
  *
@@ -103,9 +103,9 @@ fun <T> NavController<T>.popAll() {
 fun <T> NavController<T>.popUpTo(
     inclusive: Boolean = false,
     match: Match = Match.Last,
-    upToPredicate: (T) -> Boolean
+    predicate: (T) -> Boolean
 ): Boolean {
-    val entryIndex = backstack.entries.indexOf(match, upToPredicate)
+    val entryIndex = backstack.entries.indexOf(match, predicate)
     return if (entryIndex >= 0) {
         setNewBackstackEntries(
             entries = backstack.entries.subList(
@@ -182,7 +182,7 @@ fun <T> NavController<T>.replaceAll(newDestination: T) =
 
 /**
  * Pops all destinations off the backstack up to the destination that meets the condition
- * of the [upToPredicate] and replaces them with [newDestinations].
+ * of the [predicate] and replaces them with [newDestinations].
  *
  * The order of the items in the list is interpreted as going from the bottom of the backstack
  * to the top. It means that the last item of the list will become the currently displayed item
@@ -202,9 +202,9 @@ fun <T> NavController<T>.replaceUpTo(
     newDestinations: List<T>,
     inclusive: Boolean = false,
     match: Match = Match.Last,
-    upToPredicate: (T) -> Boolean
+    predicate: (T) -> Boolean
 ): Boolean {
-    val entryIndex = backstack.entries.indexOf(match, upToPredicate)
+    val entryIndex = backstack.entries.indexOf(match, predicate)
     return if (entryIndex >= 0) {
         setNewBackstackEntries(
             entries = backstack.entries.subList(
@@ -221,7 +221,7 @@ fun <T> NavController<T>.replaceUpTo(
 
 /**
  * Pops all destinations off the backstack up to the destination that meets the condition
- * of the [upToPredicate] and replaces them with a [newDestination].
+ * of the [predicate] and replaces them with a [newDestination].
  *
  * @param inclusive whether the item itself should be popped or not, default value is `false`
  *
@@ -235,8 +235,8 @@ fun <T> NavController<T>.replaceUpTo(
     newDestination: T,
     inclusive: Boolean = false,
     match: Match = Match.Last,
-    upToPredicate: (T) -> Boolean
-): Boolean = replaceUpTo(listOf(newDestination), inclusive, match, upToPredicate)
+    predicate: (T) -> Boolean
+): Boolean = replaceUpTo(listOf(newDestination), inclusive, match, predicate)
 
 /**
  * The policy of selecting the target item in case of multiple matching items.
