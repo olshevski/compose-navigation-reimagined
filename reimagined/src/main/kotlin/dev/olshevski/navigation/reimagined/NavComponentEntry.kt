@@ -73,7 +73,20 @@ class NavComponentEntry<T>(
     override fun getLifecycle(): Lifecycle = lifecycleRegistry
 
     private fun updateLifecycleRegistry() {
-        lifecycleRegistry.currentState = minOf(maxLifecycleState, navHostLifecycleState)
+        val currentState = lifecycleRegistry.currentState
+        val newState = minOf(maxLifecycleState, navHostLifecycleState)
+
+        if (currentState != newState) {
+            if (currentState == Lifecycle.State.DESTROYED) {
+                error("Moving from DESTROYED state is not allowed")
+            }
+            if (currentState == Lifecycle.State.INITIALIZED && newState == Lifecycle.State.DESTROYED) {
+                // Lifecycle should not move straight from INITIALIZED to DESTROYED,
+                // only INITIALIZED -> STARTED -> DESTROYED is allowed
+                lifecycleRegistry.currentState = Lifecycle.State.STARTED
+            }
+            lifecycleRegistry.currentState = newState
+        }
     }
 
     override fun getSavedStateRegistry(): SavedStateRegistry =
