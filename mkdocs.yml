@@ -41,7 +41,6 @@ markdown_extensions:
 
 nav:
   - "Overview": index.md
-  - "Quick start": quick-start.md
   - "NavController": nav-controller.md
   - "NavHost": nav-host.md
   - "Animations": animations.md
