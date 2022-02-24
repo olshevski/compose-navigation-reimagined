@@ -7,9 +7,9 @@ fun PluginDependenciesSpec.plugin(pluginSpec: PluginSpec) {
     id(pluginSpec.id) version (pluginSpec.version)
 }
 
-object Plugins {
+object Plugin {
     object Android {
-        private const val Version = "7.1.1"
+        private const val Version = "7.1.2"
         val Application = PluginSpec("com.android.application", Version)
         val Library = PluginSpec("com.android.library", Version)
     }
@@ -21,7 +21,6 @@ object Plugins {
     }
 
     val BenManesVersions = PluginSpec("com.github.ben-manes.versions", "0.42.0")
-    val Dokka = PluginSpec("org.jetbrains.dokka", "1.6.10")
     val NexusPublishing = PluginSpec("io.github.gradle-nexus.publish-plugin", "1.1.0")
 
 }

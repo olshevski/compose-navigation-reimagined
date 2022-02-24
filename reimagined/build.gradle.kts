@@ -1,10 +1,9 @@
 plugins {
-    plugin(Plugins.Android.Library)
-    plugin(Plugins.Kotlin.Android)
-    plugin(Plugins.Kotlin.Parcelize)
+    plugin(Plugin.Android.Library)
+    plugin(Plugin.Kotlin.Android)
+    plugin(Plugin.Kotlin.Parcelize)
     `maven-publish`
     signing
-    plugin(Plugins.Dokka)
 }
 
 android {
@@ -38,7 +37,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Libs.AndroidX.Compose.CompilerVersion
+        kotlinCompilerExtensionVersion = Lib.AndroidX.Compose.CompilerVersion
     }
 
     testOptions {
@@ -46,35 +45,31 @@ android {
             it.useJUnitPlatform()
         }
     }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 dependencies {
-    api(Libs.AndroidX.Activity.Compose)
-    api(Libs.AndroidX.Compose.Ui)
-    api(Libs.AndroidX.Compose.Animation)
-    api(Libs.AndroidX.Lifecycle.ViewModel.Ktx)
-    api(Libs.AndroidX.Lifecycle.ViewModel.Compose)
-    api(Libs.AndroidX.Lifecycle.ViewModel.SavedState)
+    api(Lib.AndroidX.Activity.Compose)
+    api(Lib.AndroidX.Compose.Ui)
+    api(Lib.AndroidX.Compose.Animation)
+    api(Lib.AndroidX.Lifecycle.ViewModel.Ktx)
+    api(Lib.AndroidX.Lifecycle.ViewModel.Compose)
+    api(Lib.AndroidX.Lifecycle.ViewModel.SavedState)
 
-    testImplementation(Libs.Kotest.RunnerJunit5)
-    testImplementation(Libs.Kotest.FrameworkDataset)
+    testImplementation(Lib.Kotest.RunnerJunit5)
+    testImplementation(Lib.Kotest.FrameworkDataset)
 
     // for latest "kotest-extensions-robolectric" sources included into the code, until the proper
     // working version is published
     testImplementation(kotlin("reflect"))
-    testImplementation(Libs.Robolectric)
-    testImplementation(Libs.JUnit4)
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-    dependsOn(tasks.dokkaJavadoc)
-    from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
-    archiveClassifier.set("javadoc")
-}
-
-val sourcesJar by tasks.registering(Jar::class) {
-    from((android.sourceSets["main"].kotlin as com.android.build.gradle.internal.api.DefaultAndroidSourceDirectorySet).srcDirs)
-    archiveClassifier.set("sources")
+    testImplementation(Lib.Robolectric)
+    testImplementation(Lib.JUnit4)
 }
 
 afterEvaluate {
@@ -82,12 +77,10 @@ afterEvaluate {
         publications {
             create<MavenPublication>("api") {
                 from(components["release"])
-                artifact(sourcesJar)
-                artifact(javadocJar)
 
                 pom {
                     name.set("Compose Navigation Reimagined")
-                    description.set("A small and simple, yet fully fledged and customizable navigation library for Jetpack Compose")
+                    description.set("Type-safe navigation library for Jetpack Compose")
                     url.set("https://github.com/olshevski/compose-navigation-reimagined")
 
                     licenses {
