@@ -72,7 +72,10 @@ internal fun <T> rememberNavComponentHolder(
 
 private const val PACKAGE_KEY = "dev.olshevski.navigation.reimagined.key"
 
-/** Just to differentiate from entry ids, because it is easy to misuse. */
+/**
+ * Used for differentiating holder id from entry ids, because when everything is named id it is
+ * just confusing.
+ */
 @Parcelize
 @JvmInline
 internal value class NavHolderId(private val id: NavId = NavId()) : Parcelable {
@@ -109,6 +112,9 @@ internal class NavComponentHolder<T>(
     val componentIds get() = componentEntries.keys as Set<NavId>
 
     init {
+        // We need to restore all previous component entries, which in return restore their own
+        // saved states and reconnect all SavedStateHandles to a new SavedStateRegistry.
+
         // Do not restore components that are no longer present in the backstack.
         // Remove their associated components instead.
         restoredComponentIds.filter { it !in backstackIds }.forEach { removeComponents(it) }
@@ -179,7 +185,11 @@ internal class NavComponentHolder<T>(
 
     fun onCreate() {
         cleanupComponentEntries()
+
+        // When created there is no transition, and we need to apply proper lifecycle states
+        // immediately.
         setPostTransitionLifecycleStates()
+
         navHostLifecycle.addObserver(lifecycleEventObserver)
     }
 
@@ -210,10 +220,8 @@ internal class NavComponentHolder<T>(
         saveableStateHolder.removeState(entryId)
     }
 
-    /**
-     * Last entry is resumed, everything else is stopped.
-     */
     private fun setPostTransitionLifecycleStates() {
+        // last entry is resumed, everything else is stopped
         componentEntries.values
             .filter { it != lastComponentEntry.value }
             .forEach {
