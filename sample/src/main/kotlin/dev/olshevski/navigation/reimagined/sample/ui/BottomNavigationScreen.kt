@@ -90,7 +90,7 @@ private val BottomNavigationDestination.tabTitle
         BottomNavigationDestination.Home -> "Home"
         BottomNavigationDestination.NavHost -> "NavHost"
         BottomNavigationDestination.AnimatedNavHost -> "Animations"
-        BottomNavigationDestination.ViewModel -> "ViewModels"
+        BottomNavigationDestination.ViewModel -> "ViewModel"
     }
 
 private val BottomNavigationDestination.tabIcon
