@@ -14,7 +14,7 @@ internal fun <T> BaseNavHost(
     val componentHolder = rememberNavComponentHolder(backstack)
 
     val currentComponentEntry = key(componentHolder.id) {
-        entryTransition(componentHolder.lastComponentEntry.value)
+        entryTransition(componentHolder.lastComponentEntry)
 
         // For NavHost: currentComponentEntry is the same as lastComponentEntry.
         //

@@ -134,24 +134,27 @@ internal class NavComponentHolder<T>(
         }
     }
 
-    val lastComponentEntry = derivedStateOf {
+    val lastComponentEntry by derivedStateOf {
         backstack.entries.lastOrNull()?.let { lastEntry ->
             componentEntries.getOrPut(lastEntry.id) {
                 newComponentEntry(lastEntry)
             }
-        }.also { lastComponentEntry ->
-            // Before transition:
-            // - all entries except lastComponentEntry are capped at STARTED state
-            // - lastComponentEntry gets promoted to STARTED state
-            //
-            // Further state changes will be done when transition finishes.
-            componentEntries.values
-                .filter { it != lastComponentEntry }
-                .forEach {
-                    it.maxLifecycleState = minOf(it.maxLifecycleState, Lifecycle.State.STARTED)
-                }
-            lastComponentEntry?.maxLifecycleState = Lifecycle.State.STARTED
         }
+    }.also {
+        // this block will be executed only when a new distinct entry is set
+        val newLastComponentEntry = it.value
+
+        // Before transition:
+        // - all entries except lastComponentEntry are capped at STARTED state
+        // - lastComponentEntry gets promoted to STARTED state
+        //
+        // Further state changes will be done when transition finishes.
+        componentEntries.values
+            .filter { it != newLastComponentEntry }
+            .forEach {
+                it.maxLifecycleState = minOf(it.maxLifecycleState, Lifecycle.State.STARTED)
+            }
+        newLastComponentEntry?.maxLifecycleState = Lifecycle.State.STARTED
     }
 
     private fun newComponentEntry(entry: NavEntry<T>): NavComponentEntry<T> {
@@ -223,11 +226,11 @@ internal class NavComponentHolder<T>(
     private fun setPostTransitionLifecycleStates() {
         // last entry is resumed, everything else is stopped
         componentEntries.values
-            .filter { it != lastComponentEntry.value }
+            .filter { it != lastComponentEntry }
             .forEach {
                 it.maxLifecycleState = Lifecycle.State.CREATED
             }
-        lastComponentEntry.value?.maxLifecycleState = Lifecycle.State.RESUMED
+        lastComponentEntry?.maxLifecycleState = Lifecycle.State.RESUMED
     }
 
     fun onDispose() {
