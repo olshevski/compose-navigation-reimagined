@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 /**
  * A navigation action hint. It is passed as a parameter into
- * [NavController.setNewBackstackEntries] and then used in
+ * [NavController.setNewBackstack] and then used in
  * [AnimatedNavHostTransitionSpec.getContentTransform] to select some animation.
  *
  * May be extended to create more action types.

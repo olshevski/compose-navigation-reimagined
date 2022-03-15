@@ -118,7 +118,7 @@ private fun BottomNavigationBackHandler(
 }
 
 private fun NavController<BottomNavigationDestination>.moveLastEntryToStart() {
-    setNewBackstackEntries(
+    setNewBackstack(
         entries = backstack.entries.toMutableList().also {
             val entry = it.removeLast()
             it.add(0, entry)

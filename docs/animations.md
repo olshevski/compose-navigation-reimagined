@@ -47,6 +47,6 @@ There are four default NavAction types:
 - `Pop`, `Replace` and `Navigate` - objects that correspond to `pop…`, `replace…`, `navigate` methods of NavController
 - `Idle` - the default action of a newly created NavController
 
-You can also create new action types by extending abstract `NavAction` class. Pass any of the type into `setNewBackstackEntries` method of NavController and handle it in AnimatedNavHostTransitionSpec.
+You can also create new action types by extending abstract `NavAction` class. Pass any of the type into `setNewBackstack` method of NavController and handle it in AnimatedNavHostTransitionSpec.
 
 The last action can also be accessed through `action` property of NavBackstack.

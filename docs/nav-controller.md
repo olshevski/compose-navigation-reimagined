@@ -100,11 +100,11 @@ In case multiple destinations match the predicate, you may specify the `match` p
 
 ### New custom methods
 
-If your use-case calls for some advanced backstack manipulations, you may use `setNewBackstackEntries` method. It is in fact the only public method defined in NavController, all other methods are provided as extensions and use `setNewBackstackEntries` under the hood. Here is how a new extension method `moveLastEntryToStart` is implemented in the [sample](https://github.com/olshevski/compose-navigation-reimagined/blob/master/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/BottomNavigationScreen.kt):
+If your use-case calls for some advanced backstack manipulations, you may use `setNewBackstack` method. It is in fact the only public method defined in NavController, all other methods are provided as extensions and use `setNewBackstack` under the hood. Here is how a new extension method `moveLastEntryToStart` is implemented in the [sample](https://github.com/olshevski/compose-navigation-reimagined/blob/master/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/BottomNavigationScreen.kt):
 
 ```kotlin
 fun NavController<BottomNavigationDestination>.moveLastEntryToStart() {
-    setNewBackstackEntries(
+    setNewBackstack(
         entries = backstack.entries.toMutableList().also {
             val entry = it.removeLast()
             it.add(0, entry)
@@ -116,6 +116,6 @@ fun NavController<BottomNavigationDestination>.moveLastEntryToStart() {
 
 ## NavBackstack
 
-This is a read-only class that you may use to access current backstack entries and the last [NavAction](/compose-navigation-reimagined/animations/#navaction). The properties are backed up by [MutableState](https://developer.android.com/reference/kotlin/androidx/compose/runtime/MutableState), so Compose will be notified about the changes.
+You may access current backstack entries the last [NavAction](/compose-navigation-reimagined/animations/#navaction) through `backstack` property of NavController. This property is backed up by [MutableState](https://developer.android.com/reference/kotlin/androidx/compose/runtime/MutableState) and any changes to it will notify composition.
 
-If you want to listen for backstack changes outside of composition you may set `onBackstackChange` listener in NavController.
+If you want to listen for backstack changes outside of composition you may set `onBackstackChange` listener of NavController.

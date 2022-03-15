@@ -54,9 +54,9 @@ class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         startDestination = ViewModelDestination.First
     )
 
-    // You may expose only read-only NavBackstack as it is done here, but it doesn't matter
-    // to you, just make navController public and use NavBackHandler.
-    val navBackstack = navController.backstack
+    // You may either make navController public or just its navBackstack. The latter is convenient
+    // when you don't want to expose navigation methods in the UI layer.
+    val navBackstack get() = navController.backstack
     val backHandlerEnabled get() = navController.backstack.entries.size > 1
 
     fun onBackPress() {
@@ -121,7 +121,6 @@ private fun SecondScreen(
         text = """Please enter some text. It will be stored in ViewModel as well as its state
             preserved by SavedStateHandle.""".singleLine(),
     )
-
 
     OutlinedTextField(value = text, onValueChange = { onTextChange(it) })
 

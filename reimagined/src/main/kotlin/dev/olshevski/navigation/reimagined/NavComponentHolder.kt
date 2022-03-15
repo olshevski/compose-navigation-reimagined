@@ -39,12 +39,13 @@ internal fun <T> rememberNavComponentHolder(
 
     return rememberSaveable(
         saver = listSaver(
-            save = { listOf(it.id, it.componentIds.toTypedArray()) },
+            save = { listOf(it.id, it.componentEntryIds.toTypedArray()) },
             restore = { restored ->
                 @Suppress("UNCHECKED_CAST")
                 NavComponentHolder(
                     id = restored[0] as NavHolderId,
-                    restoredComponentIds = (restored[1] as Array<Parcelable>).map { it as NavId }
+                    restoredComponentEntryIds = (restored[1] as Array<Parcelable>)
+                        .map { it as NavId }
                         .toSet(),
                     initialBackstack = backstack,
                     saveableStateHolder = saveableStateHolder,
@@ -65,7 +66,6 @@ internal fun <T> rememberNavComponentHolder(
             application = application
         )
     }.apply {
-        // support setting new backstacks
         this.backstack = backstack
     }
 }
@@ -87,7 +87,7 @@ internal value class NavHolderId(private val id: NavId = NavId()) : Parcelable {
  */
 internal class NavComponentHolder<T>(
     val id: NavHolderId = NavHolderId(),
-    restoredComponentIds: Set<NavId> = emptySet(),
+    restoredComponentEntryIds: Set<NavId> = emptySet(),
     initialBackstack: NavBackstack<T>,
     private val saveableStateHolder: SaveableStateHolder,
     navHostViewModelStoreOwner: ViewModelStoreOwner,
@@ -98,7 +98,7 @@ internal class NavComponentHolder<T>(
 
     var backstack by mutableStateOf(initialBackstack)
 
-    private val backstackIds by derivedStateOf {
+    private val entryIds by derivedStateOf {
         backstack.entries.map { it.id }.toHashSet()
     }
 
@@ -109,7 +109,7 @@ internal class NavComponentHolder<T>(
 
     private val componentEntries = mutableMapOf<NavId, NavComponentEntry<T>>()
 
-    val componentIds get() = componentEntries.keys as Set<NavId>
+    val componentEntryIds get() = componentEntries.keys as Set<NavId>
 
     init {
         // We need to restore all previous component entries, which in return restore their own
@@ -117,10 +117,10 @@ internal class NavComponentHolder<T>(
 
         // Do not restore components that are no longer present in the backstack.
         // Remove their associated components instead.
-        restoredComponentIds.filter { it !in backstackIds }.forEach { removeComponents(it) }
+        restoredComponentEntryIds.filter { it !in entryIds }.forEach { removeComponents(it) }
 
         // Everything else is recreated.
-        backstack.entries.filter { it.id in restoredComponentIds }.forEach { entry ->
+        backstack.entries.filter { it.id in restoredComponentEntryIds }.forEach { entry ->
             componentEntries.getOrPut(entry.id) {
                 newComponentEntry(entry)
             }
@@ -206,7 +206,7 @@ internal class NavComponentHolder<T>(
      * Remove entries that are no longer in the backstack.
      */
     private fun cleanupComponentEntries() {
-        componentEntries.keys.filter { it !in backstackIds }.forEach { entryId ->
+        componentEntries.keys.filter { it !in entryIds }.forEach { entryId ->
             componentEntries.remove(entryId)?.let { componentEntry ->
                 componentEntry.maxLifecycleState = Lifecycle.State.DESTROYED
             }

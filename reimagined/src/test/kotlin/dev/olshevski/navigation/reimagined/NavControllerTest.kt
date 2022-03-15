@@ -14,11 +14,11 @@ import java.io.Serializable
 @RobolectricTest
 class NavControllerTest : FunSpec({
 
-    context("modifyBackstack") {
+    context("setNewBackstack") {
 
         test("set empty list") {
             val navController = navController(TestDestination.A)
-            navController.setNewBackstackEntries(
+            navController.setNewBackstack(
                 entries = emptyList(),
                 action = NavAction.Pop
             )
@@ -28,7 +28,7 @@ class NavControllerTest : FunSpec({
 
         test("set new list") {
             val navController = navController(TestDestination.A)
-            navController.setNewBackstackEntries(
+            navController.setNewBackstack(
                 entries = listOf(navEntry(TestDestination.B)),
                 action = NavAction.Navigate
             )
@@ -40,7 +40,7 @@ class NavControllerTest : FunSpec({
 
         test("modify existing list") {
             val navController = navController(TestDestination.A)
-            navController.setNewBackstackEntries(
+            navController.setNewBackstack(
                 entries = navController.backstack.entries + navEntry(TestDestination.B),
                 action = NavAction.Navigate
             )
@@ -59,7 +59,7 @@ class NavControllerTest : FunSpec({
             val navController = navController(TestDestination.A)
             val onBackstackChangeCallback = OnBackstackChangeCallback<TestDestination>()
             navController.onBackstackChange = onBackstackChangeCallback
-            navController.setNewBackstackEntries(
+            navController.setNewBackstack(
                 entries = emptyList(),
                 action = NavAction.Pop
             )
@@ -73,7 +73,7 @@ class NavControllerTest : FunSpec({
             val navController = navController(TestDestination.A)
             val onBackstackChangeCallback = OnBackstackChangeCallback<TestDestination>()
             navController.onBackstackChange = onBackstackChangeCallback
-            navController.setNewBackstackEntries(
+            navController.setNewBackstack(
                 entries = navController.backstack.entries + navEntry(TestDestination.B),
                 action = NavAction.Navigate
             )
@@ -153,7 +153,7 @@ class NavControllerTest : FunSpec({
             val navEntryB = navEntry(TestDestination.B)
             val navEntryC = navEntry(TestDestination.C)
             val navEntryD = navEntry(TestDestination.D)
-            navController.setNewBackstackEntries(
+            navController.setNewBackstack(
                 entries = listOf(
                     navEntryA, // 0
                     navEntryB, // 1

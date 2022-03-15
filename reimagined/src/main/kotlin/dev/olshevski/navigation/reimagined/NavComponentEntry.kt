@@ -41,7 +41,7 @@ class NavComponentEntry<T>(
 
     /**
      * A destination you passed into [navigate], [replaceLast] or other extension method.
-     * If you used [NavController.setNewBackstackEntries] directly this is the destination
+     * If you used [NavController.setNewBackstack] directly this is the destination
      * you passed into [navEntry] method.
      */
     val destination get() = entry.destination

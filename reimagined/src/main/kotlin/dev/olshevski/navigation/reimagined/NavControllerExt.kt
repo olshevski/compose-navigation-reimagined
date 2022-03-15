@@ -10,7 +10,7 @@ package dev.olshevski.navigation.reimagined
  * The [destinations] list may be empty.
  */
 fun <T> NavController<T>.navigate(destinations: List<T>) {
-    setNewBackstackEntries(
+    setNewBackstack(
         entries = backstack.entries + destinations.map(::navEntry),
         action = NavAction.Navigate
     )
@@ -45,7 +45,7 @@ fun <T> NavController<T>.navigate(destination: T) =
 fun <T> NavController<T>.moveToTop(match: Match = Match.Last, predicate: (T) -> Boolean): Boolean {
     val entryIndex = backstack.entries.indexOf(match, predicate)
     return if (entryIndex >= 0) {
-        setNewBackstackEntries(
+        setNewBackstack(
             entries = if (entryIndex == backstack.entries.lastIndex) {
                 backstack.entries
             } else {
@@ -69,7 +69,7 @@ fun <T> NavController<T>.moveToTop(match: Match = Match.Last, predicate: (T) -> 
  * `false` is returned, meaning that nothing has changed.
  */
 fun <T> NavController<T>.pop(): Boolean = if (backstack.entries.isNotEmpty()) {
-    setNewBackstackEntries(
+    setNewBackstack(
         entries = backstack.entries.dropLast(1),
         action = NavAction.Pop
     )
@@ -82,7 +82,7 @@ fun <T> NavController<T>.pop(): Boolean = if (backstack.entries.isNotEmpty()) {
  * Pops all destinations off the backstack, making it empty.
  */
 fun <T> NavController<T>.popAll() {
-    setNewBackstackEntries(
+    setNewBackstack(
         entries = emptyList(),
         action = NavAction.Pop
     )
@@ -107,7 +107,7 @@ fun <T> NavController<T>.popUpTo(
 ): Boolean {
     val entryIndex = backstack.entries.indexOf(match, predicate)
     return if (entryIndex >= 0) {
-        setNewBackstackEntries(
+        setNewBackstack(
             entries = backstack.entries.subList(
                 fromIndex = 0,
                 toIndex = if (inclusive) entryIndex else entryIndex + 1
@@ -135,7 +135,7 @@ fun <T> NavController<T>.popUpTo(
  */
 fun <T> NavController<T>.replaceLast(newDestinations: List<T>): Boolean =
     if (backstack.entries.isNotEmpty()) {
-        setNewBackstackEntries(
+        setNewBackstack(
             entries = backstack.entries.dropLast(1) + newDestinations.map(::navEntry),
             action = NavAction.Replace
         )
@@ -166,7 +166,7 @@ fun <T> NavController<T>.replaceLast(newDestination: T): Boolean =
  * If the backstack is empty, the [newDestinations] are still added.
  */
 fun <T> NavController<T>.replaceAll(newDestinations: List<T>) {
-    setNewBackstackEntries(
+    setNewBackstack(
         entries = newDestinations.map(::navEntry),
         action = NavAction.Replace
     )
@@ -206,7 +206,7 @@ fun <T> NavController<T>.replaceUpTo(
 ): Boolean {
     val entryIndex = backstack.entries.indexOf(match, predicate)
     return if (entryIndex >= 0) {
-        setNewBackstackEntries(
+        setNewBackstack(
             entries = backstack.entries.subList(
                 fromIndex = 0,
                 toIndex = if (inclusive) entryIndex else entryIndex + 1

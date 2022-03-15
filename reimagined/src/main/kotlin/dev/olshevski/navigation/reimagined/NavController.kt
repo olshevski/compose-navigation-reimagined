@@ -7,10 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import kotlin.properties.ReadOnlyProperty
 
@@ -106,7 +106,7 @@ fun <T> SavedStateHandle.navController(
 /**
  * A backstack controller which is used for all navigation.
  *
- * Backstack modifications are done with [setNewBackstackEntries] method. More specific
+ * Backstack modifications are done with [setNewBackstack] method. More specific
  * operation such as [navigate], [pop], [replaceLast] and their variants are provided as
  * extension methods.
  *
@@ -127,25 +127,20 @@ class NavController<T> internal constructor(
     initialAction: NavAction = NavAction.Idle
 ) : Parcelable {
 
-    private val entries = mutableStateOf(initialEntries)
-
-    private val action = mutableStateOf<NavAction>(initialAction)
+    private var _backstack by mutableStateOf(NavBackstack(initialEntries, initialAction))
 
     /**
-     * A property to access the current backstack entries.
-     *
-     * The instance of [NavBackstack] in the same [NavController] never changes. However,
-     * the properties of NavBackstack itself are backed up by [MutableState] and they will change
-     * and notify Compose about.
+     * The current backstack. This property is backed up by [MutableState] and any changes to it
+     * will notify composition.
      *
      * If you want to listen for changes outside of composition, you may set [onBackstackChange]
      * listener.
      */
-    val backstack = NavBackstack(entries, action)
+    val backstack get() = _backstack
 
     /**
-     * Optional listener of backstack changes. It will be invoked after every call
-     * to [setNewBackstackEntries].
+     * An optional listener of backstack changes. It will be invoked after every call
+     * to [setNewBackstack].
      */
     @Suppress("MemberVisibilityCanBePrivate")
     var onBackstackChange: ((backstack: NavBackstack<T>) -> Unit)? = null
@@ -170,23 +165,53 @@ class NavController<T> internal constructor(
      * case.
      */
     @MainThread
-    fun setNewBackstackEntries(entries: List<NavEntry<T>>, action: NavAction = NavAction.Navigate) {
-        this.entries.value = entries.toList() // protection from outer modifications
-        this.action.value = action
-        onBackstackChange?.invoke(backstack)
+    @Deprecated(
+        "use setNewBackstack instead",
+        replaceWith = ReplaceWith("setNewBackstack(entries, action)")
+    )
+    fun setNewBackstackEntries(entries: List<NavEntry<T>>, action: NavAction = NavAction.Navigate) =
+        setNewBackstack(entries, action)
+
+    /**
+     * Creates and sets a new backstack filled with [entries].
+     *
+     * You should use existing entries from [backstack] to preserve their identities and associated
+     * components (lifecycles, saved states, view models). New entries can be created with
+     * [navEntry] method. Any new rearrangement, duplication and removal of existing entries is
+     * a valid change.
+     *
+     * Use this method when none of the built-in extension methods ([navigate], [pop],
+     * [replaceLast] and their variations) suits your need.
+     *
+     * This function does not guarantee thread-safety and is intended to be called only
+     * from the main thread.
+     *
+     * @param action an optional parameter, used as a hint for [AnimatedNavHost] to select
+     * a transition animation. In all other cases it doesn't affect anything. Existing types
+     * of actions may be used: [NavAction.Navigate], [NavAction.Replace] or [NavAction.Pop].
+     * You may also extend [NavAction] interface to create new actions appropriate for your use
+     * case.
+     */
+    @MainThread
+    fun setNewBackstack(entries: List<NavEntry<T>>, action: NavAction = NavAction.Navigate) {
+        _backstack = NavBackstack(
+            entries = entries.toList(), // protection from outer modifications
+            action = action
+        )
+        onBackstackChange?.invoke(_backstack)
     }
 
     override fun toString(): String {
-        return "NavController(entries=${entries.value}, action=${action.value})"
+        return "NavController(entries=${_backstack.entries}, action=${_backstack.action})"
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        entries.value.let { backstack ->
+        _backstack.entries.let { entries ->
             // This handles the case when some NavEntries instance appear in the backstack several
             // times. After the restoration their instances must not be duplicated.
             val ids = hashSetOf<NavId>()
-            parcel.writeInt(backstack.size)
-            backstack.forEach {
+            parcel.writeInt(entries.size)
+            entries.forEach {
                 // write every id to preserve the order
                 parcel.writeParcelable(it.id, flags)
                 if (it.id !in ids) {
@@ -197,7 +222,7 @@ class NavController<T> internal constructor(
                 }
             }
         }
-        parcel.writeParcelable(action.value, flags)
+        parcel.writeParcelable(_backstack.action, flags)
     }
 
     override fun describeContents() = 0
@@ -240,31 +265,24 @@ class NavController<T> internal constructor(
 }
 
 /**
- * A read-only class to access the current backstack [entries] and the last [action]. These
- * properties are backed up by [MutableState], so Compose will get notified about their changes.
+ * A navigation backstack. Contains the list of current [entries] and the last [action].
  */
-@Stable
-class NavBackstack<T> internal constructor(
-    entriesState: State<List<NavEntry<T>>>,
-    actionState: State<NavAction>
-) {
+@Immutable
+data class NavBackstack<T> internal constructor(
+
     /**
      * The list of current entries in the backstack. The last item in this list is the item that
      * will be displayed by [NavHost].
      *
      * May become empty if you pop all the items off the backstack.
      */
-    val entries: List<NavEntry<T>> by entriesState
+    val entries: List<NavEntry<T>>,
 
     /**
-     * The action of the last [NavController.setNewBackstackEntries] call.
+     * The action of the last [NavController.setNewBackstack] call.
      *
      * The initial value of every new instance of [NavController] is [NavAction.Idle].
      */
-    val action: NavAction by actionState
+    val action: NavAction
 
-    override fun toString(): String {
-        return "NavBackstack(entries=$entries, action=$action)"
-    }
-
-}
+)
