@@ -102,12 +102,13 @@ class NavControllerTest {
             )
             assertThat(onBackstackChangeCallback.isCalled).isEqualTo(true)
             assertThat(onBackstackChangeCallback.backstack).isNotNull()
-            assertThat(onBackstackChangeCallback.backstack!!.entries.map { it.destination }).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.A,
-                    TestDestination.B,
+            assertThat(onBackstackChangeCallback.backstack!!.entries.map { it.destination })
+                .containsExactlyElementsIn(
+                    listOf(
+                        TestDestination.A,
+                        TestDestination.B,
+                    )
                 )
-            )
             assertThat(onBackstackChangeCallback.backstack!!.action).isEqualTo(NavAction.Navigate)
         }
 

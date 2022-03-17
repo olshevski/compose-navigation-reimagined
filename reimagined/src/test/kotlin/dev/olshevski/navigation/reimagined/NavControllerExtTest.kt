@@ -279,9 +279,8 @@ class NavControllerExtTest {
                         TestDestination.B
                     )
                 )
-                assertThat(navController.popUpTo(match = Match.First) { it == TestDestination.A }).isEqualTo(
-                    true
-                )
+                assertThat(navController.popUpTo(match = Match.First) { it == TestDestination.A })
+                    .isEqualTo(true)
                 assertThat(navController.backstack.destinations).containsExactlyElementsIn(
                     listOf(
                         TestDestination.A
@@ -300,9 +299,8 @@ class NavControllerExtTest {
                 val navController = navController(
                     initialBackstack = listOf(TestDestination.A, TestDestination.B)
                 )
-                assertThat(navController.popUpTo(inclusive = true) { it == TestDestination.C }).isEqualTo(
-                    false
-                )
+                assertThat(navController.popUpTo(inclusive = true) { it == TestDestination.C })
+                    .isEqualTo(false)
                 assertThat(navController.backstack.destinations).containsExactlyElementsIn(
                     listOf(
                         TestDestination.A,
@@ -317,9 +315,8 @@ class NavControllerExtTest {
                 val navController = navController(
                     initialBackstack = listOf(TestDestination.A, TestDestination.B)
                 )
-                assertThat(navController.popUpTo(inclusive = true) { it == TestDestination.B }).isEqualTo(
-                    true
-                )
+                assertThat(navController.popUpTo(inclusive = true) { it == TestDestination.B })
+                    .isEqualTo(true)
                 assertThat(navController.backstack.destinations).containsExactlyElementsIn(
                     listOf(
                         TestDestination.A,
@@ -333,9 +330,8 @@ class NavControllerExtTest {
                 val navController = navController(
                     initialBackstack = listOf(TestDestination.A, TestDestination.B)
                 )
-                assertThat(navController.popUpTo(inclusive = true) { it == TestDestination.A }).isEqualTo(
-                    true
-                )
+                assertThat(navController.popUpTo(inclusive = true) { it == TestDestination.A })
+                    .isEqualTo(true)
                 assertThat(navController.backstack.destinations).hasSize(0)
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Pop)
             }

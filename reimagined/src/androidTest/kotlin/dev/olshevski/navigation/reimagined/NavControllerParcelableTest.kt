@@ -81,9 +81,8 @@ class NavControllerParcelableTest {
         parcel.setDataPosition(0)
 
         val restoredController = parcel.readParcelable<NavController<Any?>>(classLoader)!!
-        assertThat(restoredController.backstack.entries.map { it.destination }).containsExactlyElementsIn(
-            backstackDestination
-        )
+        assertThat(restoredController.backstack.entries.map { it.destination })
+            .containsExactlyElementsIn(backstackDestination)
     }
 
     @Test
