@@ -1,7 +1,7 @@
 plugins {
-    plugin(Plugin.Android.Application)
-    plugin(Plugin.Kotlin.Android)
-    plugin(Plugin.Kotlin.Parcelize)
+    plugin(Plugins.Android.Application)
+    plugin(Plugins.Kotlin.Android)
+    plugin(Plugins.Kotlin.Parcelize)
 }
 
 android {
@@ -39,7 +39,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Lib.AndroidX.Compose.CompilerVersion
+        kotlinCompilerExtensionVersion = Libs.AndroidX.Compose.CompilerVersion
     }
 
     packagingOptions {
@@ -51,16 +51,16 @@ android {
 
 dependencies {
     implementation(project(":reimagined"))
-    implementation(Lib.AndroidX.Activity.Compose)
-    implementation(Lib.AndroidX.Compose.Material)
-    debugImplementation(Lib.AndroidX.Compose.UiTooling)
-    implementation(Lib.AndroidX.Compose.UiToolingPreview)
-    implementation(Lib.AndroidX.Compose.RuntimeLivedata)
-    implementation(Lib.AndroidX.Compose.MaterialIconsExtended)
-    implementation(Lib.AndroidX.Lifecycle.ViewModel.Ktx)
-    implementation(Lib.AndroidX.Lifecycle.ViewModel.Compose)
-    implementation(Lib.AndroidX.Lifecycle.ViewModel.SavedState)
+    implementation(Libs.AndroidX.Activity.Compose)
+    implementation(Libs.AndroidX.Compose.Material)
+    debugImplementation(Libs.AndroidX.Compose.UiTooling)
+    implementation(Libs.AndroidX.Compose.UiToolingPreview)
+    implementation(Libs.AndroidX.Compose.RuntimeLivedata)
+    implementation(Libs.AndroidX.Compose.MaterialIconsExtended)
+    implementation(Libs.AndroidX.Lifecycle.ViewModel.Ktx)
+    implementation(Libs.AndroidX.Lifecycle.ViewModel.Compose)
+    implementation(Libs.AndroidX.Lifecycle.ViewModel.SavedState)
 
-    androidTestImplementation(Lib.AndroidX.Test.Core)
-    androidTestImplementation(Lib.AndroidX.Compose.UiTestJunit4)
+    androidTestImplementation(Libs.AndroidX.Test.Core)
+    androidTestImplementation(Libs.AndroidX.Compose.UiTestJunit4)
 }

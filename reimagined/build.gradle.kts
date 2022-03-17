@@ -1,7 +1,7 @@
 plugins {
-    plugin(Plugin.Android.Library)
-    plugin(Plugin.Kotlin.Android)
-    plugin(Plugin.Kotlin.Parcelize)
+    plugin(Plugins.Android.Library)
+    plugin(Plugins.Kotlin.Android)
+    plugin(Plugins.Kotlin.Parcelize)
     `maven-publish`
     signing
 }
@@ -37,7 +37,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Lib.AndroidX.Compose.CompilerVersion
+        kotlinCompilerExtensionVersion = Libs.AndroidX.Compose.CompilerVersion
     }
 
     testOptions {
@@ -55,18 +55,18 @@ android {
 }
 
 dependencies {
-    api(Lib.AndroidX.Activity.Compose)
-    api(Lib.AndroidX.Compose.Ui)
-    api(Lib.AndroidX.Compose.Animation)
-    api(Lib.AndroidX.Lifecycle.ViewModel.Ktx)
-    api(Lib.AndroidX.Lifecycle.ViewModel.Compose)
-    api(Lib.AndroidX.Lifecycle.ViewModel.SavedState)
+    api(Libs.AndroidX.Activity.Compose)
+    api(Libs.AndroidX.Compose.Ui)
+    api(Libs.AndroidX.Compose.Animation)
+    api(Libs.AndroidX.Lifecycle.ViewModel.Ktx)
+    api(Libs.AndroidX.Lifecycle.ViewModel.Compose)
+    api(Libs.AndroidX.Lifecycle.ViewModel.SavedState)
 
-    testImplementation(Lib.JUnit.Juniper)
-    testImplementation(Lib.Google.Truth)
+    testImplementation(Libs.JUnit.Juniper)
+    testImplementation(Libs.Google.Truth)
 
-    androidTestImplementation(Lib.AndroidX.Test.Runner)
-    androidTestImplementation(Lib.Google.Truth)
+    androidTestImplementation(Libs.AndroidX.Test.Runner)
+    androidTestImplementation(Libs.Google.Truth)
 }
 
 afterEvaluate {

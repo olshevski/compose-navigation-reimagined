@@ -1,4 +1,4 @@
-object Lib {
+object Libs {
 
     object AndroidX {
 
