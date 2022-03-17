@@ -62,14 +62,11 @@ dependencies {
     api(Lib.AndroidX.Lifecycle.ViewModel.Compose)
     api(Lib.AndroidX.Lifecycle.ViewModel.SavedState)
 
-    testImplementation(Lib.Kotest.RunnerJunit5)
-    testImplementation(Lib.Kotest.FrameworkDataset)
+    testImplementation(Lib.JUnit.Juniper)
+    testImplementation(Lib.Google.Truth)
 
-    // for latest "kotest-extensions-robolectric" sources included into the code, until the proper
-    // working version is published
-    testImplementation(kotlin("reflect"))
-    testImplementation(Lib.Robolectric)
-    testImplementation(Lib.JUnit4)
+    androidTestImplementation(Lib.AndroidX.Test.Runner)
+    androidTestImplementation(Lib.Google.Truth)
 }
 
 afterEvaluate {

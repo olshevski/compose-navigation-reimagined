@@ -34,18 +34,18 @@ object Lib {
         }
 
         object Test {
-            const val Core = "androidx.test:core:1.4.0"
+            private const val Version = "1.4.0"
+            const val Core = "androidx.test:core:$Version"
+            const val Runner = "androidx.test:runner:$Version"
         }
     }
 
-    const val JUnit4 = "junit:junit:4.13.2"
-
-    object Kotest {
-        private const val Version = "5.1.0"
-        const val RunnerJunit5 = "io.kotest:kotest-runner-junit5:$Version"
-        const val FrameworkDataset = "io.kotest:kotest-framework-datatest:$Version"
+    object Google {
+        const val Truth = "com.google.truth:truth:1.1.3"
     }
 
-    const val Robolectric = "org.robolectric:robolectric:4.7.3"
+    object JUnit {
+        const val Juniper = "org.junit.jupiter:junit-jupiter:5.8.2"
+    }
 
 }

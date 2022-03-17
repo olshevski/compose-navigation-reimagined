@@ -61,9 +61,6 @@ dependencies {
     implementation(Lib.AndroidX.Lifecycle.ViewModel.Compose)
     implementation(Lib.AndroidX.Lifecycle.ViewModel.SavedState)
 
-    testImplementation(Lib.Kotest.RunnerJunit5)
-    testImplementation(Lib.Kotest.FrameworkDataset)
-
     androidTestImplementation(Lib.AndroidX.Test.Core)
     androidTestImplementation(Lib.AndroidX.Compose.UiTestJunit4)
 }
