@@ -11,6 +11,11 @@ import dev.olshevski.navigation.reimagined.sample.ui.MainScreen
 import dev.olshevski.navigation.reimagined.sample.ui.theme.NavigationReimaginedTheme
 
 class MainActivity : ComponentActivity() {
+
+    companion object {
+        const val SkipSplash = "skip-splash"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

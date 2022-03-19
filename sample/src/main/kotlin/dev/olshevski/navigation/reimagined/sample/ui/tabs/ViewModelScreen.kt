@@ -7,6 +7,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -15,9 +18,11 @@ import dev.olshevski.navigation.reimagined.NavHost
 import dev.olshevski.navigation.reimagined.navController
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
+import dev.olshevski.navigation.reimagined.sample.R
 import dev.olshevski.navigation.reimagined.sample.singleLine
 import dev.olshevski.navigation.reimagined.sample.ui.CenteredText
 import dev.olshevski.navigation.reimagined.sample.ui.SubScreenLayout
+import dev.olshevski.navigation.reimagined.sample.ui.TestInputTag
 
 @Composable
 fun ViewModelScreen() {
@@ -76,7 +81,7 @@ class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 @Composable
 private fun FirstScreen(
     toSecondScreenButtonClick: () -> Unit,
-) = SubScreenLayout(title = "First screen") {
+) = SubScreenLayout(title = stringResource(R.string.viewmodel_first_screen_title)) {
 
     CenteredText(
         text = "This demo shows two use cases:",
@@ -94,7 +99,7 @@ private fun FirstScreen(
     )
 
     Button(onClick = toSecondScreenButtonClick) {
-        Text("To Second screen")
+        Text(stringResource(R.string.viewmodel_to_second_screen_button))
     }
 
 }
@@ -115,23 +120,27 @@ private fun SecondScreen(
     text: String,
     onTextChange: (String) -> Unit,
     toThirdScreenButtonClick: () -> Unit,
-) = SubScreenLayout(title = "Second screen") {
+) = SubScreenLayout(title = stringResource(R.string.viewmodel_second_screen_title)) {
 
     CenteredText(
         text = """Please enter some text. It will be stored in ViewModel as well as its state
             preserved by SavedStateHandle.""".singleLine(),
     )
 
-    OutlinedTextField(value = text, onValueChange = { onTextChange(it) })
+    OutlinedTextField(
+        modifier = Modifier.testTag(TestInputTag),
+        value = text,
+        onValueChange = { onTextChange(it) })
 
     Button(onClick = toThirdScreenButtonClick) {
-        Text("To Third screen")
+        Text(stringResource(R.string.viewmodel_to_third_screen_button))
     }
 }
 
 @Composable
-private fun ThirdScreen(text: String) = SubScreenLayout(title = "Third screen") {
-    CenteredText(
-        text = "Text from previous screen: $text",
-    )
-}
+private fun ThirdScreen(text: String) =
+    SubScreenLayout(title = stringResource(R.string.viewmodel_third_screen_title)) {
+        CenteredText(
+            text = stringResource(R.string.viewmodel_text_from_previous_screen, text),
+        )
+    }

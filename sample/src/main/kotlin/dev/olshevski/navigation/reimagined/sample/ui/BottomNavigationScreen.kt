@@ -7,13 +7,9 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Animation
-import androidx.compose.material.icons.outlined.Domain
-import androidx.compose.material.icons.outlined.Explore
-import androidx.compose.material.icons.outlined.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
 import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.NavController
@@ -40,7 +36,7 @@ fun BottomNavigationScreen() {
             AnimatedNavHost(
                 controller = navController
             ) { destination ->
-                ScreenLayout(title = destination.screenTitle) {
+                ScreenLayout(title = stringResource(destination.screenTitleId)) {
                     when (destination) {
                         BottomNavigationDestination.Home -> HomeScreen()
                         BottomNavigationDestination.NavHost -> NavHostScreen()
@@ -54,12 +50,13 @@ fun BottomNavigationScreen() {
         val lastDestination = navController.backstack.entries.last().destination
         BottomNavigation {
             BottomNavigationDestination.values().forEach { destination ->
+                val tabTitle = stringResource(destination.tabTitleId)
                 BottomNavigationItem(
-                    label = { Text(destination.tabTitle) },
+                    label = { Text(tabTitle) },
                     icon = {
                         Icon(
                             imageVector = destination.tabIcon,
-                            contentDescription = destination.tabTitle
+                            contentDescription = tabTitle
                         )
                     },
                     selected = destination == lastDestination,
@@ -76,30 +73,6 @@ fun BottomNavigationScreen() {
     }
 
 }
-
-private val BottomNavigationDestination.screenTitle
-    get() = when (this) {
-        BottomNavigationDestination.Home -> "BottomNavigation Demo"
-        BottomNavigationDestination.NavHost -> "NavHost Demo"
-        BottomNavigationDestination.AnimatedNavHost -> "AnimatedNavHost Demo"
-        BottomNavigationDestination.ViewModel -> "ViewModel Demo"
-    }
-
-private val BottomNavigationDestination.tabTitle
-    get() = when (this) {
-        BottomNavigationDestination.Home -> "Home"
-        BottomNavigationDestination.NavHost -> "NavHost"
-        BottomNavigationDestination.AnimatedNavHost -> "Animations"
-        BottomNavigationDestination.ViewModel -> "ViewModel"
-    }
-
-private val BottomNavigationDestination.tabIcon
-    get() = when (this) {
-        BottomNavigationDestination.Home -> Icons.Outlined.Home
-        BottomNavigationDestination.NavHost -> Icons.Outlined.Explore
-        BottomNavigationDestination.AnimatedNavHost -> Icons.Outlined.Animation
-        BottomNavigationDestination.ViewModel -> Icons.Outlined.Domain
-    }
 
 @Composable
 private fun BottomNavigationBackHandler(

@@ -61,6 +61,8 @@ dependencies {
     implementation(Libs.AndroidX.Lifecycle.ViewModel.Compose)
     implementation(Libs.AndroidX.Lifecycle.ViewModel.SavedState)
 
-    androidTestImplementation(Libs.AndroidX.Test.Core)
+    androidTestImplementation(Libs.AndroidX.Test.Runner)
+    androidTestImplementation(Libs.AndroidX.Test.Espresso)
     androidTestImplementation(Libs.AndroidX.Compose.UiTestJunit4)
+    androidTestImplementation(Libs.Google.Truth)
 }

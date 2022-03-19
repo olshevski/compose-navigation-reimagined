@@ -5,12 +5,14 @@ import androidx.compose.animation.with
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
 import dev.olshevski.navigation.reimagined.AnimatedNavHostTransitionSpec
 import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.NavBackHandler
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.rememberNavController
+import dev.olshevski.navigation.reimagined.sample.R
 import dev.olshevski.navigation.reimagined.sample.singleLine
 import dev.olshevski.navigation.reimagined.sample.ui.CenteredText
 import dev.olshevski.navigation.reimagined.sample.ui.SubScreenLayout
@@ -47,7 +49,12 @@ fun AnimatedNavHostScreen() {
         controller = navController,
         transitionSpec = AnimatedNavHostTransitionSpec
     ) { destination ->
-        SubScreenLayout(title = "Screen #$destination") {
+        SubScreenLayout(
+            title = stringResource(
+                R.string.animatednavhost_screen_title,
+                destination
+            )
+        ) {
 
             CenteredText(
                 text = """AnimatedNavHost switches between destinations with animations. 
@@ -55,7 +62,7 @@ fun AnimatedNavHostScreen() {
             )
 
             Button(onClick = { navController.navigate(destination + 1) }) {
-                Text("To Next screen")
+                Text(stringResource(R.string.animatednavhost_to_next_screen_button))
             }
         }
     }

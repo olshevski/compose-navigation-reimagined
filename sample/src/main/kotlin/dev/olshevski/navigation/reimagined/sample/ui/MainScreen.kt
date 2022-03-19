@@ -1,16 +1,19 @@
 package dev.olshevski.navigation.reimagined.sample.ui
 
+import android.app.Activity
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.with
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
 import dev.olshevski.navigation.reimagined.AnimatedNavHostTransitionSpec
 import dev.olshevski.navigation.reimagined.NavBackHandler
 import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.replaceAll
+import dev.olshevski.navigation.reimagined.sample.MainActivity
 
 private val MainNavHostTransitionSpec =
     AnimatedNavHostTransitionSpec<MainDestination> { _, _, _ ->
@@ -27,9 +30,14 @@ private val MainNavHostTransitionSpec =
 
 @Composable
 fun MainScreen() {
-    val navController = rememberNavController(
-        startDestination = MainDestination.Splash
-    )
+    val activity = LocalContext.current as Activity
+    val startDestination =
+        if (activity.intent.getBooleanExtra(MainActivity.SkipSplash, false)) {
+            MainDestination.BottomNavigation
+        } else {
+            MainDestination.Splash
+        }
+    val navController = rememberNavController(startDestination)
 
     NavBackHandler(navController)
 

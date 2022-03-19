@@ -7,7 +7,7 @@ object Libs {
         }
 
         object Compose {
-            private const val Version = "1.1.0"
+            private const val Version = "1.1.1"
 
             @Suppress("MemberVisibilityCanBePrivate")
             const val CompilerVersion = Version
@@ -34,9 +34,8 @@ object Libs {
         }
 
         object Test {
-            private const val Version = "1.4.0"
-            const val Core = "androidx.test:core:$Version"
-            const val Runner = "androidx.test:runner:$Version"
+            const val Runner = "androidx.test:runner:1.4.0"
+            const val Espresso = "androidx.test.espresso:espresso-core:3.4.0"
         }
     }
 

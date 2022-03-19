@@ -81,3 +81,5 @@ fun DialogLayout(
 fun CenteredText(text: String) {
     Text(text, textAlign = TextAlign.Center)
 }
+
+const val TestInputTag = "test-input-tag"
