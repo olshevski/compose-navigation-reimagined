@@ -116,6 +116,6 @@ fun NavController<BottomNavigationDestination>.moveLastEntryToStart() {
 
 ## NavBackstack
 
-You may access current backstack entries the last [NavAction](/compose-navigation-reimagined/animations/#navaction) through `backstack` property of NavController. This property is backed up by [MutableState](https://developer.android.com/reference/kotlin/androidx/compose/runtime/MutableState) and any changes to it will notify composition.
+You may access current backstack entries and the last [NavAction](/compose-navigation-reimagined/animations/#navaction) through `backstack` property of NavController. This property is backed up by [MutableState](https://developer.android.com/reference/kotlin/androidx/compose/runtime/MutableState) and any changes to it will notify composition.
 
 If you want to listen for backstack changes outside of composition you may set `onBackstackChange` listener of NavController.
