@@ -39,12 +39,12 @@ fun ViewModelScreen() {
             )
             ViewModelDestination.Second -> {
                 val secondViewModel = viewModel<SecondViewModel>()
-                val text by secondViewModel.text.observeAsState(initial = "")
+                val text by secondViewModel.text.observeAsState()
                 SecondScreen(
-                    text = text,
+                    text = text!!,
                     onTextChange = secondViewModel::onTextChange,
                     toThirdScreenButtonClick = {
-                        navigationViewModel.toThirdScreenButtonClick(text)
+                        navigationViewModel.toThirdScreenButtonClick(text!!)
                     }
                 )
             }
@@ -106,7 +106,7 @@ private fun FirstScreen(
 
 class SecondViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
-    private val _text = savedStateHandle.getLiveData<String>("text")
+    private val _text = savedStateHandle.getLiveData("text", "")
     val text = _text as LiveData<String>
 
     fun onTextChange(text: String) {
