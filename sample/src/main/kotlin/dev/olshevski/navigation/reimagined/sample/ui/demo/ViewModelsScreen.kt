@@ -1,4 +1,4 @@
-package dev.olshevski.navigation.reimagined.sample.ui.tabs
+package dev.olshevski.navigation.reimagined.sample.ui.demo
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.material.Button
@@ -21,11 +21,14 @@ import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.sample.R
 import dev.olshevski.navigation.reimagined.sample.singleLine
 import dev.olshevski.navigation.reimagined.sample.ui.CenteredText
-import dev.olshevski.navigation.reimagined.sample.ui.SubScreenLayout
+import dev.olshevski.navigation.reimagined.sample.ui.ContentLayout
+import dev.olshevski.navigation.reimagined.sample.ui.ScreenLayout
 import dev.olshevski.navigation.reimagined.sample.ui.TestInputTag
 
 @Composable
-fun ViewModelScreen() {
+fun ViewModelsScreen() = ScreenLayout(
+    title = stringResource(R.string.view_models__demo_screen_title)
+) {
     val navigationViewModel = viewModel<NavigationViewModel>()
 
     BackHandler(navigationViewModel.backHandlerEnabled) {
@@ -34,10 +37,10 @@ fun ViewModelScreen() {
 
     NavHost(backstack = navigationViewModel.navBackstack) { destination ->
         when (destination) {
-            ViewModelDestination.First -> FirstScreen(
+            ViewModelsDestination.First -> FirstScreen(
                 toSecondScreenButtonClick = navigationViewModel::toSecondScreenButtonClick
             )
-            ViewModelDestination.Second -> {
+            ViewModelsDestination.Second -> {
                 val secondViewModel = viewModel<SecondViewModel>()
                 val text by secondViewModel.text.observeAsState()
                 SecondScreen(
@@ -48,15 +51,15 @@ fun ViewModelScreen() {
                     }
                 )
             }
-            is ViewModelDestination.Third -> ThirdScreen(destination.text)
+            is ViewModelsDestination.Third -> ThirdScreen(destination.text)
         }
     }
 }
 
 class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
-    private val navController by savedStateHandle.navController<ViewModelDestination>(
-        startDestination = ViewModelDestination.First
+    private val navController by savedStateHandle.navController<ViewModelsDestination>(
+        startDestination = ViewModelsDestination.First
     )
 
     // You may either make navController public or just its navBackstack. The latter is convenient
@@ -69,11 +72,11 @@ class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     }
 
     fun toSecondScreenButtonClick() {
-        navController.navigate(ViewModelDestination.Second)
+        navController.navigate(ViewModelsDestination.Second)
     }
 
     fun toThirdScreenButtonClick(text: String) {
-        navController.navigate(ViewModelDestination.Third(text))
+        navController.navigate(ViewModelsDestination.Third(text))
     }
 
 }
@@ -81,7 +84,7 @@ class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 @Composable
 private fun FirstScreen(
     toSecondScreenButtonClick: () -> Unit,
-) = SubScreenLayout(title = stringResource(R.string.viewmodel_first_screen_title)) {
+) = ContentLayout(title = stringResource(R.string.view_models__first_screen_title)) {
 
     CenteredText(
         text = "This demo shows two use cases:",
@@ -99,7 +102,7 @@ private fun FirstScreen(
     )
 
     Button(onClick = toSecondScreenButtonClick) {
-        Text(stringResource(R.string.viewmodel_to_second_screen_button))
+        Text(stringResource(R.string.view_models__to_second_screen_button))
     }
 
 }
@@ -120,7 +123,7 @@ private fun SecondScreen(
     text: String,
     onTextChange: (String) -> Unit,
     toThirdScreenButtonClick: () -> Unit,
-) = SubScreenLayout(title = stringResource(R.string.viewmodel_second_screen_title)) {
+) = ContentLayout(title = stringResource(R.string.view_models__second_screen_title)) {
 
     CenteredText(
         text = """Please enter some text. It will be stored in ViewModel as well as its state
@@ -133,14 +136,14 @@ private fun SecondScreen(
         onValueChange = { onTextChange(it) })
 
     Button(onClick = toThirdScreenButtonClick) {
-        Text(stringResource(R.string.viewmodel_to_third_screen_button))
+        Text(stringResource(R.string.view_models__to_third_screen_button))
     }
 }
 
 @Composable
 private fun ThirdScreen(text: String) =
-    SubScreenLayout(title = stringResource(R.string.viewmodel_third_screen_title)) {
+    ContentLayout(title = stringResource(R.string.view_models__third_screen_title)) {
         CenteredText(
-            text = stringResource(R.string.viewmodel_text_from_previous_screen, text),
+            text = stringResource(R.string.view_models__text_from_previous_screen, text),
         )
     }

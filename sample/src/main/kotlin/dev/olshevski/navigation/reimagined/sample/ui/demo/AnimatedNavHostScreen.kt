@@ -1,4 +1,4 @@
-package dev.olshevski.navigation.reimagined.sample.ui.tabs
+package dev.olshevski.navigation.reimagined.sample.ui.demo
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.with
@@ -15,7 +15,8 @@ import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.sample.R
 import dev.olshevski.navigation.reimagined.sample.singleLine
 import dev.olshevski.navigation.reimagined.sample.ui.CenteredText
-import dev.olshevski.navigation.reimagined.sample.ui.SubScreenLayout
+import dev.olshevski.navigation.reimagined.sample.ui.ContentLayout
+import dev.olshevski.navigation.reimagined.sample.ui.ScreenLayout
 
 private val AnimatedNavHostTransitionSpec = AnimatedNavHostTransitionSpec<Int> { action, from, to ->
     val directionsCount = 4
@@ -38,10 +39,10 @@ private val AnimatedNavHostTransitionSpec = AnimatedNavHostTransitionSpec<Int> {
 }
 
 @Composable
-fun AnimatedNavHostScreen() {
-    val navController = rememberNavController(
-        startDestination = 0,
-    )
+fun AnimatedNavHostScreen() = ScreenLayout(
+    title = stringResource(R.string.animated_nav_host__demo_screen_title)
+) {
+    val navController = rememberNavController(startDestination = 0)
 
     NavBackHandler(navController)
 
@@ -49,20 +50,17 @@ fun AnimatedNavHostScreen() {
         controller = navController,
         transitionSpec = AnimatedNavHostTransitionSpec
     ) { destination ->
-        SubScreenLayout(
-            title = stringResource(
-                R.string.animatednavhost_screen_title,
-                destination
-            )
+        ContentLayout(
+            title = stringResource(R.string.animated_nav_host__screen_title, destination)
         ) {
 
             CenteredText(
                 text = """AnimatedNavHost switches between destinations with animations. 
-                    You can select specific animation for every transition.""".singleLine(),
+                    You can select a unique animation for every transition.""".singleLine(),
             )
 
             Button(onClick = { navController.navigate(destination + 1) }) {
-                Text(stringResource(R.string.animatednavhost_to_next_screen_button))
+                Text(stringResource(R.string.animated_nav_host__to_next_screen_button))
             }
         }
     }

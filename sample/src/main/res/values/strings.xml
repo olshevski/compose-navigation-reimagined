@@ -2,42 +2,58 @@
 
     <string name="app_name">Navigation Reimagined</string>
 
-    <string name="bottomnavigation_home_tab">Home</string>
-    <string name="bottomnavigation_navhost_tab">NavHost</string>
-    <string name="bottomnavigation_animatednavhost_tab">Animations</string>
-    <string name="bottomnavigation_viewmodel_tab">ViewModel</string>
-    <string name="bottomnavigation_home_screen_title">BottomNavigation Demo</string>
-    <string name="bottomnavigation_navhost_screen_title">NavHost Demo</string>
-    <string name="bottomnavigation_animatednavhost_screen_title">AnimatedNavHost Demo</string>
-    <string name="bottomnavigation_viewmodel_screen_title">ViewModel Demo</string>
+    <string name="demo_selection__screen_title">Select demo</string>
+    <string name="demo_selection__pass_values_button">Pass values</string>
+    <string name="demo_selection__return_results_button">Return results</string>
+    <string name="demo_selection__animated_nav_host_button">AnimatedNavHost</string>
+    <string name="demo_selection__dialog_nav_host_button">DialogNavHost</string>
+    <string name="demo_selection__view_models_button">ViewModels</string>
+    <string name="demo_selection__bottom_navigation_button">BottomNavigation</string>
 
-    <string name="navhost_first_screen">First screen</string>
-    <string name="navhost_second_screen">Second screen #%1$s</string>
-    <string name="navhost_third_screen">Third screen</string>
-    <string name="navhost_forth_screen">Forth screen</string>
-    <string name="navhost_fifth_screen">Fifth screen</string>
-    <string name="navhost_first_dialog">First dialog</string>
-    <string name="navhost_second_dialog">Second dialog</string>
-    <string name="navhost_to_second_screen_button">To Second screen</string>
-    <string name="navhost_to_second_screen_plus_one_button">To Second screen +1</string>
-    <string name="navhost_to_third_screen_button">To Third screen</string>
-    <string name="navhost_to_forth_screen_button">To Forth screen</string>
-    <string name="navhost_to_fifth_screen_button">To Fifth screen</string>
-    <string name="navhost_to_first_dialog_button">To First dialog</string>
-    <string name="navhost_to_second_dialog_button">To Second dialog</string>
-    <string name="navhost_back_to_first_screen_button">Go back to First screen</string>
-    <string name="navhost_return_to_forth_screen_button">Return result to Forth screen</string>
-    <string name="navhost_result_from_fifth">Result from fifth: %1$s</string>
-    <string name="navhost_clear_result_from_fifth_button">Clear result</string>
+    <string name="pass_values__demo_screen_title">Pass values demo</string>
+    <string name="pass_values__screen_a_title">Screen A</string>
+    <string name="pass_values__screen_b_title">Screen B id=%1$s</string>
+    <string name="pass_values__screen_c_title">Screen C</string>
+    <string name="pass_values__to_screen_b_button">To screen B</string>
+    <string name="pass_values__to_screen_b_plus_one_button">To screen B +1</string>
+    <string name="pass_values__return_back_to_screen_a_button">Return back to screen A</string>
+    <string name="pass_values__to_screen_c_button">To screen C</string>
+    <string name="pass_values__passed_text">Passed text: %1$s</string>
 
-    <string name="animatednavhost_screen_title">Screen #%1$s</string>
-    <string name="animatednavhost_to_next_screen_button">To Next screen</string>
+    <string name="return_results__demo_screen_title">Return results demo</string>
+    <string name="return_results__first_screen_title">First screen</string>
+    <string name="return_results__second_screen_title">Second screen</string>
+    <string name="return_results__to_second_screen_button">To Second screen</string>
+    <string name="return_results__return_result_to_first_screen_button">Return result to First screen</string>
+    <string name="return_results__result_from_second_screen">Result from Second screen: %1$s</string>
+    <string name="return_results__clear_result_button">Clear result</string>
 
-    <string name="viewmodel_first_screen_title">First screen</string>
-    <string name="viewmodel_second_screen_title">Second screen</string>
-    <string name="viewmodel_third_screen_title">Third screen</string>
-    <string name="viewmodel_to_second_screen_button">To Second screen</string>
-    <string name="viewmodel_to_third_screen_button">To Third screen</string>
-    <string name="viewmodel_text_from_previous_screen">Text from previous screen: %1$s</string>
+    <string name="animated_nav_host__demo_screen_title">AnimatedNavHost demo</string>
+    <string name="animated_nav_host__screen_title">Screen #%1$s</string>
+    <string name="animated_nav_host__to_next_screen_button">To next screen</string>
+
+    <string name="dialog_nav_host__demo_screen_title">DialogNavHost demo</string>
+    <string name="dialog_nav_host__first_dialog_title">First dialog</string>
+    <string name="dialog_nav_host__second_dialog_title">Second dialog</string>
+    <string name="dialog_nav_host__to_first_dialog_button">To First dialog</string>
+    <string name="dialog_nav_host__to_second_dialog_button">To Second dialog</string>
+
+    <string name="view_models__demo_screen_title">ViewModels demo</string>
+    <string name="view_models__first_screen_title">First screen</string>
+    <string name="view_models__second_screen_title">Second screen</string>
+    <string name="view_models__third_screen_title">Third screen</string>
+    <string name="view_models__to_second_screen_button">To Second screen</string>
+    <string name="view_models__to_third_screen_button">To Third screen</string>
+    <string name="view_models__text_from_previous_screen">Text from previous screen: %1$s</string>
+
+    <string name="bottom_navigation__demo_screen_title">BottomNavigation demo</string>
+    <string name="bottom_navigation__home_tab_title">Home</string>
+    <string name="bottom_navigation__saved_state_tab_title">Saved state</string>
+    <string name="bottom_navigation__nested_navigation_tab_title">Nested navigation</string>
+    <string name="bottom_navigation__home_screen_title">Home screen</string>
+    <string name="bottom_navigation__saved_state_screen_title">Saved state screen</string>
+    <string name="bottom_navigation__nested_navigation_screen_a_title">Nested navigation screen A</string>
+    <string name="bottom_navigation__nested_navigation_screen_b_title">Nested navigation screen B</string>
+    <string name="bottom_navigation__to_nested_navigation_screen_b_button">To screen B</string>
 
 </resources>

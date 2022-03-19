@@ -34,7 +34,7 @@ fun ScreenLayout(title: String, content: @Composable ColumnScope.() -> Unit = {}
 }
 
 @Composable
-fun SubScreenLayout(title: String, content: @Composable ColumnScope.() -> Unit = {}) {
+fun ContentLayout(title: String? = null, content: @Composable ColumnScope.() -> Unit = {}) {
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
@@ -44,11 +44,13 @@ fun SubScreenLayout(title: String, content: @Composable ColumnScope.() -> Unit =
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = title,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.h6
-        )
+        if (title != null) {
+            Text(
+                text = title,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.h6
+            )
+        }
         content()
     }
 }
