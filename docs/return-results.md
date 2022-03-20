@@ -34,7 +34,7 @@ previousDestination.resultFromSecond.value = text
 navController.pop()
 ```
 
-You may see how it is implemented in the sample [here](https://github.com/olshevski/compose-navigation-reimagined/blob/master/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/tabs/NavHostScreen.kt).
+You may see how it is implemented in the sample [here](https://github.com/olshevski/compose-navigation-reimagined/blob/main/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/demo/ReturnResultsScreen.kt).
 
 !!! warning
     In general, returning values to previous destinations makes the navigation logic more complicated. Also, this approach doesn't guarantee full compile time type-safety. Use it with caution and when you are sure what you are doing. Sometimes it may be easier to use a shared state holder. 

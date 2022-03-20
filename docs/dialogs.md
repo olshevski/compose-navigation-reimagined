@@ -33,9 +33,6 @@ fun NavHostScreen() {
 }
 ```
 
-You may explore the full implementation in the [sample](https://github.com/olshevski/compose-navigation-reimagined/blob/master/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/tabs/NavHostScreen.kt).
-
-
 ## DialogNavHost
 DialogNavHost is an alternative version of NavHost that is better suited for showing dialogs. It is based on AnimatedNavHost and provides smoother transition between dialogs without any scrim/fade flickering:
 

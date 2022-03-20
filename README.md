@@ -95,10 +95,6 @@ Explore the [sample](https://github.com/olshevski/compose-navigation-reimagined/
 - entry-scoped ViewModels
 - usage of NavController within the ViewModel layer
 
-<p align="center">
-    <img width="240" src="https://user-images.githubusercontent.com/5606565/155094899-7cb20a5a-c5e4-4235-8fe0-e22218ddef35.gif" />
-</p>
-
 ## About
 
 I've been thinking about Android app architecture and navigation in particular for the longest time. After being introduced to Compose I could finally create the navigation structure that satisfies all my needs perfectly.

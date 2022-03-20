@@ -3,7 +3,7 @@ Back handling in the library is opt-in, rather than opt-out. By itself, neither 
 
 NavBackHandler is the most basic implementation of BackHandler - it calls `pop` only when there are more than one item in the backstack. When there is only one backstack item left, NavBackHandler is disabled, and any upper-level BackHandler may take its turn to react to back button presses.
 
-If you want to specify your own backstack logic, use BackHandler directly. For example, this is how back navigation is handled for BottomNavigation in the [sample](https://github.com/olshevski/compose-navigation-reimagined/blob/main/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/BottomNavigationScreen.kt):
+If you want to specify your own backstack logic, use BackHandler directly. For example, this is how back navigation is handled for BottomNavigation in the [sample](https://github.com/olshevski/compose-navigation-reimagined/blob/main/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/demo/BottomNavigationScreen.kt):
 
 ```kotlin
 @Composable

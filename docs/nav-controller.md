@@ -90,7 +90,7 @@ if (!navController.moveToTop { it is SomeDestination }) {
 }
 ```
 
-You may see how it is used for BottomNavigation in the [sample](https://github.com/olshevski/compose-navigation-reimagined/blob/main/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/BottomNavigationScreen.kt)
+You may see how it is used for BottomNavigation in the [sample](https://github.com/olshevski/compose-navigation-reimagined/blob/main/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/demo/BottomNavigationScreen.kt).
 
 ### Methods with a search predicate
 
@@ -100,7 +100,7 @@ In case multiple destinations match the predicate, you may specify the `match` p
 
 ### New custom methods
 
-If your use-case calls for some advanced backstack manipulations, you may use `setNewBackstack` method. It is in fact the only public method defined in NavController, all other methods are provided as extensions and use `setNewBackstack` under the hood. Here is how a new extension method `moveLastEntryToStart` is implemented in the [sample](https://github.com/olshevski/compose-navigation-reimagined/blob/master/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/BottomNavigationScreen.kt):
+If your use-case calls for some advanced backstack manipulations, you may use `setNewBackstack` method. It is in fact the only public method defined in NavController, all other methods are provided as extensions and use `setNewBackstack` under the hood. Here is how a new extension method `moveLastEntryToStart` is implemented in the [sample](https://github.com/olshevski/compose-navigation-reimagined/blob/main/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/demo/BottomNavigationScreen.kt):
 
 ```kotlin
 fun NavController<BottomNavigationDestination>.moveLastEntryToStart() {
