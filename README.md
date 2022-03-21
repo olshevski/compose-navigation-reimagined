@@ -18,7 +18,7 @@ A small and simple, yet fully fledged and customizable navigation library for [J
 Add a single dependency to your project:
 
 ```kotlin
-implementation("dev.olshevski.navigation:reimagined:1.0.0")
+implementation("dev.olshevski.navigation:reimagined:1.1.0")
 ```
 
 Define a set of screens. It is convenient to use a sealed class for this:
