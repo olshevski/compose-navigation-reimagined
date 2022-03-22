@@ -21,6 +21,7 @@ object Plugins {
         val Parcelize = PluginSpec("org.jetbrains.kotlin.plugin.parcelize", Version)
     }
 
+    val Anvil = PluginSpec("com.squareup.anvil", "2.4.0-M2")
     val BenManesVersions = PluginSpec("com.github.ben-manes.versions", "0.42.0")
     val NexusPublishing = PluginSpec("io.github.gradle-nexus.publish-plugin", "1.1.0")
 

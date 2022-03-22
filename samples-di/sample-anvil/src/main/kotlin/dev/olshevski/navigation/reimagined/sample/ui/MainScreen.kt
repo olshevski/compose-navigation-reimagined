@@ -14,7 +14,7 @@ import dev.olshevski.viewmodel.easyfactories.viewModel
 
 @Composable
 fun MainScreen() = ScreenLayout(
-    title = "Dagger demo"
+    title = "Anvil demo"
 ) {
     val navController = rememberNavController<MainDestination>(
         startDestination = MainDestination.First
@@ -75,6 +75,7 @@ private fun SecondScreen(
     ) {
         Text("To Third screen")
     }
+
 }
 
 @Composable

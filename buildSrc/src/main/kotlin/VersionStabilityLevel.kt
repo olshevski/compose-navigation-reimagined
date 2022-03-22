@@ -11,7 +11,7 @@ enum class VersionStabilityLevel {
 fun stabilityLevel(version: String) = version.toLowerCase(Locale.ROOT).let { lowercaseVersion ->
     when {
         isRelease(lowercaseVersion) -> VersionStabilityLevel.RELEASE
-        lowercaseVersion.contains("rc") -> VersionStabilityLevel.RC
+        lowercaseVersion.contains("rc") || lowercaseVersion.contains("m") -> VersionStabilityLevel.RC
         lowercaseVersion.contains("beta") -> VersionStabilityLevel.BETA
         lowercaseVersion.contains("alpha") -> VersionStabilityLevel.ALPHA
         else -> VersionStabilityLevel.UNKNOWN
