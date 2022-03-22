@@ -55,6 +55,10 @@ object Libs {
         const val Juniper = "org.junit.jupiter:junit-jupiter:5.8.2"
     }
 
+    object Koin {
+        const val Compose = "io.insert-koin:koin-androidx-compose:3.1.5"
+    }
+
     object Olshevski {
         const val EasyFactoriesCompose = "dev.olshevski.viewmodel:easy-factories-compose:1.0.0"
     }
