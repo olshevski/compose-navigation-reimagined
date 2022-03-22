@@ -43,9 +43,11 @@ object Libs {
         const val Truth = "com.google.truth:truth:1.1.3"
 
         object Dagger {
-            private const val Version = "2.41"
+            const val Version = "2.41"
             const val Api = "com.google.dagger:dagger:$Version"
             const val Compiler = "com.google.dagger:dagger-compiler:$Version"
+            const val HiltAndroid = "com.google.dagger:hilt-android:$Version"
+            const val HiltCompiler = "com.google.dagger:hilt-compiler:$Version"
         }
     }
 
