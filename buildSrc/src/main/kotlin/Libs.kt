@@ -41,10 +41,20 @@ object Libs {
 
     object Google {
         const val Truth = "com.google.truth:truth:1.1.3"
+
+        object Dagger {
+            private const val Version = "2.41"
+            const val Api = "com.google.dagger:dagger:$Version"
+            const val Compiler = "com.google.dagger:dagger-compiler:$Version"
+        }
     }
 
     object JUnit {
         const val Juniper = "org.junit.jupiter:junit-jupiter:5.8.2"
+    }
+
+    object Olshevski {
+        const val EasyFactoriesCompose = "dev.olshevski.viewmodel:easy-factories-compose:1.0.0"
     }
 
 }

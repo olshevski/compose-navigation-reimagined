@@ -17,6 +17,7 @@ object Plugins {
     object Kotlin {
         private const val Version = "1.6.10"
         val Android = PluginSpec("org.jetbrains.kotlin.android", Version)
+        val Kapt = PluginSpec("org.jetbrains.kotlin.kapt", Version)
         val Parcelize = PluginSpec("org.jetbrains.kotlin.plugin.parcelize", Version)
     }
 

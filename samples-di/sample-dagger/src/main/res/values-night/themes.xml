@@ -1,0 +1,7 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="Theme.NavigationReimagined" parent="android:Theme.Material">
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/purple_lighter</item>
+    </style>
+</resources>
