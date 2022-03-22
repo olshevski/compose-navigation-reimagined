@@ -9,9 +9,9 @@ sealed class PassValuesDestination : Parcelable {
     object A : PassValuesDestination()
 
     @Parcelize
-    class B(val id: Int) : PassValuesDestination()
+    data class B(val id: Int) : PassValuesDestination()
 
     @Parcelize
-    class C(val text: String) : PassValuesDestination()
-    
+    data class C(val text: String) : PassValuesDestination()
+
 }

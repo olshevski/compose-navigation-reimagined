@@ -9,6 +9,7 @@
     <string name="demo_selection__dialog_nav_host_button">DialogNavHost</string>
     <string name="demo_selection__view_models_button">ViewModels</string>
     <string name="demo_selection__bottom_navigation_button">BottomNavigation</string>
+    <string name="demo_selection__deeplinks_button">Deeplinks</string>
 
     <string name="pass_values__demo_screen_title">Pass values demo</string>
     <string name="pass_values__screen_a_title">Screen A</string>
@@ -55,5 +56,12 @@
     <string name="bottom_navigation__nested_navigation_screen_a_title">Nested navigation screen A</string>
     <string name="bottom_navigation__nested_navigation_screen_b_title">Nested navigation screen B</string>
     <string name="bottom_navigation__to_nested_navigation_screen_b_button">To screen B</string>
+
+    <string name="deeplinks__demo_screen_title">Deeplinks demo</string>
+    <string name="deeplinks__first_screen_title">First screen</string>
+    <string name="deeplinks__second_screen_title">Second screen</string>
+    <string name="deeplinks__third_screen_title">Third screen id=%1$s</string>
+    <string name="deeplinks__to_second_screen_button">To Second screen</string>
+    <string name="deeplinks__to_third_screen_button">To Third screen</string>
 
 </resources>

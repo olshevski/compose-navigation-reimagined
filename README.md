@@ -94,6 +94,7 @@ Explore the [sample](https://github.com/olshevski/compose-navigation-reimagined/
 - dialog navigation
 - entry-scoped ViewModels
 - usage of NavController within the ViewModel layer
+- deeplinks
 
 ## About
 

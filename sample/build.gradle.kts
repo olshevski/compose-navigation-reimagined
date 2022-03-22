@@ -27,6 +27,12 @@ android {
         }
     }
 
+    signingConfigs {
+        named("debug") {
+            storeFile = rootProject.file("debug.keystore")
+        }
+    }
+
     kotlinOptions {
         freeCompilerArgs = freeCompilerArgs + listOf(
             "-Xopt-in=kotlin.RequiresOptIn",

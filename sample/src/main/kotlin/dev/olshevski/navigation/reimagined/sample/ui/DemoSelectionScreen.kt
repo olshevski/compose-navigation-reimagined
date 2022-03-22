@@ -22,7 +22,8 @@ fun DemoSelectionScreen(
     onAnimatedNavHostButtonClick: () -> Unit,
     onDialogNavHostButtonClick: () -> Unit,
     onViewModelsButtonClick: () -> Unit,
-    onBottomNavigationButtonClick: () -> Unit
+    onBottomNavigationButtonClick: () -> Unit,
+    onDeeplinksButtonClick: () -> Unit,
 ) = ScreenLayout(stringResource(R.string.demo_selection__screen_title)) {
     Column(
         modifier = Modifier
@@ -72,6 +73,13 @@ fun DemoSelectionScreen(
             onClick = { onBottomNavigationButtonClick() }
         ) {
             Text(stringResource(R.string.demo_selection__bottom_navigation_button))
+        }
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { onDeeplinksButtonClick() }
+        ) {
+            Text(stringResource(R.string.demo_selection__deeplinks_button))
         }
 
     }
