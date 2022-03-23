@@ -47,3 +47,4 @@ nav:
   - "Dialogs": dialogs.md
   - "Back handling": back-handling.md
   - "Return results": return-results.md
+  - "ViewModels": view-models.md
