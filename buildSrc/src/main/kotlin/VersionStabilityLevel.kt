@@ -1,20 +1,22 @@
 import java.util.*
 
 enum class VersionStabilityLevel {
-    UNKNOWN,
     ALPHA,
     BETA,
     RC,
-    RELEASE
+    RELEASE,
+    UNKNOWN
 }
 
 fun stabilityLevel(version: String) = version.toLowerCase(Locale.ROOT).let { lowercaseVersion ->
     when {
         isRelease(lowercaseVersion) -> VersionStabilityLevel.RELEASE
-        lowercaseVersion.contains("rc") || lowercaseVersion.contains("m") -> VersionStabilityLevel.RC
+        listOf("rc", "m").any { lowercaseVersion.contains(it) } -> VersionStabilityLevel.RC
         lowercaseVersion.contains("beta") -> VersionStabilityLevel.BETA
         lowercaseVersion.contains("alpha") -> VersionStabilityLevel.ALPHA
-        else -> VersionStabilityLevel.UNKNOWN
+        else -> VersionStabilityLevel.UNKNOWN.also {
+            println("Unknown stability level: $version")
+        }
     }
 }
 
