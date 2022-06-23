@@ -7,6 +7,7 @@ import dev.olshevski.navigation.reimagined.NavBackHandler
 import dev.olshevski.navigation.reimagined.NavHost
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.rememberNavController
+import org.koin.androidx.compose.getStateViewModel
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -75,5 +76,5 @@ private fun ThirdScreen(
 ) = ContentLayout(
     title = "Third screen text=$text"
 ) {
-    val viewModel = getViewModel<ThirdViewModel> { parametersOf(text) }
+    val viewModel = getStateViewModel<ThirdViewModel> { parametersOf(text) }
 }

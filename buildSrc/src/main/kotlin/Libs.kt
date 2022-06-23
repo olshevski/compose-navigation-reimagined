@@ -43,7 +43,7 @@ object Libs {
         const val Truth = "com.google.truth:truth:1.1.3"
 
         object Dagger {
-            const val Version = "2.41"
+            const val Version = "2.42"
             const val Api = "com.google.dagger:dagger:$Version"
             const val Compiler = "com.google.dagger:dagger-compiler:$Version"
             const val HiltAndroid = "com.google.dagger:hilt-android:$Version"
@@ -56,7 +56,7 @@ object Libs {
     }
 
     object Koin {
-        const val Compose = "io.insert-koin:koin-androidx-compose:3.1.5"
+        const val Compose = "io.insert-koin:koin-androidx-compose:3.2.0"
     }
 
     object Olshevski {
