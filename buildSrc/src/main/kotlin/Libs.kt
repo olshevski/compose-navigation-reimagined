@@ -3,14 +3,14 @@ object Libs {
     object AndroidX {
 
         object Activity {
-            const val Compose = "androidx.activity:activity-compose:1.4.0"
+            const val Compose = "androidx.activity:activity-compose:1.5.0"
         }
 
         object Compose {
             private const val Version = "1.1.1"
 
             @Suppress("MemberVisibilityCanBePrivate")
-            const val CompilerVersion = Version
+            const val CompilerVersion = "1.2.0"
 
             const val Ui = "androidx.compose.ui:ui:$Version"
             const val Animation = "androidx.compose.animation:animation:$Version"
@@ -24,7 +24,7 @@ object Libs {
         }
 
         object Lifecycle {
-            private const val Version = "2.4.1"
+            private const val Version = "2.5.0"
 
             object ViewModel {
                 const val Ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$Version"

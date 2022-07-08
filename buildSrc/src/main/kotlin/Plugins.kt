@@ -15,13 +15,13 @@ object Plugins {
     }
 
     object Kotlin {
-        private const val Version = "1.6.10"
+        private const val Version = "1.7.0"
         val Android = PluginSpec("org.jetbrains.kotlin.android", Version)
         val Kapt = PluginSpec("org.jetbrains.kotlin.kapt", Version)
         val Parcelize = PluginSpec("org.jetbrains.kotlin.plugin.parcelize", Version)
     }
 
-    val Anvil = PluginSpec("com.squareup.anvil", "2.4.1-1-6")
+    val Anvil = PluginSpec("com.squareup.anvil", "2.4.1")
     val BenManesVersions = PluginSpec("com.github.ben-manes.versions", "0.42.0")
     val Hilt = PluginSpec("com.google.dagger.hilt.android", Libs.Google.Dagger.Version)
     val NexusPublishing = PluginSpec("io.github.gradle-nexus.publish-plugin", "1.1.0")

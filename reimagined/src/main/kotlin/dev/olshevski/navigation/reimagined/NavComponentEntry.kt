@@ -89,8 +89,7 @@ class NavComponentEntry<T>(
         }
     }
 
-    override fun getSavedStateRegistry(): SavedStateRegistry =
-        savedStateRegistryController.savedStateRegistry
+    override val savedStateRegistry = savedStateRegistryController.savedStateRegistry
 
     internal fun restoreState(savedState: Bundle) {
         savedStateRegistryController.performRestore(savedState)
