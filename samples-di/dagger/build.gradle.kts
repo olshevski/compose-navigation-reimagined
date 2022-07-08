@@ -6,10 +6,11 @@ plugins {
 }
 
 android {
+    namespace = "${project.group}.reimagined.sample.dagger"
     compileSdk = AndroidSdkVersion.Compile
 
     defaultConfig {
-        applicationId = "dev.olshevski.navigation.reimagined.sample.dagger"
+        applicationId = namespace
         minSdk = AndroidSdkVersion.Min
         targetSdk = AndroidSdkVersion.Target
         versionName = project.property("version").toString()

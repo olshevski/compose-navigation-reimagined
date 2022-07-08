@@ -5,10 +5,11 @@ plugins {
 }
 
 android {
+    namespace = "${project.group}.reimagined.sample.koin"
     compileSdk = AndroidSdkVersion.Compile
 
     defaultConfig {
-        applicationId = "dev.olshevski.navigation.reimagined.sample.koin"
+        applicationId = namespace
         minSdk = AndroidSdkVersion.Min
         targetSdk = AndroidSdkVersion.Target
         versionName = project.property("version").toString()

@@ -7,10 +7,11 @@ plugins {
 }
 
 android {
+    namespace = "${project.group}.reimagined.sample.hilt"
     compileSdk = AndroidSdkVersion.Compile
 
     defaultConfig {
-        applicationId = "dev.olshevski.navigation.reimagined.sample.hilt"
+        applicationId = namespace
         minSdk = AndroidSdkVersion.Min
         targetSdk = AndroidSdkVersion.Target
         versionName = project.property("version").toString()

@@ -7,6 +7,7 @@ plugins {
 }
 
 android {
+    namespace = "${project.group}.reimagined"
     compileSdk = AndroidSdkVersion.Compile
 
     defaultConfig {
