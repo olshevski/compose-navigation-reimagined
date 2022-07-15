@@ -25,3 +25,35 @@ If you use dependency injections in your project, explore the [samples](https://
 - **Dagger/Anvil/Hilt** use a combination of Easy Factories library mentioned above and [@AssistedInject](https://dagger.dev/dev-guide/assisted-injection)
 
 - **Koin** supports ViewModel parameters out of the box and does it charmingly simple
+
+## hiltViewModel()
+
+If Hilt is the DI library of your choice and you want to use `hiltViewModel()` method that you may already be familiar with from the official Navigation Component, you can add the dependency:
+
+```kotlin
+implementation("dev.olshevski.navigation:reimagined-hilt:<latest-version>")
+```
+
+It provides a similar `hiltViewModel()` method that works with the Reimagined library. The only catch is that by default it doesn't know how to pass arguments to the SavedStateHandle of your ViewModel. For this you can use an additional `defaultArguments` parameter:
+
+```kotlin
+val viewModel = hiltViewModel<SomeViewModel>(
+    defaultArguments = bundleOf("id" to id)
+)
+```
+
+And in ViewModel you can read this argument as such:
+
+```kotlin
+@HiltViewModel
+class SomeViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle
+) : LoggingViewModel() {
+
+    private val id: Int = savedStateHandle["id"]!!
+
+}
+```
+
+!!! tip
+    Don't forget to annotate your view models with `@HiltViewModel` annotation.
