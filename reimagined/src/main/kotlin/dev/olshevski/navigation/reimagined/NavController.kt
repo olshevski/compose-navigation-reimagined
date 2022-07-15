@@ -110,7 +110,7 @@ fun <T> SavedStateHandle.navController(
  * operation such as [navigate], [pop], [replaceLast] and their variants are provided as
  * extension methods.
  *
- * Implements [Parcelable] interface so it may be stored in [SavedStateHandle] or remembered with
+ * Implements [Parcelable] interface, so it may be stored in [SavedStateHandle] or remembered with
  * [rememberSaveable]. Use [rememberNavController] for the latter.
  *
  * The type specified in the type parameter must comply with the next requirements:

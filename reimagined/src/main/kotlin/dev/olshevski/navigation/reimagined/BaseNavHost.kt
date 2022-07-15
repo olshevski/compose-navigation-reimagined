@@ -9,7 +9,7 @@ internal fun <T> BaseNavHost(
     backstack: NavBackstack<T>,
     entryTransition: @Composable (NavComponentEntry<T>?) -> NavComponentEntry<T>?
 ) {
-    // In future, it may be convenient to make possible to create ComponentHolder externally
+    // In future, it may be convenient to make possible to create ComponentHolder externally,
     // so it is hoistable. But I need to see reasonable use-cases for this.
     val componentHolder = rememberNavComponentHolder(backstack)
 

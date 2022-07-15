@@ -101,7 +101,7 @@ private fun ScreenA(
     }
 
     CenteredText(
-        text = """Of course you are not limited just to primitive types. Create complex data
+        text = """Of course, you are not limited just to primitive types. Create complex data
             structures and add @Parcelize to them.""".singleLine(),
     )
 }

@@ -260,7 +260,7 @@ class NavControllerExtTest {
                         TestDestination.B
                     )
                 )
-                assertThat(navController.popUpTo() { it == TestDestination.A }).isEqualTo(true)
+                assertThat(navController.popUpTo { it == TestDestination.A }).isEqualTo(true)
                 assertThat(navController.backstack.destinations).containsExactlyElementsIn(
                     listOf(
                         TestDestination.A,

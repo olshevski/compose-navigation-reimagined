@@ -5,7 +5,7 @@ import android.content.Context
 
 class ReimaginedApplication : Application() {
 
-    val appComponent by lazy {
+    val appComponent: AppComponent by lazy {
         DaggerAppComponent.create()
     }
 

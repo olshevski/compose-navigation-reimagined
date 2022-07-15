@@ -140,9 +140,9 @@ internal class NavComponentHolder<T>(
                 newComponentEntry(lastEntry)
             }
         }
-    }.also {
+    }.also { state ->
         // this block will be executed only when a new distinct entry is set
-        val newLastComponentEntry = it.value
+        val newLastComponentEntry = state.value
 
         // Before transition:
         // - all entries except lastComponentEntry are capped at STARTED state

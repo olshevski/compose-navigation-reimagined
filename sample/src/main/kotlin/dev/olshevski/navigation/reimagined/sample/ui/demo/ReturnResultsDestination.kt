@@ -13,7 +13,7 @@ sealed class ReturnResultsDestination : Parcelable {
     /*
     * 1) The type may be @Stable, not only @Immutable. This guarantee is backed up by MutableState
     *    here.
-    * 2) MutableState is Parcelable, it's just doesn't expose this interface, so we are fine.
+    * 2) MutableState is Parcelable, it just doesn't expose this interface, so we are fine.
     */
     @Stable
     @Parcelize

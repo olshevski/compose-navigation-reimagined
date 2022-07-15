@@ -3,7 +3,6 @@ package dev.olshevski.navigation.reimagined.sample.ui
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.os.bundleOf
 import dev.olshevski.navigation.reimagined.NavBackHandler
 import dev.olshevski.navigation.reimagined.NavHost
@@ -61,9 +60,9 @@ private fun SecondScreen(
 ) = ContentLayout(
     title = "Second screen id=$id"
 ) {
-    val viewModel = hiltViewModel<SecondViewModel>(defaultArguments = bundleOf(
-        "id" to id
-    ))
+    val viewModel = hiltViewModel<SecondViewModel>(
+        defaultArguments = bundleOf("id" to id)
+    )
 
     Button(
         onClick = { toThirdScreenButtonClick() }
@@ -78,7 +77,7 @@ private fun ThirdScreen(
 ) = ContentLayout(
     title = "Third screen text=$text"
 ) {
-    val viewModel = hiltViewModel<ThirdViewModel>(defaultArguments = bundleOf(
-        "text" to text
-    ))
+    val viewModel = hiltViewModel<ThirdViewModel>(
+        defaultArguments = bundleOf("text" to text)
+    )
 }

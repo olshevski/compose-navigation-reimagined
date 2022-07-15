@@ -13,5 +13,5 @@ sealed class MainDestination : Parcelable {
 
     @Parcelize
     class Third(val text: String) : MainDestination()
-    
+
 }
