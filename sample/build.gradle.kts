@@ -36,8 +36,8 @@ android {
 
     kotlinOptions {
         freeCompilerArgs = freeCompilerArgs + listOf(
-            "-Xopt-in=kotlin.RequiresOptIn",
-            "-Xopt-in=androidx.compose.animation.ExperimentalAnimationApi"
+            "-opt-in=kotlin.RequiresOptIn",
+            "-opt-in=androidx.compose.animation.ExperimentalAnimationApi"
         )
     }
 
