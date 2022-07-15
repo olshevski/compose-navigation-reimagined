@@ -1,12 +1,11 @@
 plugins {
     plugin(Plugins.Android.Library)
     plugin(Plugins.Kotlin.Android)
-    plugin(Plugins.Kotlin.Parcelize)
     `publishing-config`
 }
 
 android {
-    namespace = "${project.group}.reimagined"
+    namespace = "${project.group}.reimagined.hilt"
     compileSdk = AndroidSdkVersion.Compile
 
     defaultConfig {
@@ -55,16 +54,6 @@ android {
 }
 
 dependencies {
-    api(Libs.AndroidX.Activity.Compose)
-    api(Libs.AndroidX.Compose.Ui)
-    api(Libs.AndroidX.Compose.Animation)
-    api(Libs.AndroidX.Lifecycle.ViewModel.Ktx)
-    api(Libs.AndroidX.Lifecycle.ViewModel.Compose)
-    api(Libs.AndroidX.Lifecycle.ViewModel.SavedState)
-
-    testImplementation(Libs.JUnit.Juniper)
-    testImplementation(Libs.Google.Truth)
-
-    androidTestImplementation(Libs.AndroidX.Test.Runner)
-    androidTestImplementation(Libs.Google.Truth)
+    api(project(":reimagined"))
+    api(Libs.Google.Dagger.HiltAndroid)
 }

@@ -58,6 +58,8 @@ android {
 
 dependencies {
     implementation(project(":reimagined"))
+
+    // default Compose setup
     implementation(Libs.AndroidX.Activity.Compose)
     implementation(Libs.AndroidX.Compose.Material)
     debugImplementation(Libs.AndroidX.Compose.UiTooling)
@@ -65,6 +67,8 @@ dependencies {
     implementation(Libs.AndroidX.Lifecycle.ViewModel.Ktx)
     implementation(Libs.AndroidX.Lifecycle.ViewModel.Compose)
     implementation(Libs.AndroidX.Lifecycle.ViewModel.SavedState)
+
+    // Dagger libs
     implementation(Libs.Google.Dagger.Api)
     kapt(Libs.Google.Dagger.Compiler)
     implementation(Libs.Olshevski.EasyFactoriesCompose)

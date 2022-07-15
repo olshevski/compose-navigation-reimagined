@@ -27,8 +27,8 @@ class FirstViewModel @Inject constructor(
 ) : LoggingViewModel()
 
 class SecondViewModel @AssistedInject constructor(
-    @Assisted val id: Int,
-    val demoRepository: DemoRepository
+    @Assisted id: Int,
+    demoRepository: DemoRepository
 ) : LoggingViewModel() {
 
     @AssistedFactory
@@ -41,9 +41,9 @@ class SecondViewModel @AssistedInject constructor(
 }
 
 class ThirdViewModel @AssistedInject constructor(
-    @Assisted val text: String,
-    @Assisted val savedStateHandle: SavedStateHandle,
-    val demoRepository: DemoRepository
+    @Assisted text: String,
+    @Assisted savedStateHandle: SavedStateHandle,
+    demoRepository: DemoRepository
 ) : LoggingViewModel() {
 
     @AssistedFactory

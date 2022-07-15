@@ -1,11 +1,13 @@
 plugins {
     plugin(Plugins.Android.Application)
     plugin(Plugins.Kotlin.Android)
+    plugin(Plugins.Kotlin.Kapt)
     plugin(Plugins.Kotlin.Parcelize)
+    plugin(Plugins.Hilt)
 }
 
 android {
-    namespace = "${project.group}.reimagined.sample.koin"
+    namespace = "${project.group}.reimagined.sample.hilt.assistedinject"
     compileSdk = AndroidSdkVersion.Compile
 
     defaultConfig {
@@ -67,6 +69,12 @@ dependencies {
     implementation(Libs.AndroidX.Lifecycle.ViewModel.Compose)
     implementation(Libs.AndroidX.Lifecycle.ViewModel.SavedState)
 
-    // Koin
-    implementation(Libs.Koin.Compose)
+    // Hilt libs
+    implementation(Libs.Google.Dagger.HiltAndroid)
+    kapt(Libs.Google.Dagger.HiltCompiler)
+    implementation(Libs.Olshevski.EasyFactoriesCompose)
+}
+
+kapt {
+    correctErrorTypes = true
 }

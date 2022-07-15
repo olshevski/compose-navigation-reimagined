@@ -1,0 +1,13 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="Theme.NavigationReimagined" parent="android:Theme.Material.Light">
+        <item name="android:statusBarColor">@color/purple_darker</item>
+    </style>
+
+    <style name="Theme.NavigationReimagined.NoActionBar">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+</resources>

@@ -1,11 +1,13 @@
 plugins {
     plugin(Plugins.Android.Application)
     plugin(Plugins.Kotlin.Android)
+    plugin(Plugins.Kotlin.Kapt)
     plugin(Plugins.Kotlin.Parcelize)
+    plugin(Plugins.Hilt)
 }
 
 android {
-    namespace = "${project.group}.reimagined.sample.koin"
+    namespace = "${project.group}.reimagined.sample.hilt.hiltviewmodel"
     compileSdk = AndroidSdkVersion.Compile
 
     defaultConfig {
@@ -56,7 +58,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":reimagined"))
+    implementation(project(":reimagined-hilt"))
 
     // default Compose setup
     implementation(Libs.AndroidX.Activity.Compose)
@@ -67,6 +69,11 @@ dependencies {
     implementation(Libs.AndroidX.Lifecycle.ViewModel.Compose)
     implementation(Libs.AndroidX.Lifecycle.ViewModel.SavedState)
 
-    // Koin
-    implementation(Libs.Koin.Compose)
+    // Hilt libs
+    implementation(Libs.Google.Dagger.HiltAndroid)
+    kapt(Libs.Google.Dagger.HiltCompiler)
+}
+
+kapt {
+    correctErrorTypes = true
 }

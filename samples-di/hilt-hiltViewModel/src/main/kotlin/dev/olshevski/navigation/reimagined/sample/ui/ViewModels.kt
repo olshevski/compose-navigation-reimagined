@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.olshevski.navigation.reimagined.sample.repo.DemoRepository
 import javax.inject.Inject
 
@@ -22,35 +23,27 @@ open class LoggingViewModel : ViewModel() {
     }
 }
 
+@HiltViewModel
 class FirstViewModel @Inject constructor(
     demoRepository: DemoRepository
 ) : LoggingViewModel()
 
-class SecondViewModel @AssistedInject constructor(
-    @Assisted id: Int,
+@HiltViewModel
+class SecondViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     demoRepository: DemoRepository
 ) : LoggingViewModel() {
 
-    @AssistedFactory
-    interface Factory {
-
-        fun create(id: Int): SecondViewModel
-
-    }
+    private val id: Int = savedStateHandle["id"]!!
 
 }
 
-class ThirdViewModel @AssistedInject constructor(
-    @Assisted text: String,
-    @Assisted savedStateHandle: SavedStateHandle,
+@HiltViewModel
+class ThirdViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     demoRepository: DemoRepository
 ) : LoggingViewModel() {
 
-    @AssistedFactory
-    interface Factory {
-
-        fun create(text: String, savedStateHandle: SavedStateHandle): ThirdViewModel
-
-    }
+    private val text: String = savedStateHandle["text"]!!
 
 }

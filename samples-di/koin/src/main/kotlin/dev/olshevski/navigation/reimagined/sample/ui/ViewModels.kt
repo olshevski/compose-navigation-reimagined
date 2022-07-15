@@ -23,12 +23,12 @@ class FirstViewModel(
 ) : LoggingViewModel()
 
 class SecondViewModel(
-    val id: Int,
-    val demoRepository: DemoRepository
+    id: Int,
+    demoRepository: DemoRepository
 ) : LoggingViewModel()
 
 class ThirdViewModel(
-    val text: String,
-    val savedStateHandle: SavedStateHandle,
-    val demoRepository: DemoRepository
+    text: String,
+    savedStateHandle: SavedStateHandle,
+    demoRepository: DemoRepository
 ) : LoggingViewModel()
