@@ -57,3 +57,10 @@ class SomeViewModel @Inject constructor(
 
 !!! tip
     Don't forget to annotate your view models with `@HiltViewModel` annotation.
+
+!!! warning
+    Do not pass mutable data structures as `defaultArguments` and expect the external changes to be reflected through the SavedStateHandle inside a ViewModel, e.g. when trying to return results as described [here](/compose-navigation-reimagined/return-results/).
+
+    As soon as SavedStateHandle parcelize/unparcelize data once, it becomes the only source of truth for the data it holds.
+    
+    If you still need to pass mutable data structure into your ViewModel, it would be more reliable to pass it directly as a [constructor parameter](#passing-parameters-into-a-viewmodel)).
