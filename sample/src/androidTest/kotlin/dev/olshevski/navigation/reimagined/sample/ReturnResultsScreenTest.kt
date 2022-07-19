@@ -70,7 +70,7 @@ class ReturnResultsScreenTest {
     }
 
     @Test
-    fun normalFlow() = composeRule.returnResultsScreenScope {
+    fun generalFlow() = composeRule.returnResultsScreenScope {
         assertReturnedResultDoesNotExist()
         performToSecondScreenButtonClick()
         assertSecondScreenIsDisplayed()

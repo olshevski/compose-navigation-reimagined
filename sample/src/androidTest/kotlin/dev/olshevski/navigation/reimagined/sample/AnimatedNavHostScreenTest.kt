@@ -41,39 +41,36 @@ class AnimatedNavHostScreenTest {
         assertScreenIsDisplayed(0)
     }
 
-    @Test
-    fun normalFlow() = composeRule.animatedNavHostScreenScope {
-        val count = 5
-        repeat(count) {
-            performToNextScreenButtonClick()
-            assertScreenIsDisplayed(it + 1)
-        }
+    private fun generalFlow(middleBlock: AnimatedNavHostScreenScope.() -> Unit) =
+        composeRule.animatedNavHostScreenScope {
+            val count = 5
+            repeat(count) {
+                performToNextScreenButtonClick()
+                assertScreenIsDisplayed(it + 1)
+            }
 
-        repeat(count) {
+            middleBlock()
+            assertScreenIsDisplayed(count)
+
+            repeat(count) {
+                pressBack()
+                assertScreenIsDisplayed(count - it - 1)
+            }
             pressBack()
-            assertScreenIsDisplayed(count - it - 1)
+            assertDemoSelectionScreenIsDisplayed()
         }
-        pressBack()
-        assertDemoSelectionScreenIsDisplayed()
-    }
 
     @Test
-    fun normalFlow_recreateActivity() = composeRule.animatedNavHostScreenScope {
-        val count = 5
-        repeat(count) {
-            performToNextScreenButtonClick()
-            assertScreenIsDisplayed(it + 1)
-        }
+    fun generalFlow() = generalFlow(middleBlock = {})
 
+    @Test
+    fun generalFlow_recreateActivity() = generalFlow(middleBlock = {
         recreateActivity()
-        assertScreenIsDisplayed(count)
+    })
 
-        repeat(count) {
-            pressBack()
-            assertScreenIsDisplayed(count - it - 1)
-        }
-        pressBack()
-        assertDemoSelectionScreenIsDisplayed()
-    }
+    @Test
+    fun generalFlow_recreateActivityAndViewModels() = generalFlow(middleBlock = {
+        recreateActivityAndViewModels()
+    })
 
 }

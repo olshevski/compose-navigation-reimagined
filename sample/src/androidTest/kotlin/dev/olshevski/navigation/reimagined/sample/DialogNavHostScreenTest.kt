@@ -61,38 +61,36 @@ class DialogNavHostScreenTest {
         assertDialogNavHostDemoScreenIsDisplayed()
     }
 
+    private fun generalFlow(middleBlock: DialogNavHostScreenScope.() -> Unit) =
+        composeRule.dialogNavHostScreenScope {
+            performToFirstDialogButtonClick()
+            assertFirstDialogIsDisplayed()
+            performToSecondDialogButtonClick()
+            assertFirstDialogDoesNotExist()
+            assertSecondDialogIsDisplayed()
+
+            middleBlock()
+            assertFirstDialogDoesNotExist()
+            assertSecondDialogIsDisplayed()
+
+            pressBack()
+            assertFirstDialogDoesNotExist()
+            assertSecondDialogDoesNotExist()
+            pressBack()
+            assertDemoSelectionScreenIsDisplayed()
+        }
+
     @Test
-    fun normalFlow() = composeRule.dialogNavHostScreenScope {
-        performToFirstDialogButtonClick()
-        assertFirstDialogIsDisplayed()
-        performToSecondDialogButtonClick()
-        assertFirstDialogDoesNotExist()
-        assertSecondDialogIsDisplayed()
-
-        pressBack()
-        assertFirstDialogDoesNotExist()
-        assertSecondDialogDoesNotExist()
-        pressBack()
-        assertDemoSelectionScreenIsDisplayed()
-    }
+    fun generalFlow() = generalFlow(middleBlock = {})
 
     @Test
-    fun normalFlow_recreateActivity() = composeRule.dialogNavHostScreenScope {
-        performToFirstDialogButtonClick()
-        assertFirstDialogIsDisplayed()
-        performToSecondDialogButtonClick()
-        assertFirstDialogDoesNotExist()
-        assertSecondDialogIsDisplayed()
-
+    fun generalFlow_recreateActivity() = generalFlow(middleBlock = {
         recreateActivity()
-        assertFirstDialogDoesNotExist()
-        assertSecondDialogIsDisplayed()
+    })
 
-        pressBack()
-        assertFirstDialogDoesNotExist()
-        assertSecondDialogDoesNotExist()
-        pressBack()
-        assertDemoSelectionScreenIsDisplayed()
-    }
+    @Test
+    fun generalFlow_recreateActivityAndViewModels() = generalFlow(middleBlock = {
+        recreateActivityAndViewModels()
+    })
 
 }

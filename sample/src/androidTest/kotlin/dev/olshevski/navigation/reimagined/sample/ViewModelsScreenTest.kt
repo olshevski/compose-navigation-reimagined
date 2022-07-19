@@ -63,45 +63,40 @@ class ViewModelsScreenTest {
         assertFirstScreenIsDisplayed()
     }
 
+    private fun generalFlow(middleBlock: ViewModelsScreenScope.() -> Unit) =
+        composeRule.viewModelsScreenScope {
+            performToSecondScreenButtonClick()
+            assertSecondScreenIsDisplayed()
+            performTextInput()
+            performToThirdScreenButtonClick()
+            assertThirdScreenIsDisplayed()
+            assertPassedTextIsDisplayed()
+
+            middleBlock()
+            assertThirdScreenIsDisplayed()
+            assertPassedTextIsDisplayed()
+
+            pressBack()
+            assertSecondScreenIsDisplayed()
+            assertInputHasText()
+            pressBack()
+            assertFirstScreenIsDisplayed()
+            pressBack()
+            assertDemoSelectionScreenIsDisplayed()
+        }
+
     @Test
-    fun normalFlow() = composeRule.viewModelsScreenScope {
-        performToSecondScreenButtonClick()
-        assertSecondScreenIsDisplayed()
-        performTextInput()
-        performToThirdScreenButtonClick()
-        assertThirdScreenIsDisplayed()
-        assertPassedTextIsDisplayed()
-
-        pressBack()
-        assertSecondScreenIsDisplayed()
-        assertInputHasText()
-        pressBack()
-        assertFirstScreenIsDisplayed()
-        pressBack()
-        assertDemoSelectionScreenIsDisplayed()
-    }
+    fun generalFlow() = generalFlow(middleBlock = {})
 
     @Test
-    fun normalFlow_recreateActivity() = composeRule.viewModelsScreenScope {
-        performToSecondScreenButtonClick()
-        assertSecondScreenIsDisplayed()
-        performTextInput()
-        performToThirdScreenButtonClick()
-        assertThirdScreenIsDisplayed()
-        assertPassedTextIsDisplayed()
-
+    fun generalFlow_recreateActivity() = generalFlow(middleBlock = {
         recreateActivity()
-        assertThirdScreenIsDisplayed()
-        assertPassedTextIsDisplayed()
+    })
 
-        pressBack()
-        assertSecondScreenIsDisplayed()
-        assertInputHasText()
-        pressBack()
-        assertFirstScreenIsDisplayed()
-        pressBack()
-        assertDemoSelectionScreenIsDisplayed()
-    }
+    @Test
+    fun generalFlow_recreateActivityAndViewModels() = generalFlow(middleBlock = {
+        recreateActivityAndViewModels()
+    })
 
     @Test
     fun textInputIsClearedWhenEntryIsRemoved() = composeRule.viewModelsScreenScope {

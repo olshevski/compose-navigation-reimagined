@@ -64,46 +64,40 @@ class BottomNavigationScreenTest {
         assertHomeScreenIsDisplayed()
     }
 
+    private fun generalFlow(middleBlock: BottomNavigationScreenScope.() -> Unit) =
+        composeRule.bottomNavigationScreenScope {
+            performTabClick(BottomNavigationDestination.SavedState)
+            performTabClick(BottomNavigationDestination.NestedNavigation)
+            performToScreenBButtonClick()
+            performTabClick(BottomNavigationDestination.Home)
+
+            middleBlock()
+            assertHomeScreenIsDisplayed()
+
+            pressBack()
+            assertNestedNavigationScreenBIsDisplayed()
+            pressBack()
+            assertNestedNavigationScreenAIsDisplayed()
+            pressBack()
+            assertSavedStateScreenIsDisplayed()
+            pressBack()
+            assertHomeScreenIsDisplayed()
+            pressBack()
+            assertDemoSelectionScreenIsDisplayed()
+        }
+
     @Test
-    fun normalFlow() = composeRule.bottomNavigationScreenScope {
-        performTabClick(BottomNavigationDestination.SavedState)
-        performTabClick(BottomNavigationDestination.NestedNavigation)
-        performToScreenBButtonClick()
-        performTabClick(BottomNavigationDestination.Home)
-
-        pressBack()
-        assertNestedNavigationScreenBIsDisplayed()
-        pressBack()
-        assertNestedNavigationScreenAIsDisplayed()
-        pressBack()
-        assertSavedStateScreenIsDisplayed()
-        pressBack()
-        assertHomeScreenIsDisplayed()
-        pressBack()
-        assertDemoSelectionScreenIsDisplayed()
-    }
+    fun generalFlow() = generalFlow(middleBlock = {})
 
     @Test
-    fun normalFlow_recreateActivity() = composeRule.bottomNavigationScreenScope {
-        performTabClick(BottomNavigationDestination.SavedState)
-        performTabClick(BottomNavigationDestination.NestedNavigation)
-        performToScreenBButtonClick()
-        performTabClick(BottomNavigationDestination.Home)
-
+    fun generalFlow_recreateActivity() = generalFlow(middleBlock = {
         recreateActivity()
-        assertHomeScreenIsDisplayed()
+    })
 
-        pressBack()
-        assertNestedNavigationScreenBIsDisplayed()
-        pressBack()
-        assertNestedNavigationScreenAIsDisplayed()
-        pressBack()
-        assertSavedStateScreenIsDisplayed()
-        pressBack()
-        assertHomeScreenIsDisplayed()
-        pressBack()
-        assertDemoSelectionScreenIsDisplayed()
-    }
+    @Test
+    fun generalFlow_recreateActivityAndViewModels() = generalFlow(middleBlock = {
+        recreateActivityAndViewModels()
+    })
 
     @Test
     fun nonRepeatingEntries() = composeRule.bottomNavigationScreenScope {
