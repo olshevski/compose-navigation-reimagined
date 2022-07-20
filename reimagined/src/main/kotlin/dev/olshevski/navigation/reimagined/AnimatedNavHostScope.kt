@@ -2,9 +2,9 @@ package dev.olshevski.navigation.reimagined
 
 import androidx.compose.animation.AnimatedVisibilityScope
 
-interface AnimatedNavHostScope<T> : NavHostScope<T>, AnimatedVisibilityScope
+interface AnimatedNavHostScope<out T> : NavHostScope<T>, AnimatedVisibilityScope
 
-internal class AnimatedNavHostScopeImpl<T>(
+internal class AnimatedNavHostScopeImpl<out T>(
     backstack: NavBackstack<T>,
     currentNavHostEntry: NavHostEntry<T>,
     navHostStateScope: NavHostStateScope<T>,

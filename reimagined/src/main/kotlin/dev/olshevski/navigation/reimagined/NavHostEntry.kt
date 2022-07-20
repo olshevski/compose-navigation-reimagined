@@ -24,7 +24,7 @@ import kotlin.properties.Delegates
  * Wraps around [NavEntry] and serves as an owner of its associated components ([Lifecycle],
  * [SavedStateRegistry], [ViewModelStore]).
  */
-class NavHostEntry<T>(
+class NavHostEntry<out T>(
     private val entry: NavEntry<T>,
     private val saveableStateHolder: SaveableStateHolder,
     private val viewModelStore: ViewModelStore,

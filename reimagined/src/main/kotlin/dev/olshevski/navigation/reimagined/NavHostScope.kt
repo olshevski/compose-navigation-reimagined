@@ -1,6 +1,6 @@
 package dev.olshevski.navigation.reimagined
 
-interface NavHostScope<T> {
+interface NavHostScope<out T> {
 
     val backstack: NavBackstack<T>
 
@@ -10,7 +10,7 @@ interface NavHostScope<T> {
 
 }
 
-internal open class NavHostScopeImpl<T>(
+internal open class NavHostScopeImpl<out T>(
     override val backstack: NavBackstack<T>,
     override val currentNavHostEntry: NavHostEntry<T>,
     private val navHostStateScope: NavHostStateScope<T>
