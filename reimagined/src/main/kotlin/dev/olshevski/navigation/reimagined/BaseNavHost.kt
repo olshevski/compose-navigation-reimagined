@@ -7,14 +7,14 @@ import androidx.compose.runtime.key
 @Composable
 internal fun <T> BaseNavHost(
     backstack: NavBackstack<T>,
-    entryTransition: @Composable (NavHostEntry<T>?) -> NavHostEntry<T>?
+    entryTransition: @Composable NavHostStateScope<T>.(NavHostEntry<T>?) -> NavHostEntry<T>?
 ) {
     // In the future, it may be convenient to make possible to create NavHostState externally,
     // so it is hoistable. But I need to see reasonable use-cases for this.
     val navHostState = rememberNavHostState(backstack)
 
     val currentNavHostEntry = key(navHostState.id) {
-        entryTransition(navHostState.lastNavHostEntry)
+        navHostState.entryTransition(navHostState.lastNavHostEntry)
 
         // For NavHost: currentNavHostEntry is the same as lastNavHostEntry.
         //

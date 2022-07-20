@@ -31,7 +31,7 @@ import androidx.compose.runtime.key
 fun <T> NavHost(
     controller: NavController<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable (T) -> Unit
+    contentSelector: @Composable NavHostScope<T>.(T) -> Unit
 ) = NavHost(
     backstack = controller.backstack,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
@@ -65,12 +65,16 @@ fun <T> NavHost(
 fun <T> NavHost(
     backstack: NavBackstack<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable (T) -> Unit
+    contentSelector: @Composable NavHostScope<T>.(T) -> Unit
 ) = BaseNavHost(backstack) { lastNavHostEntry ->
     key(lastNavHostEntry?.id) {
         if (lastNavHostEntry != null) {
             lastNavHostEntry.ComponentProvider {
-                contentSelector(lastNavHostEntry.destination)
+                NavHostScopeImpl(
+                    backstack = backstack,
+                    currentNavHostEntry = lastNavHostEntry,
+                    navHostStateScope = this@BaseNavHost
+                ).contentSelector(lastNavHostEntry.destination)
             }
         } else {
             emptyBackstackPlaceholder()

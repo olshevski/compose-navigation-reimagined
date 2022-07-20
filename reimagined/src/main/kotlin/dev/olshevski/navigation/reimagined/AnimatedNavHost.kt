@@ -69,7 +69,7 @@ fun <T> AnimatedNavHost(
     controller: NavController<T>,
     transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
-    contentSelector: @Composable AnimatedVisibilityScope.(T) -> Unit
+    contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
 ) = AnimatedNavHost(
     backstack = controller.backstack,
     transitionSpec = transitionSpec,
@@ -108,7 +108,7 @@ fun <T> AnimatedNavHost(
     backstack: NavBackstack<T>,
     transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
-    contentSelector: @Composable AnimatedVisibilityScope.(T) -> Unit
+    contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
 ) = BaseNavHost(backstack) { lastNavHostEntry ->
     val transition = updateTransition(
         targetState = lastNavHostEntry,
@@ -122,7 +122,12 @@ fun <T> AnimatedNavHost(
     ) { entry ->
         if (entry != null) {
             entry.ComponentProvider {
-                contentSelector(entry.destination)
+                AnimatedNavHostScopeImpl(
+                    backstack = backstack,
+                    currentNavHostEntry = entry,
+                    navHostStateScope = this@BaseNavHost,
+                    animatedVisibilityScope = this@AnimatedContent
+                ).contentSelector(entry.destination)
             }
         } else {
             emptyBackstackPlaceholder()

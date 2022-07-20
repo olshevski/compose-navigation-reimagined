@@ -42,7 +42,7 @@ private val NoneTransitionSpec = AnimatedNavHostTransitionSpec<Any?> { _, _, _ -
 fun <T> DialogNavHost(
     controller: NavController<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable (T) -> Unit
+    contentSelector: @Composable NavHostScope<T>.(T) -> Unit
 ) = DialogNavHost(
     backstack = controller.backstack,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
@@ -78,7 +78,7 @@ fun <T> DialogNavHost(
 fun <T> DialogNavHost(
     backstack: NavBackstack<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable (T) -> Unit
+    contentSelector: @Composable NavHostScope<T>.(T) -> Unit
 ) = AnimatedNavHost(
     backstack = backstack,
     transitionSpec = NoneTransitionSpec,

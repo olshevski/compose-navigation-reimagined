@@ -94,7 +94,7 @@ internal class NavHostState<T>(
     private val navHostLifecycle: Lifecycle,
     private val navHostSavedStateRegistry: SavedStateRegistry,
     private val application: Application?
-) {
+) : NavHostStateScope<T> {
 
     var backstack by mutableStateOf(initialBackstack)
 
@@ -239,6 +239,8 @@ internal class NavHostState<T>(
             it.navHostLifecycleState = Lifecycle.State.DESTROYED
         }
     }
+
+    override fun getNavHostEntry(navId: NavId): NavHostEntry<T>? = navHostEntries[navId]
 
 }
 
