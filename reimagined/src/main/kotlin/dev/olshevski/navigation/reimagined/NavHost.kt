@@ -3,6 +3,7 @@ package dev.olshevski.navigation.reimagined
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 
 /**
  * A basic navigation host that selects UI for every destination and provides necessary
@@ -70,11 +71,14 @@ fun <T> NavHost(
     key(lastNavHostEntry?.id) {
         if (lastNavHostEntry != null) {
             lastNavHostEntry.ComponentProvider {
-                NavHostScopeImpl(
-                    backstack = backstack,
-                    currentNavHostEntry = lastNavHostEntry,
-                    navHostStateScope = this@BaseNavHost
-                ).contentSelector(lastNavHostEntry.destination)
+                val scope = remember(backstack, lastNavHostEntry, this@BaseNavHost) {
+                    NavHostScopeImpl(
+                        backstack = backstack,
+                        currentNavHostEntry = lastNavHostEntry,
+                        navHostStateScope = this@BaseNavHost
+                    )
+                }
+                scope.contentSelector(lastNavHostEntry.destination)
             }
         } else {
             emptyBackstackPlaceholder()

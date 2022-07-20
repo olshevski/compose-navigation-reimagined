@@ -14,6 +14,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.with
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 
 @ExperimentalAnimationApi
 private val CrossfadeTransitionSpec = object : AnimatedNavHostTransitionSpec<Any?> {
@@ -122,12 +123,15 @@ fun <T> AnimatedNavHost(
     ) { entry ->
         if (entry != null) {
             entry.ComponentProvider {
-                AnimatedNavHostScopeImpl(
-                    backstack = backstack,
-                    currentNavHostEntry = entry,
-                    navHostStateScope = this@BaseNavHost,
-                    animatedVisibilityScope = this@AnimatedContent
-                ).contentSelector(entry.destination)
+                val scope = remember(backstack, entry, this@BaseNavHost, this@AnimatedContent) {
+                    AnimatedNavHostScopeImpl(
+                        backstack = backstack,
+                        currentNavHostEntry = entry,
+                        navHostStateScope = this@BaseNavHost,
+                        animatedVisibilityScope = this@AnimatedContent
+                    )
+                }
+                scope.contentSelector(entry.destination)
             }
         } else {
             emptyBackstackPlaceholder()
@@ -145,18 +149,18 @@ private fun <T> AnimatedContentScope<NavHostEntry<T>?>.selectTransition(
     // For some reason AnimatedContent calls for transitionSpec even when created initially
     // which doesn't make much sense.
     return if (initialState?.id != targetState?.id) {
-        val animatedContentScope = AnimatedNavHostTransitionScopeImpl(this)
+        val scope = AnimatedNavHostTransitionScopeImpl(this)
         with(transitionSpec) {
             when {
-                initialState == null -> animatedContentScope.fromEmptyBackstack(
+                initialState == null -> scope.fromEmptyBackstack(
                     action = action,
                     to = targetState!!.destination
                 )
-                targetState == null -> animatedContentScope.toEmptyBackstack(
+                targetState == null -> scope.toEmptyBackstack(
                     action = action,
                     from = initialState!!.destination
                 )
-                else -> animatedContentScope.getContentTransform(
+                else -> scope.getContentTransform(
                     action = action,
                     from = initialState!!.destination,
                     to = targetState!!.destination
