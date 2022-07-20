@@ -26,9 +26,9 @@ import androidx.savedstate.SavedStateRegistry
 import kotlinx.parcelize.Parcelize
 
 @Composable
-internal fun <T> rememberNavComponentHolder(
+internal fun <T> rememberNavHostState(
     backstack: NavBackstack<T>
-): NavComponentHolder<T> {
+): NavHostState<T> {
     val saveableStateHolder = rememberSaveableStateHolder()
     val viewModelStoreOwner = LocalViewModelStoreOwner.current!!
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -39,12 +39,12 @@ internal fun <T> rememberNavComponentHolder(
 
     return rememberSaveable(
         saver = listSaver(
-            save = { listOf(it.id, it.componentEntryIds.toTypedArray()) },
+            save = { listOf(it.id, it.navHostEntryIds.toTypedArray()) },
             restore = { restored ->
                 @Suppress("UNCHECKED_CAST")
-                NavComponentHolder(
+                NavHostState(
                     id = restored[0] as NavHolderId,
-                    restoredComponentEntryIds = (restored[1] as Array<Parcelable>)
+                    restoredNavHostEntryIds = (restored[1] as Array<Parcelable>)
                         .map { it as NavId }
                         .toSet(),
                     initialBackstack = backstack,
@@ -57,7 +57,7 @@ internal fun <T> rememberNavComponentHolder(
             }
         )
     ) {
-        NavComponentHolder(
+        NavHostState(
             initialBackstack = backstack,
             saveableStateHolder = saveableStateHolder,
             navHostViewModelStoreOwner = viewModelStoreOwner,
@@ -85,9 +85,9 @@ internal value class NavHolderId(private val id: NavId = NavId()) : Parcelable {
 /**
  * Stores and manages all components (lifecycles, saved states, view models).
  */
-internal class NavComponentHolder<T>(
+internal class NavHostState<T>(
     val id: NavHolderId = NavHolderId(),
-    restoredComponentEntryIds: Set<NavId> = emptySet(),
+    restoredNavHostEntryIds: Set<NavId> = emptySet(),
     initialBackstack: NavBackstack<T>,
     private val saveableStateHolder: SaveableStateHolder,
     navHostViewModelStoreOwner: ViewModelStoreOwner,
@@ -107,9 +107,9 @@ internal class NavComponentHolder<T>(
 
     private var navHostLifecycleState: Lifecycle.State = Lifecycle.State.INITIALIZED
 
-    private val componentEntries = mutableMapOf<NavId, NavComponentEntry<T>>()
+    private val navHostEntries = mutableMapOf<NavId, NavHostEntry<T>>()
 
-    val componentEntryIds get() = componentEntries.keys as Set<NavId>
+    val navHostEntryIds get() = navHostEntries.keys as Set<NavId>
 
     init {
         // We need to restore all previous component entries, which in return restore their own
@@ -117,48 +117,48 @@ internal class NavComponentHolder<T>(
 
         // Do not restore components that are no longer present in the backstack.
         // Remove their associated components instead.
-        restoredComponentEntryIds.filter { it !in entryIds }.forEach { removeComponents(it) }
+        restoredNavHostEntryIds.filter { it !in entryIds }.forEach { removeComponents(it) }
 
         // Everything else is recreated.
-        backstack.entries.filter { it.id in restoredComponentEntryIds }.forEach { entry ->
-            componentEntries.getOrPut(entry.id) {
-                newComponentEntry(entry)
+        backstack.entries.filter { it.id in restoredNavHostEntryIds }.forEach { entry ->
+            navHostEntries.getOrPut(entry.id) {
+                newNavHostEntry(entry)
             }
         }
     }
 
     private val lifecycleEventObserver = LifecycleEventObserver { _, event ->
         navHostLifecycleState = event.targetState
-        componentEntries.values.forEach {
+        navHostEntries.values.forEach {
             it.navHostLifecycleState = navHostLifecycleState
         }
     }
 
-    val lastComponentEntry by derivedStateOf {
+    val lastNavHostEntry by derivedStateOf {
         backstack.entries.lastOrNull()?.let { lastEntry ->
-            componentEntries.getOrPut(lastEntry.id) {
-                newComponentEntry(lastEntry)
+            navHostEntries.getOrPut(lastEntry.id) {
+                newNavHostEntry(lastEntry)
             }
         }
     }.also { state ->
         // this block will be executed only when a new distinct entry is set
-        val newLastComponentEntry = state.value
+        val newLastNavHostEntry = state.value
 
         // Before transition:
-        // - all entries except lastComponentEntry are capped at STARTED state
-        // - lastComponentEntry gets promoted to STARTED state
+        // - all entries except lastNavHostEntry are capped at STARTED state
+        // - lastNavHostEntry gets promoted to STARTED state
         //
         // Further state changes will be done when transition finishes.
-        componentEntries.values
-            .filter { it != newLastComponentEntry }
+        navHostEntries.values
+            .filter { it != newLastNavHostEntry }
             .forEach {
                 it.maxLifecycleState = minOf(it.maxLifecycleState, Lifecycle.State.STARTED)
             }
-        newLastComponentEntry?.maxLifecycleState = Lifecycle.State.STARTED
+        newLastNavHostEntry?.maxLifecycleState = Lifecycle.State.STARTED
     }
 
-    private fun newComponentEntry(entry: NavEntry<T>): NavComponentEntry<T> {
-        val componentEntry = NavComponentEntry(
+    private fun newNavHostEntry(entry: NavEntry<T>): NavHostEntry<T> {
+        val navHostEntry = NavHostEntry(
             entry = entry,
             saveableStateHolder = saveableStateHolder,
             viewModelStore = viewModelStoreProvider.getViewModelStore(entry.id),
@@ -166,28 +166,28 @@ internal class NavComponentHolder<T>(
         )
 
         // state should be restored only in INITIALIZED state
-        savedStateKey(componentEntry.id).let { key ->
+        savedStateKey(navHostEntry.id).let { key ->
             navHostSavedStateRegistry.consumeRestoredStateForKey(key).let { savedState ->
-                componentEntry.restoreState(savedState ?: Bundle())
+                navHostEntry.restoreState(savedState ?: Bundle())
             }
             navHostSavedStateRegistry.unregisterSavedStateProvider(key)
             navHostSavedStateRegistry.registerSavedStateProvider(
                 key,
-                componentEntry.savedStateProvider
+                navHostEntry.savedStateProvider
             )
         }
 
         // apply actual states only after state restoration
-        componentEntry.navHostLifecycleState = navHostLifecycleState
-        componentEntry.maxLifecycleState = Lifecycle.State.STARTED
+        navHostEntry.navHostLifecycleState = navHostLifecycleState
+        navHostEntry.maxLifecycleState = Lifecycle.State.STARTED
 
-        return componentEntry
+        return navHostEntry
     }
 
     private fun savedStateKey(entryId: NavId) = "$PACKAGE_KEY:$id:$entryId"
 
     fun onCreate() {
-        cleanupComponentEntries()
+        cleanupNavHostEntries()
 
         // When created there is no transition, and we need to apply proper lifecycle states
         // immediately.
@@ -197,7 +197,7 @@ internal class NavComponentHolder<T>(
     }
 
     fun onTransitionFinish() {
-        cleanupComponentEntries()
+        cleanupNavHostEntries()
         setPostTransitionLifecycleStates()
         // https://www.youtube.com/watch?v=cwyTleTL06Y
     }
@@ -205,10 +205,10 @@ internal class NavComponentHolder<T>(
     /**
      * Remove entries that are no longer in the backstack.
      */
-    private fun cleanupComponentEntries() {
-        componentEntries.keys.filter { it !in entryIds }.forEach { entryId ->
-            componentEntries.remove(entryId)?.let { componentEntry ->
-                componentEntry.maxLifecycleState = Lifecycle.State.DESTROYED
+    private fun cleanupNavHostEntries() {
+        navHostEntries.keys.filter { it !in entryIds }.forEach { entryId ->
+            navHostEntries.remove(entryId)?.let { navHostEntry ->
+                navHostEntry.maxLifecycleState = Lifecycle.State.DESTROYED
             }
             removeComponents(entryId)
         }
@@ -225,17 +225,17 @@ internal class NavComponentHolder<T>(
 
     private fun setPostTransitionLifecycleStates() {
         // last entry is resumed, everything else is stopped
-        componentEntries.values
-            .filter { it != lastComponentEntry }
+        navHostEntries.values
+            .filter { it != lastNavHostEntry }
             .forEach {
                 it.maxLifecycleState = Lifecycle.State.CREATED
             }
-        lastComponentEntry?.maxLifecycleState = Lifecycle.State.RESUMED
+        lastNavHostEntry?.maxLifecycleState = Lifecycle.State.RESUMED
     }
 
     fun onDispose() {
         navHostLifecycle.removeObserver(lifecycleEventObserver)
-        componentEntries.values.forEach {
+        navHostEntries.values.forEach {
             it.navHostLifecycleState = Lifecycle.State.DESTROYED
         }
     }

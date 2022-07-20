@@ -13,8 +13,8 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.internal.lifecycle.HiltViewModelFactory
-import dev.olshevski.navigation.reimagined.NavComponentEntry
 import dev.olshevski.navigation.reimagined.NavController
+import dev.olshevski.navigation.reimagined.NavHostEntry
 
 /*
  All code in this file is taken from androidx.hilt:hilt-navigation-compose:1.0.0 and adapter
@@ -49,10 +49,10 @@ inline fun <reified VM : ViewModel> hiltViewModel(
 internal fun createHiltViewModelFactory(
     viewModelStoreOwner: ViewModelStoreOwner,
     defaultArguments: Bundle?
-): ViewModelProvider.Factory? = if (viewModelStoreOwner is NavComponentEntry<*>) {
+): ViewModelProvider.Factory? = if (viewModelStoreOwner is NavHostEntry<*>) {
     createHiltViewModelFactory(
         context = LocalContext.current,
-        navComponentEntry = viewModelStoreOwner,
+        navHostEntry = viewModelStoreOwner,
         defaultArguments = defaultArguments
     )
 } else {
@@ -64,16 +64,16 @@ internal fun createHiltViewModelFactory(
 /**
  * Creates a [ViewModelProvider.Factory] to get
  * [HiltViewModel](https://dagger.dev/api/latest/dagger/hilt/android/lifecycle/HiltViewModel)
- * -annotated `ViewModel` from a [NavComponentEntry].
+ * -annotated `ViewModel` from a [NavHostEntry].
  *
  * @param context the activity context
- * @param navComponentEntry the navigation back stack entry
+ * @param navHostEntry the navigation back stack entry
  * @return the factory
  * @throws IllegalStateException if the context given is not an activity
  */
 private fun createHiltViewModelFactory(
     context: Context,
-    navComponentEntry: NavComponentEntry<*>,
+    navHostEntry: NavHostEntry<*>,
     defaultArguments: Bundle?
 ): ViewModelProvider.Factory {
     val activity = context.let {
@@ -86,13 +86,13 @@ private fun createHiltViewModelFactory(
         }
         throw IllegalStateException(
             "Expected an activity context for creating a HiltViewModelFactory for a " +
-                    "NavComponentEntry but instead found: $ctx"
+                    "NavHostEntry but instead found: $ctx"
         )
     }
     return HiltViewModelFactory.createInternal(
         activity,
-        navComponentEntry,
+        navHostEntry,
         defaultArguments,
-        navComponentEntry.defaultViewModelProviderFactory,
+        navHostEntry.defaultViewModelProviderFactory,
     )
 }

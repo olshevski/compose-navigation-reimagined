@@ -109,9 +109,9 @@ fun <T> AnimatedNavHost(
     transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedVisibilityScope.(T) -> Unit
-) = BaseNavHost(backstack) { lastComponentEntry ->
+) = BaseNavHost(backstack) { lastNavHostEntry ->
     val transition = updateTransition(
-        targetState = lastComponentEntry,
+        targetState = lastNavHostEntry,
         label = "AnimatedNavHost"
     )
     transition.AnimatedContent(
@@ -132,7 +132,7 @@ fun <T> AnimatedNavHost(
 }
 
 @ExperimentalAnimationApi
-private fun <T> AnimatedContentScope<NavComponentEntry<T>?>.selectTransition(
+private fun <T> AnimatedContentScope<NavHostEntry<T>?>.selectTransition(
     transitionSpec: AnimatedNavHostTransitionSpec<T>,
     action: NavAction,
 ): ContentTransform {

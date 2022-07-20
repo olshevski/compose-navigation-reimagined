@@ -7,32 +7,32 @@ import androidx.compose.runtime.key
 @Composable
 internal fun <T> BaseNavHost(
     backstack: NavBackstack<T>,
-    entryTransition: @Composable (NavComponentEntry<T>?) -> NavComponentEntry<T>?
+    entryTransition: @Composable (NavHostEntry<T>?) -> NavHostEntry<T>?
 ) {
-    // In future, it may be convenient to make possible to create ComponentHolder externally,
+    // In the future, it may be convenient to make possible to create NavHostState externally,
     // so it is hoistable. But I need to see reasonable use-cases for this.
-    val componentHolder = rememberNavComponentHolder(backstack)
+    val navHostState = rememberNavHostState(backstack)
 
-    val currentComponentEntry = key(componentHolder.id) {
-        entryTransition(componentHolder.lastComponentEntry)
+    val currentNavHostEntry = key(navHostState.id) {
+        entryTransition(navHostState.lastNavHostEntry)
 
-        // For NavHost: currentComponentEntry is the same as lastComponentEntry.
+        // For NavHost: currentNavHostEntry is the same as lastNavHostEntry.
         //
-        // For AnimatedNavHost: currentComponentEntry is the entry in transition. When transition
-        // finishes, currentComponentEntry will become the same as currentComponentEntry.
+        // For AnimatedNavHost: currentNavHostEntry is the entry in transition. When transition
+        // finishes, currentNavHostEntry will become the same as lastNavHostEntry.
     }
 
-    DisposableEffect(componentHolder, currentComponentEntry) {
+    DisposableEffect(navHostState, currentNavHostEntry) {
         onDispose {
             // should be called only in onDispose, because it affects lifecycle events
-            componentHolder.onTransitionFinish()
+            navHostState.onTransitionFinish()
         }
     }
 
-    DisposableEffect(componentHolder) {
-        componentHolder.onCreate()
+    DisposableEffect(navHostState) {
+        navHostState.onCreate()
         onDispose {
-            componentHolder.onDispose()
+            navHostState.onDispose()
         }
     }
 }

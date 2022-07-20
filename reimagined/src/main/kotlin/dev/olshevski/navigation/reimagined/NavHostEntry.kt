@@ -24,7 +24,7 @@ import kotlin.properties.Delegates
  * Wraps around [NavEntry] and serves as an owner of its associated components ([Lifecycle],
  * [SavedStateRegistry], [ViewModelStore]).
  */
-class NavComponentEntry<T>(
+class NavHostEntry<T>(
     private val entry: NavEntry<T>,
     private val saveableStateHolder: SaveableStateHolder,
     private val viewModelStore: ViewModelStore,
@@ -107,7 +107,7 @@ class NavComponentEntry<T>(
 }
 
 @Composable
-internal fun <T> NavComponentEntry<T>.ComponentProvider(
+internal fun <T> NavHostEntry<T>.ComponentProvider(
     content: @Composable () -> Unit
 ) = CompositionLocalProvider(
     LocalViewModelStoreOwner provides this,
@@ -116,3 +116,6 @@ internal fun <T> NavComponentEntry<T>.ComponentProvider(
 ) {
     this.SaveableStateProvider(content)
 }
+
+@Deprecated(message = "Renamed to NavHostEntry", replaceWith = ReplaceWith("NavHostEntry<T>"))
+typealias NavComponentEntry<T> = NavHostEntry<T>
