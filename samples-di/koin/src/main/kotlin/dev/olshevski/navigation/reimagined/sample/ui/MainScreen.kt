@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 package dev.olshevski.navigation.reimagined.sample.ui
 
 import androidx.compose.material.Button
@@ -76,5 +78,6 @@ private fun ThirdScreen(
 ) = ContentLayout(
     title = "Third screen text=$text"
 ) {
+    @Suppress("DEPRECATION")
     val viewModel = getStateViewModel<ThirdViewModel> { parametersOf(text) }
 }

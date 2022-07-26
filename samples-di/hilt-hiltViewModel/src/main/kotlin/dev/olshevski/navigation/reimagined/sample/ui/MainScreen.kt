@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 package dev.olshevski.navigation.reimagined.sample.ui
 
 import androidx.compose.material.Button

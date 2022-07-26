@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_PARAMETER")
+
 package dev.olshevski.navigation.reimagined.sample.ui
 
 import android.util.Log
