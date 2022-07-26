@@ -40,19 +40,19 @@ inline fun <reified VM : ViewModel> hiltViewModel(
     },
     defaultArguments: Bundle? = null
 ): VM {
-    val factory = createHiltViewModelFactory(viewModelStoreOwner, defaultArguments)
+    val factory = getHiltViewModelFactory(viewModelStoreOwner, defaultArguments)
     return viewModel(viewModelStoreOwner, factory = factory)
 }
 
 @Composable
 @PublishedApi
-internal fun createHiltViewModelFactory(
+internal fun getHiltViewModelFactory(
     viewModelStoreOwner: ViewModelStoreOwner,
     defaultArguments: Bundle?
 ): ViewModelProvider.Factory? = if (viewModelStoreOwner is NavHostEntry<*>) {
     createHiltViewModelFactory(
         context = LocalContext.current,
-        navHostEntry = viewModelStoreOwner,
+        hostEntry = viewModelStoreOwner,
         defaultArguments = defaultArguments
     )
 } else {
@@ -67,13 +67,13 @@ internal fun createHiltViewModelFactory(
  * -annotated `ViewModel` from a [NavHostEntry].
  *
  * @param context the activity context
- * @param navHostEntry the navigation back stack entry
+ * @param hostEntry the navigation back stack entry
  * @return the factory
  * @throws IllegalStateException if the context given is not an activity
  */
 private fun createHiltViewModelFactory(
     context: Context,
-    navHostEntry: NavHostEntry<*>,
+    hostEntry: NavHostEntry<*>,
     defaultArguments: Bundle?
 ): ViewModelProvider.Factory {
     val activity = context.let {
@@ -91,8 +91,8 @@ private fun createHiltViewModelFactory(
     }
     return HiltViewModelFactory.createInternal(
         activity,
-        navHostEntry,
+        hostEntry,
         defaultArguments,
-        navHostEntry.defaultViewModelProviderFactory,
+        hostEntry.defaultViewModelProviderFactory,
     )
 }

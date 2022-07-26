@@ -4,24 +4,23 @@ interface NavHostScope<out T> {
 
     val backstack: NavBackstack<T>
 
-    val currentNavHostEntry: NavHostEntry<T>
+    val currentHostEntry: NavHostEntry<T>
 
-    fun getNavHostEntry(navId: NavId): NavHostEntry<T>?
+    fun getHostEntry(id: NavId): NavHostEntry<T>?
 
 }
 
 internal open class NavHostScopeImpl<out T>(
     override val backstack: NavBackstack<T>,
-    override val currentNavHostEntry: NavHostEntry<T>,
-    private val navHostStateScope: NavHostStateScope<T>
+    override val currentHostEntry: NavHostEntry<T>,
+    private val hostStateScope: NavHostStateScope<T>
 ) : NavHostScope<T> {
 
-    override fun getNavHostEntry(navId: NavId): NavHostEntry<T>? =
-        navHostStateScope.getNavHostEntry(navId)
+    override fun getHostEntry(id: NavId): NavHostEntry<T>? = hostStateScope.getHostEntry(id)
 
 }
 
-fun <T> NavHostScope<T>.findNavHostEntry(
+fun <T> NavHostScope<T>.findHostEntry(
     match: Match = Match.Last,
     predicate: (T) -> Boolean
 ): NavHostEntry<T>? {
@@ -32,6 +31,6 @@ fun <T> NavHostScope<T>.findNavHostEntry(
             Match.Last -> findLast(entryPredicate)
         }
     }?.let { entry ->
-        getNavHostEntry(entry.id)
+        getHostEntry(entry.id)
     }
 }

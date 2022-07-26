@@ -48,7 +48,7 @@ class NavHostEntry<out T>(
 
     private val lifecycleRegistry = LifecycleRegistry(this)
 
-    internal var navHostLifecycleState by Delegates.observable(Lifecycle.State.INITIALIZED) { _, _, _ ->
+    internal var hostLifecycleState by Delegates.observable(Lifecycle.State.INITIALIZED) { _, _, _ ->
         updateLifecycleRegistry()
     }
 
@@ -74,7 +74,7 @@ class NavHostEntry<out T>(
 
     private fun updateLifecycleRegistry() {
         val currentState = lifecycleRegistry.currentState
-        val newState = minOf(maxLifecycleState, navHostLifecycleState)
+        val newState = minOf(maxLifecycleState, hostLifecycleState)
 
         if (currentState != newState) {
             if (currentState == Lifecycle.State.DESTROYED) {

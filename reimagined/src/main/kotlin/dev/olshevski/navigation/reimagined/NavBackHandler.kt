@@ -7,7 +7,7 @@ import androidx.lifecycle.Lifecycle
 /**
  * Convenient [BackHandler] implementation that supports the most basic logic of back navigation.
  *
- * The underlying [BackHandler] will be kept enabled while the [navController] contains
+ * The underlying [BackHandler] will be kept enabled while the [controller] contains
  * more than one entry in its backstack. The back button press will cause a single
  * [NavController.pop]. This way the back handling may be delegated to upper `BackHandlers`
  * when there are no more items to pop off without leaving the backstack completely empty.
@@ -24,9 +24,9 @@ import androidx.lifecycle.Lifecycle
  */
 @Composable
 fun <T> NavBackHandler(
-    navController: NavController<T>
+    controller: NavController<T>
 ) {
-    BackHandler(enabled = navController.backstack.entries.size > 1) {
-        navController.pop()
+    BackHandler(enabled = controller.backstack.entries.size > 1) {
+        controller.pop()
     }
 }

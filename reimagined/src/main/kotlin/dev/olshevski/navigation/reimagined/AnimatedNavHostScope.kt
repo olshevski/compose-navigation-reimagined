@@ -6,11 +6,11 @@ interface AnimatedNavHostScope<out T> : NavHostScope<T>, AnimatedVisibilityScope
 
 internal class AnimatedNavHostScopeImpl<out T>(
     backstack: NavBackstack<T>,
-    currentNavHostEntry: NavHostEntry<T>,
-    navHostStateScope: NavHostStateScope<T>,
+    currentHostEntry: NavHostEntry<T>,
+    hostStateScope: NavHostStateScope<T>,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) : NavHostScopeImpl<T>(
     backstack = backstack,
-    currentNavHostEntry = currentNavHostEntry,
-    navHostStateScope = navHostStateScope
+    currentHostEntry = currentHostEntry,
+    hostStateScope = hostStateScope
 ), AnimatedNavHostScope<T>, AnimatedVisibilityScope by animatedVisibilityScope

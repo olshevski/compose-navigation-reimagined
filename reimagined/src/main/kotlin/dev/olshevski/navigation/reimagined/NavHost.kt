@@ -67,22 +67,22 @@ fun <T> NavHost(
     backstack: NavBackstack<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable NavHostScope<T>.(T) -> Unit
-) = BaseNavHost(backstack) { lastNavHostEntry ->
-    key(lastNavHostEntry?.id) {
-        if (lastNavHostEntry != null) {
-            lastNavHostEntry.ComponentProvider {
-                val scope = remember(backstack, lastNavHostEntry, this@BaseNavHost) {
+) = BaseNavHost(backstack) { lastHostEntry ->
+    key(lastHostEntry?.id) {
+        if (lastHostEntry != null) {
+            lastHostEntry.ComponentProvider {
+                val scope = remember(backstack, lastHostEntry, this@BaseNavHost) {
                     NavHostScopeImpl(
                         backstack = backstack,
-                        currentNavHostEntry = lastNavHostEntry,
-                        navHostStateScope = this@BaseNavHost
+                        currentHostEntry = lastHostEntry,
+                        hostStateScope = this@BaseNavHost
                     )
                 }
-                scope.contentSelector(lastNavHostEntry.destination)
+                scope.contentSelector(lastHostEntry.destination)
             }
         } else {
             emptyBackstackPlaceholder()
         }
     }
-    lastNavHostEntry
+    lastHostEntry
 }
