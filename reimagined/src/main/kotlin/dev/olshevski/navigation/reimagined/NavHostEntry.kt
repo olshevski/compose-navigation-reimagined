@@ -4,6 +4,7 @@ import android.app.Application
 import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSavedStateRegistryOwner
@@ -24,6 +25,7 @@ import kotlin.properties.Delegates
  * Wraps around [NavEntry] and serves as an owner of its associated components ([Lifecycle],
  * [SavedStateRegistry], [ViewModelStore]).
  */
+@Stable
 class NavHostEntry<out T>(
     private val entry: NavEntry<T>,
     private val saveableStateHolder: SaveableStateHolder,

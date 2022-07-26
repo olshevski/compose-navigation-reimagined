@@ -1,6 +1,7 @@
 package dev.olshevski.navigation.reimagined
 
 import android.os.Parcelable
+import androidx.compose.runtime.Stable
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -8,13 +9,15 @@ import kotlinx.parcelize.Parcelize
  * [NavController.setNewBackstack] and then used in
  * [AnimatedNavHostTransitionSpec.getContentTransform] to select some animation.
  *
- * May be extended to create more action types.
+ * May be extended to create more action types. The derived classes must be [Stable].
  */
+@Stable
 abstract class NavAction : Parcelable {
 
     /**
      * The default action for every new instance of [NavController].
      */
+    @Stable
     @Parcelize
     object Idle : NavAction() {
         override fun toString() = this::class.simpleName!!
@@ -24,6 +27,7 @@ abstract class NavAction : Parcelable {
      * An action type that tells [NavController.navigate] or [NavController.moveToTop] was
      * the last successful call.
      */
+    @Stable
     @Parcelize
     object Navigate : NavAction() {
         override fun toString() = this::class.simpleName!!
@@ -33,6 +37,7 @@ abstract class NavAction : Parcelable {
      * An action type that tells [NavController.replaceLast], [NavController.replaceAll] or
      * [NavController.replaceUpTo] was the last successful call.
      */
+    @Stable
     @Parcelize
     object Replace : NavAction() {
         override fun toString() = this::class.simpleName!!
@@ -42,6 +47,7 @@ abstract class NavAction : Parcelable {
      * An action type that tells [NavController.pop], [NavController.popAll] or
      * [NavController.popUpTo] was the last successful call.
      */
+    @Stable
     @Parcelize
     object Pop : NavAction() {
         override fun toString() = this::class.simpleName!!

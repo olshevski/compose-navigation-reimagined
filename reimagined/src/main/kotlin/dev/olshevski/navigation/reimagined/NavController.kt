@@ -267,7 +267,7 @@ class NavController<T> internal constructor(
 /**
  * A navigation backstack. Contains the list of current [entries] and the last [action].
  */
-@Immutable
+@Stable
 data class NavBackstack<out T> internal constructor(
 
     /**
