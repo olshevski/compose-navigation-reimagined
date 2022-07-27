@@ -1,6 +1,7 @@
 package dev.olshevski.navigation.reimagined
 
 import android.os.Parcelable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import kotlinx.parcelize.Parcelize
 
@@ -9,17 +10,19 @@ import kotlinx.parcelize.Parcelize
  * [NavController.setNewBackstack] and then used in
  * [AnimatedNavHostTransitionSpec.getContentTransform] to select some animation.
  *
- * May be extended to create more action types. The derived classes must be [Stable].
+ * You may implement this interface to create more action types. If you want to use the last action
+ * from the [NavBackstack] as a parameter for a composable function, make sure your action class
+ * is [Stable] or [Immutable].
  */
 @Stable
-abstract class NavAction : Parcelable {
+interface NavAction : Parcelable {
 
     /**
      * The default action for every new instance of [NavController].
      */
-    @Stable
+    @Immutable
     @Parcelize
-    object Idle : NavAction() {
+    object Idle : NavAction {
         override fun toString() = this::class.simpleName!!
     }
 
@@ -27,9 +30,9 @@ abstract class NavAction : Parcelable {
      * An action type that tells [NavController.navigate] or [NavController.moveToTop] was
      * the last successful call.
      */
-    @Stable
+    @Immutable
     @Parcelize
-    object Navigate : NavAction() {
+    object Navigate : NavAction {
         override fun toString() = this::class.simpleName!!
     }
 
@@ -37,9 +40,9 @@ abstract class NavAction : Parcelable {
      * An action type that tells [NavController.replaceLast], [NavController.replaceAll] or
      * [NavController.replaceUpTo] was the last successful call.
      */
-    @Stable
+    @Immutable
     @Parcelize
-    object Replace : NavAction() {
+    object Replace : NavAction {
         override fun toString() = this::class.simpleName!!
     }
 
@@ -47,9 +50,9 @@ abstract class NavAction : Parcelable {
      * An action type that tells [NavController.pop], [NavController.popAll] or
      * [NavController.popUpTo] was the last successful call.
      */
-    @Stable
+    @Immutable
     @Parcelize
-    object Pop : NavAction() {
+    object Pop : NavAction {
         override fun toString() = this::class.simpleName!!
     }
 

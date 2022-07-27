@@ -15,7 +15,7 @@ import java.util.*
  * `toString()` output in Base64 format.
  */
 @Immutable
-data class NavId(private val uuid: UUID = UUID.randomUUID()) : Parcelable {
+class NavId internal constructor(private val uuid: UUID = UUID.randomUUID()) : Parcelable {
 
     private constructor(parcel: Parcel) : this(UUID(parcel.readLong(), parcel.readLong()))
 
@@ -42,5 +42,15 @@ data class NavId(private val uuid: UUID = UUID.randomUUID()) : Parcelable {
         byteBuffer.putLong(uuid.leastSignificantBits)
         return Base64.encodeToString(byteBuffer.array(), Base64.NO_WRAP or Base64.NO_PADDING)
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as NavId
+        if (uuid != other.uuid) return false
+        return true
+    }
+
+    override fun hashCode() = uuid.hashCode()
 
 }

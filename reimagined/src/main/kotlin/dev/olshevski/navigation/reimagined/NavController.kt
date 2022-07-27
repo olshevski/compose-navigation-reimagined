@@ -201,9 +201,8 @@ class NavController<T> internal constructor(
         onBackstackChange?.invoke(_backstack)
     }
 
-    override fun toString(): String {
-        return "NavController(entries=${_backstack.entries}, action=${_backstack.action})"
-    }
+    override fun toString() =
+        "NavController(entries=${_backstack.entries}, action=${_backstack.action})"
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         _backstack.entries.let { entries ->
@@ -263,26 +262,3 @@ class NavController<T> internal constructor(
     }
 
 }
-
-/**
- * A navigation backstack. Contains the list of current [entries] and the last [action].
- */
-@Stable
-data class NavBackstack<out T> internal constructor(
-
-    /**
-     * The list of current entries in the backstack. The last item in this list is the item that
-     * will be displayed by [NavHost].
-     *
-     * May become empty if you pop all the items off the backstack.
-     */
-    val entries: List<NavEntry<T>>,
-
-    /**
-     * The action of the last [NavController.setNewBackstack] call.
-     *
-     * The initial value of every new instance of [NavController] is [NavAction.Idle].
-     */
-    val action: NavAction
-
-)

@@ -106,6 +106,12 @@ class NavHostEntry<out T>(
             content = content
         )
 
+    override fun toString() = "NavHostEntry(id=$id, destination=$destination)"
+
+    operator fun component1() = id
+
+    operator fun component2() = destination
+
 }
 
 @Composable
