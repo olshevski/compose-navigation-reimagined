@@ -12,4 +12,3 @@ local.properties
 *.iml
 !.idea/codeStyles
 !.idea/inspectionProfiles
-!.idea/saveactions_settings.xml
