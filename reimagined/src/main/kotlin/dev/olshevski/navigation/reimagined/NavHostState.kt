@@ -83,7 +83,7 @@ internal class NavHostState<T>(
     private val hostLifecycle: Lifecycle,
     private val hostSavedStateRegistry: SavedStateRegistry,
     private val application: Application?
-) : NavHostStateScope<T> {
+) {
 
     var backstack by mutableStateOf(initialBackstack)
 
@@ -96,55 +96,38 @@ internal class NavHostState<T>(
 
     private var hostLifecycleState: Lifecycle.State = Lifecycle.State.INITIALIZED
 
-    private val hostEntries = mutableMapOf<NavId, NavHostEntry<T>>()
+    private val hostEntriesMap = mutableMapOf<NavId, NavHostEntry<T>>()
 
-    val hostEntryIds get() = hostEntries.keys as Set<NavId>
+    val hostEntryIds get() = hostEntriesMap.keys as Set<NavId>
 
     init {
-        // We need to restore all previous component entries, which in return restore their own
-        // saved states and reconnect all SavedStateHandles to a new SavedStateRegistry.
-
-        // Do not restore components that are no longer present in the backstack.
-        // Remove their associated components instead.
+        // Remove components of the entries that are no longer present in the backstack.
         restoredHostEntryIds.filter { it !in entryIds }.forEach { removeComponents(it) }
-
-        // Everything else is recreated.
-        backstack.entries.filter { it.id in restoredHostEntryIds }.forEach { entry ->
-            hostEntries.getOrPut(entry.id) {
-                newHostEntry(entry)
-            }
-        }
     }
 
     private val lifecycleEventObserver = LifecycleEventObserver { _, event ->
         hostLifecycleState = event.targetState
-        hostEntries.values.forEach {
+        hostEntriesMap.values.forEach {
             it.hostLifecycleState = hostLifecycleState
         }
     }
 
-    val lastHostEntry by derivedStateOf {
-        backstack.entries.lastOrNull()?.let { lastEntry ->
-            hostEntries.getOrPut(lastEntry.id) {
-                newHostEntry(lastEntry)
-            }
+    private var previousLastHostEntry: NavHostEntry<T>? = null
+
+    val hostEntries by derivedStateOf {
+        val newHostEntries = backstack.entries.map {
+            hostEntriesMap.getOrPut(it.id) { newHostEntry(it) }
         }
-    }.also { state ->
-        // this block will be executed only when a new distinct entry is set
+        val newLastHostEntry = newHostEntries.lastOrNull()
 
-        val newLastHostEntry = state.value
+        if (previousLastHostEntry != newLastHostEntry) {
+            previousLastHostEntry = newLastHostEntry
 
-        // Before transition:
-        // - all entries except newLastHostEntry are capped at STARTED state
-        // - newLastHostEntry gets promoted to STARTED state
-        //
-        // Further state changes will be done when transition finishes.
-        hostEntries.values
-            .filter { it != newLastHostEntry }
-            .forEach {
-                it.maxLifecycleState = minOf(it.maxLifecycleState, Lifecycle.State.STARTED)
-            }
-        newLastHostEntry?.maxLifecycleState = Lifecycle.State.STARTED
+            // this will be executed only when a new distinct last entry is set
+            setPreTransitionLifecycleStates(newLastHostEntry)
+        }
+
+        newHostEntries
     }
 
     private fun newHostEntry(entry: NavEntry<T>): NavHostEntry<T> {
@@ -177,18 +160,19 @@ internal class NavHostState<T>(
     private fun savedStateKey(entryId: NavId) = "$PACKAGE_KEY:$id:$entryId"
 
     fun onCreate() {
-        removeOutdatedHostEntries()
-
-        // When created there is no transition, and we need to apply proper lifecycle states
-        // immediately.
-        setPostTransitionLifecycleStates()
-
         hostLifecycle.addObserver(lifecycleEventObserver)
+    }
+
+    fun onDispose() {
+        hostLifecycle.removeObserver(lifecycleEventObserver)
+        hostEntriesMap.values.forEach {
+            it.hostLifecycleState = Lifecycle.State.DESTROYED
+        }
     }
 
     fun onTransitionFinish() {
         removeOutdatedHostEntries()
-        setPostTransitionLifecycleStates()
+        setPostTransitionLifecycleStates(hostEntries.lastOrNull())
         // https://www.youtube.com/watch?v=cwyTleTL06Y
     }
 
@@ -196,8 +180,8 @@ internal class NavHostState<T>(
      * Remove entries that are no longer in the backstack.
      */
     private fun removeOutdatedHostEntries() {
-        hostEntries.keys.filter { it !in entryIds }.forEach { entryId ->
-            hostEntries.remove(entryId)?.let { hostEntry ->
+        hostEntriesMap.keys.filter { it !in entryIds }.forEach { entryId ->
+            hostEntriesMap.remove(entryId)?.let { hostEntry ->
                 hostEntry.maxLifecycleState = Lifecycle.State.DESTROYED
             }
             removeComponents(entryId)
@@ -213,24 +197,29 @@ internal class NavHostState<T>(
         saveableStateHolder.removeState(entryId)
     }
 
-    private fun setPostTransitionLifecycleStates() {
+    private fun setPreTransitionLifecycleStates(lastHostEntry: NavHostEntry<T>?) {
+        // Before transition:
+        // - all entries except newLastHostEntry are capped at STARTED state
+        // - newLastHostEntry gets promoted to STARTED state
+        //
+        // Further state changes will be done when transition finishes.
+        hostEntriesMap.values
+            .filter { it != lastHostEntry }
+            .forEach {
+                it.maxLifecycleState = minOf(it.maxLifecycleState, Lifecycle.State.STARTED)
+            }
+        lastHostEntry?.maxLifecycleState = Lifecycle.State.STARTED
+    }
+
+    private fun setPostTransitionLifecycleStates(lastHostEntry: NavHostEntry<T>?) {
         // last entry is resumed, everything else is stopped
-        hostEntries.values
+        hostEntriesMap.values
             .filter { it != lastHostEntry }
             .forEach {
                 it.maxLifecycleState = Lifecycle.State.CREATED
             }
         lastHostEntry?.maxLifecycleState = Lifecycle.State.RESUMED
     }
-
-    fun onDispose() {
-        hostLifecycle.removeObserver(lifecycleEventObserver)
-        hostEntries.values.forEach {
-            it.hostLifecycleState = Lifecycle.State.DESTROYED
-        }
-    }
-
-    override fun getHostEntry(id: NavId): NavHostEntry<T>? = hostEntries[id]
 
 }
 

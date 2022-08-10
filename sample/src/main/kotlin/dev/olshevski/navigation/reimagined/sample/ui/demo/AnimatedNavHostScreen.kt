@@ -1,11 +1,15 @@
 package dev.olshevski.navigation.reimagined.sample.ui.demo
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.with
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.LifecycleEventObserver
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
 import dev.olshevski.navigation.reimagined.AnimatedNavHostTransitionSpec
 import dev.olshevski.navigation.reimagined.NavAction
@@ -50,6 +54,19 @@ fun AnimatedNavHostScreen() = ScreenLayout(
         controller = navController,
         transitionSpec = AnimatedNavHostTransitionSpec
     ) { destination ->
+
+        val lifecycle = LocalLifecycleOwner.current.lifecycle
+        DisposableEffect(Unit) {
+            val observer = LifecycleEventObserver { source, event ->
+                Log.v("ERASEME", "$destination $event")
+            }
+            lifecycle.addObserver(observer)
+            onDispose {
+                lifecycle.removeObserver(observer)
+            }
+        }
+
+
         ContentLayout(
             title = stringResource(R.string.animated_nav_host__screen_title, destination)
         ) {

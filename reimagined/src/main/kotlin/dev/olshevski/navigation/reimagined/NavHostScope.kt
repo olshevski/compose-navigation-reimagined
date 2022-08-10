@@ -1,36 +1,24 @@
 package dev.olshevski.navigation.reimagined
 
 interface NavHostScope<out T> {
-
-    val backstack: NavBackstack<T>
-
-    val currentHostEntry: NavHostEntry<T>
-
-    fun getHostEntry(id: NavId): NavHostEntry<T>?
-
+    val hostEntries: List<NavHostEntry<T>>
 }
 
 internal open class NavHostScopeImpl<out T>(
-    override val backstack: NavBackstack<T>,
-    override val currentHostEntry: NavHostEntry<T>,
-    private val hostStateScope: NavHostStateScope<T>
-) : NavHostScope<T> {
+    override val hostEntries: List<NavHostEntry<T>>
+) : NavHostScope<T>
 
-    override fun getHostEntry(id: NavId): NavHostEntry<T>? = hostStateScope.getHostEntry(id)
-
-}
+val <T> NavHostScope<T>.currentHostEntry: NavHostEntry<T> get() = hostEntries.last()
 
 fun <T> NavHostScope<T>.findHostEntry(
     match: Match = Match.Last,
     predicate: (T) -> Boolean
 ): NavHostEntry<T>? {
-    val entryPredicate: (NavEntry<T>) -> Boolean = { predicate(it.destination) }
-    return backstack.entries.run {
+    val entryPredicate: (NavHostEntry<T>) -> Boolean = { predicate(it.destination) }
+    return hostEntries.run {
         when (match) {
             Match.First -> find(entryPredicate)
             Match.Last -> findLast(entryPredicate)
         }
-    }?.let { entry ->
-        getHostEntry(entry.id)
     }
 }
