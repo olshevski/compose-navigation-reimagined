@@ -9,7 +9,7 @@ fun PluginDependenciesSpec.plugin(pluginSpec: PluginSpec) {
 
 object Plugins {
     object Android {
-        private const val Version = "7.2.1"
+        private const val Version = "7.2.2"
         val Application = PluginSpec("com.android.application", Version)
         val Library = PluginSpec("com.android.library", Version)
     }

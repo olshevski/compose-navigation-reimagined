@@ -3,11 +3,11 @@ object Libs {
     object AndroidX {
 
         object Activity {
-            const val Compose = "androidx.activity:activity-compose:1.5.0"
+            const val Compose = "androidx.activity:activity-compose:1.5.1"
         }
 
         object Compose {
-            private const val Version = "1.1.1"
+            private const val Version = "1.2.0"
 
             @Suppress("MemberVisibilityCanBePrivate")
             const val CompilerVersion = "1.2.0"
@@ -24,7 +24,7 @@ object Libs {
         }
 
         object Lifecycle {
-            private const val Version = "2.5.0"
+            private const val Version = "2.5.1"
 
             object ViewModel {
                 const val Ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$Version"
@@ -43,7 +43,7 @@ object Libs {
         const val Truth = "com.google.truth:truth:1.1.3"
 
         object Dagger {
-            const val Version = "2.42"
+            const val Version = "2.43.2"
             const val Api = "com.google.dagger:dagger:$Version"
             const val Compiler = "com.google.dagger:dagger-compiler:$Version"
             const val HiltAndroid = "com.google.dagger:hilt-android:$Version"
@@ -52,7 +52,7 @@ object Libs {
     }
 
     object JUnit {
-        const val Juniper = "org.junit.jupiter:junit-jupiter:5.8.2"
+        const val Juniper = "org.junit.jupiter:junit-jupiter:5.9.0"
     }
 
     object Koin {
