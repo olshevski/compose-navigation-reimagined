@@ -1,6 +1,6 @@
 package dev.olshevski.navigation.reimagined
 
-import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -20,9 +20,10 @@ class NavControllerExtTest {
                 startDestination = TestDestination.A
             )
             navController.navigate(TestDestination.B)
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(TestDestination.A, TestDestination.B)
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.A,
+                TestDestination.B
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Navigate)
         }
 
@@ -33,13 +34,11 @@ class NavControllerExtTest {
             )
             navController.navigate(TestDestination.B)
             navController.navigate(TestDestination.C)
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.A,
-                    TestDestination.B,
-                    TestDestination.C
-                )
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.A,
+                TestDestination.B,
+                TestDestination.C
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Navigate)
         }
 
@@ -49,13 +48,11 @@ class NavControllerExtTest {
                 startDestination = TestDestination.A
             )
             navController.navigate(listOf(TestDestination.B, TestDestination.C))
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.A,
-                    TestDestination.B,
-                    TestDestination.C
-                )
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.A,
+                TestDestination.B,
+                TestDestination.C
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Navigate)
         }
 
@@ -65,11 +62,9 @@ class NavControllerExtTest {
                 startDestination = TestDestination.A
             )
             navController.navigate(emptyList())
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.A
-                )
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.A
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Navigate)
         }
 
@@ -84,13 +79,11 @@ class NavControllerExtTest {
                 initialBackstack = listOf(TestDestination.A, TestDestination.B, TestDestination.C)
             )
             assertThat(navController.moveToTop { it == TestDestination.B }).isEqualTo(true)
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.A,
-                    TestDestination.C,
-                    TestDestination.B
-                )
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.A,
+                TestDestination.C,
+                TestDestination.B
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Navigate)
         }
 
@@ -100,13 +93,11 @@ class NavControllerExtTest {
                 initialBackstack = listOf(TestDestination.A, TestDestination.B, TestDestination.C)
             )
             assertThat(navController.moveToTop { it == TestDestination.C }).isEqualTo(true)
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.A,
-                    TestDestination.B,
-                    TestDestination.C
-                )
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.A,
+                TestDestination.B,
+                TestDestination.C
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Navigate)
         }
 
@@ -116,13 +107,11 @@ class NavControllerExtTest {
                 initialBackstack = listOf(TestDestination.A, TestDestination.B, TestDestination.C)
             )
             assertThat(navController.moveToTop { it == TestDestination.D }).isEqualTo(false)
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.A,
-                    TestDestination.B,
-                    TestDestination.C
-                )
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.A,
+                TestDestination.B,
+                TestDestination.C
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Idle)
         }
     }
@@ -146,11 +135,9 @@ class NavControllerExtTest {
                 initialBackstack = listOf(TestDestination.A, TestDestination.B)
             )
             assertThat(navController.pop()).isEqualTo(true)
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.A
-                )
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.A
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Pop)
         }
 
@@ -213,12 +200,10 @@ class NavControllerExtTest {
                     initialBackstack = listOf(TestDestination.A, TestDestination.B)
                 )
                 assertThat(navController.popUpTo { it == TestDestination.C }).isEqualTo(false)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                        TestDestination.B,
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A,
+                    TestDestination.B
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Idle)
             }
 
@@ -228,12 +213,10 @@ class NavControllerExtTest {
                     initialBackstack = listOf(TestDestination.A, TestDestination.B)
                 )
                 assertThat(navController.popUpTo { it == TestDestination.B }).isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                        TestDestination.B,
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A,
+                    TestDestination.B
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Pop)
             }
 
@@ -243,11 +226,9 @@ class NavControllerExtTest {
                     initialBackstack = listOf(TestDestination.A, TestDestination.B)
                 )
                 assertThat(navController.popUpTo { it == TestDestination.A }).isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Pop)
             }
 
@@ -261,12 +242,10 @@ class NavControllerExtTest {
                     )
                 )
                 assertThat(navController.popUpTo { it == TestDestination.A }).isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                        TestDestination.A
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A,
+                    TestDestination.A
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Pop)
             }
 
@@ -281,11 +260,9 @@ class NavControllerExtTest {
                 )
                 assertThat(navController.popUpTo(match = Match.First) { it == TestDestination.A })
                     .isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Pop)
             }
 
@@ -301,12 +278,10 @@ class NavControllerExtTest {
                 )
                 assertThat(navController.popUpTo(inclusive = true) { it == TestDestination.C })
                     .isEqualTo(false)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                        TestDestination.B,
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A,
+                    TestDestination.B
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Idle)
             }
 
@@ -317,11 +292,9 @@ class NavControllerExtTest {
                 )
                 assertThat(navController.popUpTo(inclusive = true) { it == TestDestination.B })
                     .isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Pop)
             }
 
@@ -348,11 +321,9 @@ class NavControllerExtTest {
                 assertThat(navController.popUpTo(
                     inclusive = true,
                 ) { it == TestDestination.A }).isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Pop)
             }
 
@@ -386,11 +357,9 @@ class NavControllerExtTest {
                 startDestination = TestDestination.A
             )
             assertThat(navController.replaceLast(TestDestination.B)).isEqualTo(true)
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.B,
-                )
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.B
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
         }
 
@@ -400,12 +369,10 @@ class NavControllerExtTest {
                 initialBackstack = listOf(TestDestination.A, TestDestination.B)
             )
             assertThat(navController.replaceLast(TestDestination.C)).isEqualTo(true)
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.A,
-                    TestDestination.C,
-                )
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.A,
+                TestDestination.C
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
         }
 
@@ -429,12 +396,10 @@ class NavControllerExtTest {
                     listOf(TestDestination.B, TestDestination.C)
                 )
             ).isEqualTo(true)
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.B,
-                    TestDestination.C
-                )
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.B,
+                TestDestination.C
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
         }
 
@@ -459,11 +424,9 @@ class NavControllerExtTest {
                 startDestination = TestDestination.A
             )
             navController.replaceAll(TestDestination.B)
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.B,
-                )
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.B
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
         }
 
@@ -473,11 +436,9 @@ class NavControllerExtTest {
                 initialBackstack = listOf(TestDestination.A, TestDestination.B)
             )
             navController.replaceAll(TestDestination.C)
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.C,
-                )
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.C
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
         }
 
@@ -488,11 +449,9 @@ class NavControllerExtTest {
             )
             navController.pop()
             navController.replaceAll(TestDestination.B)
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.B,
-                )
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.B
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
         }
 
@@ -502,12 +461,10 @@ class NavControllerExtTest {
                 startDestination = TestDestination.A
             )
             navController.replaceAll(listOf(TestDestination.B, TestDestination.C))
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.B,
-                    TestDestination.C
-                )
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.B,
+                TestDestination.C
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
         }
 
@@ -537,12 +494,10 @@ class NavControllerExtTest {
                 assertThat(navController.replaceUpTo(
                     newDestination = TestDestination.D
                 ) { it == TestDestination.C }).isEqualTo(false)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                        TestDestination.B,
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A,
+                    TestDestination.B
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Idle)
             }
 
@@ -554,13 +509,11 @@ class NavControllerExtTest {
                 assertThat(navController.replaceUpTo(
                     newDestination = TestDestination.D
                 ) { it == TestDestination.B }).isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                        TestDestination.B,
-                        TestDestination.D,
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A,
+                    TestDestination.B,
+                    TestDestination.D
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
             }
 
@@ -572,12 +525,10 @@ class NavControllerExtTest {
                 assertThat(navController.replaceUpTo(
                     newDestination = TestDestination.D
                 ) { it == TestDestination.A }).isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                        TestDestination.D,
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A,
+                    TestDestination.D
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
             }
 
@@ -589,13 +540,11 @@ class NavControllerExtTest {
                 assertThat(navController.replaceUpTo(
                     newDestinations = listOf(TestDestination.D, TestDestination.B)
                 ) { it == TestDestination.A }).isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                        TestDestination.D,
-                        TestDestination.B,
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A,
+                    TestDestination.D,
+                    TestDestination.B
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
             }
 
@@ -607,11 +556,9 @@ class NavControllerExtTest {
                 assertThat(navController.replaceUpTo(
                     newDestinations = emptyList()
                 ) { it == TestDestination.A }).isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
             }
 
@@ -627,13 +574,11 @@ class NavControllerExtTest {
                 assertThat(navController.replaceUpTo(
                     newDestination = TestDestination.C,
                 ) { it == TestDestination.A }).isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                        TestDestination.A,
-                        TestDestination.C
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A,
+                    TestDestination.A,
+                    TestDestination.C
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
             }
 
@@ -650,12 +595,10 @@ class NavControllerExtTest {
                     newDestination = TestDestination.C,
                     match = Match.First
                 ) { it == TestDestination.A }).isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                        TestDestination.C
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A,
+                    TestDestination.C
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
             }
 
@@ -673,12 +616,10 @@ class NavControllerExtTest {
                     newDestination = TestDestination.D,
                     inclusive = true
                 ) { it == TestDestination.C }).isEqualTo(false)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                        TestDestination.B,
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A,
+                    TestDestination.B
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Idle)
             }
 
@@ -691,12 +632,10 @@ class NavControllerExtTest {
                     newDestination = TestDestination.D,
                     inclusive = true
                 ) { it == TestDestination.B }).isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                        TestDestination.D,
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A,
+                    TestDestination.D
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
             }
 
@@ -709,11 +648,9 @@ class NavControllerExtTest {
                     newDestination = TestDestination.D,
                     inclusive = true
                 ) { it == TestDestination.A }).isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.D,
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.D
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
             }
 
@@ -726,12 +663,10 @@ class NavControllerExtTest {
                     newDestinations = listOf(TestDestination.D, TestDestination.B),
                     inclusive = true
                 ) { it == TestDestination.A }).isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.D,
-                        TestDestination.B,
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.D,
+                    TestDestination.B
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
             }
 
@@ -761,12 +696,10 @@ class NavControllerExtTest {
                     newDestination = TestDestination.C,
                     inclusive = true,
                 ) { it == TestDestination.A }).isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                        TestDestination.C
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.A,
+                    TestDestination.C
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
             }
 
@@ -784,11 +717,9 @@ class NavControllerExtTest {
                     inclusive = true,
                     match = Match.First
                 ) { it == TestDestination.A }).isEqualTo(true)
-                assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.C
-                    )
-                )
+                assertThat(navController.backstack.destinations).containsExactly(
+                    TestDestination.C
+                ).inOrder()
                 assertThat(navController.backstack.action).isEqualTo(NavAction.Replace)
             }
 

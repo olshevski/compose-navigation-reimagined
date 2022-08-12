@@ -47,11 +47,9 @@ class NavControllerTest {
                 entries = listOf(navEntry(TestDestination.B)),
                 action = NavAction.Navigate
             )
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.B,
-                )
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.B
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Navigate)
         }
 
@@ -62,12 +60,10 @@ class NavControllerTest {
                 entries = navController.backstack.entries + navEntry(TestDestination.B),
                 action = NavAction.Navigate
             )
-            assertThat(navController.backstack.destinations).containsExactlyElementsIn(
-                listOf(
-                    TestDestination.A,
-                    TestDestination.B,
-                )
-            )
+            assertThat(navController.backstack.destinations).containsExactly(
+                TestDestination.A,
+                TestDestination.B
+            ).inOrder()
             assertThat(navController.backstack.action).isEqualTo(NavAction.Navigate)
         }
 
@@ -103,12 +99,9 @@ class NavControllerTest {
             assertThat(onBackstackChangeCallback.isCalled).isEqualTo(true)
             assertThat(onBackstackChangeCallback.backstack).isNotNull()
             assertThat(onBackstackChangeCallback.backstack!!.entries.map { it.destination })
-                .containsExactlyElementsIn(
-                    listOf(
-                        TestDestination.A,
-                        TestDestination.B,
-                    )
-                )
+                .containsExactly(
+                    TestDestination.A, TestDestination.B
+                ).inOrder()
             assertThat(onBackstackChangeCallback.backstack!!.action).isEqualTo(NavAction.Navigate)
         }
 

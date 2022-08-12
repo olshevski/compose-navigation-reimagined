@@ -77,5 +77,7 @@ dependencies {
     testImplementation(Libs.Google.Truth)
 
     androidTestImplementation(Libs.AndroidX.Test.Runner)
+    androidTestImplementation(Libs.AndroidX.Compose.UiTestJunit4)
+    debugImplementation(Libs.AndroidX.Compose.UiTestManifest)
     androidTestImplementation(Libs.Google.Truth)
 }

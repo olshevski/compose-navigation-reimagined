@@ -112,22 +112,10 @@ internal class NavHostState<T>(
         }
     }
 
-    private var previousLastHostEntry: NavHostEntry<T>? = null
-
     val hostEntries by derivedStateOf {
-        val newHostEntries = backstack.entries.map {
+        backstack.entries.map {
             hostEntriesMap.getOrPut(it.id) { newHostEntry(it) }
         }
-        val newLastHostEntry = newHostEntries.lastOrNull()
-
-        if (previousLastHostEntry != newLastHostEntry) {
-            previousLastHostEntry = newLastHostEntry
-
-            // this will be executed only when a new distinct last entry is set
-            setPreTransitionLifecycleStates(newLastHostEntry)
-        }
-
-        newHostEntries
     }
 
     private fun newHostEntry(entry: NavEntry<T>): NavHostEntry<T> {
@@ -170,16 +158,38 @@ internal class NavHostState<T>(
         }
     }
 
+    fun onTransitionStart() {
+        val lastHostEntry = hostEntries.lastOrNull()
+
+        // Before transition:
+        // - all entries except newLastHostEntry are capped at STARTED state
+        // - newLastHostEntry gets promoted to STARTED state
+        //
+        // Further state changes will be done when transition finishes.
+        hostEntriesMap.values
+            .filter { it != lastHostEntry }
+            .forEach {
+                it.maxLifecycleState = minOf(it.maxLifecycleState, Lifecycle.State.STARTED)
+            }
+        lastHostEntry?.maxLifecycleState = Lifecycle.State.STARTED
+    }
+
     fun onTransitionFinish() {
-        removeOutdatedHostEntries()
-        setPostTransitionLifecycleStates(hostEntries.lastOrNull())
-        // https://www.youtube.com/watch?v=cwyTleTL06Y
+        val lastHostEntry = hostEntries.lastOrNull()
+
+        // last entry is resumed, everything else is stopped
+        hostEntriesMap.values
+            .filter { it != lastHostEntry }
+            .forEach {
+                it.maxLifecycleState = Lifecycle.State.CREATED
+            }
+        lastHostEntry?.maxLifecycleState = Lifecycle.State.RESUMED
     }
 
     /**
      * Remove entries that are no longer in the backstack.
      */
-    private fun removeOutdatedHostEntries() {
+    fun removeOutdatedHostEntries() {
         hostEntriesMap.keys.filter { it !in entryIds }.forEach { entryId ->
             hostEntriesMap.remove(entryId)?.let { hostEntry ->
                 hostEntry.maxLifecycleState = Lifecycle.State.DESTROYED
@@ -195,30 +205,6 @@ internal class NavHostState<T>(
         hostSavedStateRegistry.unregisterSavedStateProvider(savedStateKey(entryId))
         viewModelStoreProvider.removeViewModelStore(entryId)
         saveableStateHolder.removeState(entryId)
-    }
-
-    private fun setPreTransitionLifecycleStates(lastHostEntry: NavHostEntry<T>?) {
-        // Before transition:
-        // - all entries except newLastHostEntry are capped at STARTED state
-        // - newLastHostEntry gets promoted to STARTED state
-        //
-        // Further state changes will be done when transition finishes.
-        hostEntriesMap.values
-            .filter { it != lastHostEntry }
-            .forEach {
-                it.maxLifecycleState = minOf(it.maxLifecycleState, Lifecycle.State.STARTED)
-            }
-        lastHostEntry?.maxLifecycleState = Lifecycle.State.STARTED
-    }
-
-    private fun setPostTransitionLifecycleStates(lastHostEntry: NavHostEntry<T>?) {
-        // last entry is resumed, everything else is stopped
-        hostEntriesMap.values
-            .filter { it != lastHostEntry }
-            .forEach {
-                it.maxLifecycleState = Lifecycle.State.CREATED
-            }
-        lastHostEntry?.maxLifecycleState = Lifecycle.State.RESUMED
     }
 
 }

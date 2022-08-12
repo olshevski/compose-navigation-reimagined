@@ -12,9 +12,24 @@ internal fun <T> BaseNavHost(
     // In the future, it may be convenient to make possible to create NavHostState externally,
     // so it is hoistable. But I need to see reasonable use-cases for this.
     val state = rememberNavHostState(backstack)
+    val targetHostEntries = state.hostEntries
+
+    DisposableEffect(state) {
+        state.onCreate()
+
+        onDispose {
+            state.removeOutdatedHostEntries()
+            state.onDispose()
+        }
+    }
+
+    DisposableEffect(state, targetHostEntries.lastOrNull()) {
+        state.onTransitionStart()
+        onDispose {}
+    }
 
     val currentHostEntries = key(state.id) {
-        entryTransition(state.hostEntries)
+        entryTransition(targetHostEntries)
 
         // For NavHost: currentHostEntries is the same as state.hostEntries.
         //
@@ -23,20 +38,12 @@ internal fun <T> BaseNavHost(
     }
 
     DisposableEffect(state, currentHostEntries) {
-        onDispose {
-            // should be called only in onDispose, because it affects lifecycle events
-            state.onTransitionFinish()
-        }
+        state.removeOutdatedHostEntries()
+        onDispose {}
     }
 
-    DisposableEffect(state) {
-        state.onCreate()
-
-        // there is no transition when entering composition, so we need to finish it straight away
+    DisposableEffect(state, currentHostEntries.lastOrNull()) {
         state.onTransitionFinish()
-
-        onDispose {
-            state.onDispose()
-        }
+        onDispose {}
     }
 }
