@@ -1,17 +1,16 @@
 package dev.olshevski.navigation.reimagined
 
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.key
 
+@VisibleForTesting
 @Composable
 internal fun <T> BaseNavHost(
-    backstack: NavBackstack<T>,
+    state: NavHostState<T>,
     entryTransition: @Composable (List<NavHostEntry<T>>) -> List<NavHostEntry<T>>
 ) {
-    // In the future, it may be convenient to make possible to create NavHostState externally,
-    // so it is hoistable. But I need to see reasonable use-cases for this.
-    val state = rememberNavHostState(backstack)
     val targetHostEntries = state.hostEntries
 
     DisposableEffect(state) {
@@ -23,11 +22,6 @@ internal fun <T> BaseNavHost(
         }
     }
 
-    DisposableEffect(state, targetHostEntries.lastOrNull()) {
-        state.onTransitionStart()
-        onDispose {}
-    }
-
     val currentHostEntries = key(state.id) {
         entryTransition(targetHostEntries)
 
@@ -35,6 +29,12 @@ internal fun <T> BaseNavHost(
         //
         // For AnimatedNavHost: currentHostEntries are the entries in transition. When transition
         // finishes, currentHostEntries will become the same as state.hostEntries.
+    }
+
+    DisposableEffect(state, targetHostEntries.lastOrNull()) {
+        onDispose {
+            state.onTransitionStart()
+        }
     }
 
     DisposableEffect(state, currentHostEntries) {

@@ -1,5 +1,6 @@
 package dev.olshevski.navigation.reimagined
 
+import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -110,14 +111,29 @@ fun <T> AnimatedNavHost(
     transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
-) = BaseNavHost(backstack) { targetHostEntries ->
+) = AnimatedNavHost(
+    state = rememberNavHostState(backstack),
+    transitionSpec = transitionSpec,
+    emptyBackstackPlaceholder = emptyBackstackPlaceholder,
+    contentSelector = contentSelector
+)
+
+@ExperimentalAnimationApi
+@VisibleForTesting
+@Composable
+internal fun <T> AnimatedNavHost(
+    state: NavHostState<T>,
+    transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
+    emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
+    contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
+) = BaseNavHost(state) { targetHostEntries ->
     val transition = updateTransition(
         targetState = targetHostEntries,
         label = "AnimatedNavHost"
     )
     transition.AnimatedContent(
         transitionSpec = {
-            selectTransition(transitionSpec, backstack.action)
+            selectTransition(transitionSpec, state.backstack.action)
         },
         contentKey = { it.lastOrNull()?.id }
     ) { hostEntries ->

@@ -140,7 +140,7 @@ internal class NavHostState<T>(
 
         // apply actual states only after state restoration
         hostEntry.hostLifecycleState = hostLifecycleState
-        hostEntry.maxLifecycleState = Lifecycle.State.STARTED
+        hostEntry.maxLifecycleState = Lifecycle.State.CREATED
 
         return hostEntry
     }

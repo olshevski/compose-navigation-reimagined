@@ -1,5 +1,6 @@
 package dev.olshevski.navigation.reimagined
 
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
@@ -67,7 +68,19 @@ fun <T> NavHost(
     backstack: NavBackstack<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable NavHostScope<T>.(T) -> Unit
-) = BaseNavHost(backstack) { hostEntries ->
+) = NavHost(
+    state = rememberNavHostState(backstack),
+    emptyBackstackPlaceholder = emptyBackstackPlaceholder,
+    contentSelector = contentSelector
+)
+
+@VisibleForTesting
+@Composable
+internal fun <T> NavHost(
+    state: NavHostState<T>,
+    emptyBackstackPlaceholder: @Composable () -> Unit = {},
+    contentSelector: @Composable NavHostScope<T>.(T) -> Unit
+) = BaseNavHost(state) { hostEntries ->
     val lastHostEntry = hostEntries.lastOrNull()
     key(lastHostEntry?.id) {
         if (lastHostEntry != null) {
