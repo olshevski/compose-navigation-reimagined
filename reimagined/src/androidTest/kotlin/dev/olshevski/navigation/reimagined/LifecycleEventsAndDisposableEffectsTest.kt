@@ -4,7 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -17,7 +17,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
-class LifecycleEventAndDisposableEffectTest(private val navHostParam: NavHostParam) {
+class LifecycleEventsAndDisposableEffectsTest(private val navHostParam: NavHostParam) {
 
     companion object {
         @JvmStatic
@@ -32,45 +32,42 @@ class LifecycleEventAndDisposableEffectTest(private val navHostParam: NavHostPar
         A, B, C
     }
 
-    private enum class DisposableEvent {
-        OnCreate,
-        OnDispose
-    }
-
     private sealed class EventType {
         data class Lifecycle(val event: androidx.lifecycle.Lifecycle.Event) : EventType()
-        data class DisposableEffect(val event: DisposableEvent) : EventType()
+        sealed class DisposableEffect : EventType() {
+            object OnCreate : DisposableEffect()
+            object OnDispose : DisposableEffect()
+        }
     }
 
-    private lateinit var navController: NavController<Screen>
-    private lateinit var lifecycleChanges: MutableList<Pair<Screen, EventType>>
+    private val navController = navController(Screen.A)
+    private val lifecycleChanges = mutableListOf<Pair<Screen, EventType>>()
 
     @OptIn(ExperimentalAnimationApi::class)
     @Before
     fun before() {
-        navController = navController(Screen.A)
-        lifecycleChanges = mutableListOf()
         composeRule.setContent {
             val state = rememberNavHostState(navController.backstack)
-            val observedEntries = remember { mutableSetOf<LifecycleOwner>() }
 
-            DisposableEffect(state.hostEntries) {
-                state.hostEntries.forEach {
-                    if (!observedEntries.contains(it)) {
-                        it.lifecycle.addObserver(LifecycleEventObserver { _, event ->
-                            lifecycleChanges.add(it.destination to EventType.Lifecycle(event))
-                        })
-                        observedEntries.add(it)
+            ImmediateLaunchedEffect(state) {
+                val observedEntries = mutableSetOf<LifecycleOwner>()
+                snapshotFlow { state.hostEntries }.collect { hostEntries ->
+                    hostEntries.forEach {
+                        if (!observedEntries.contains(it)) {
+                            it.lifecycle.addObserver(LifecycleEventObserver { _, event ->
+                                lifecycleChanges.add(it.destination to EventType.Lifecycle(event))
+                            })
+                            observedEntries.add(it)
+                        }
                     }
                 }
-                onDispose {}
             }
 
             val content: @Composable (Screen) -> Unit = { screen ->
                 DisposableEffect(Unit) {
-                    lifecycleChanges.add(screen to EventType.DisposableEffect(DisposableEvent.OnCreate))
+                    lifecycleChanges.add(screen to EventType.DisposableEffect.OnCreate)
                     onDispose {
-                        lifecycleChanges.add(screen to EventType.DisposableEffect(DisposableEvent.OnDispose))
+                        lifecycleChanges.add(screen to EventType.DisposableEffect.OnDispose)
                     }
                 }
             }
@@ -85,7 +82,7 @@ class LifecycleEventAndDisposableEffectTest(private val navHostParam: NavHostPar
     fun navigateToEntryAndPop() {
         assertThat(
             lifecycleChanges.lastIndexOf(
-                Screen.A to EventType.DisposableEffect(DisposableEvent.OnCreate)
+                Screen.A to EventType.DisposableEffect.OnCreate
             )
         ).isLessThan(
             lifecycleChanges.indexOf(
@@ -103,7 +100,7 @@ class LifecycleEventAndDisposableEffectTest(private val navHostParam: NavHostPar
             )
         ).isLessThan(
             lifecycleChanges.indexOf(
-                Screen.A to EventType.DisposableEffect(DisposableEvent.OnDispose)
+                Screen.A to EventType.DisposableEffect.OnDispose
             )
         )
     }
@@ -120,13 +117,13 @@ class LifecycleEventAndDisposableEffectTest(private val navHostParam: NavHostPar
             )
         ).isLessThan(
             lifecycleChanges.indexOf(
-                Screen.A to EventType.DisposableEffect(DisposableEvent.OnDispose)
+                Screen.A to EventType.DisposableEffect.OnDispose
             )
         )
 
         assertThat(
             lifecycleChanges.lastIndexOf(
-                Screen.B to EventType.DisposableEffect(DisposableEvent.OnCreate)
+                Screen.B to EventType.DisposableEffect.OnCreate
             )
         ).isLessThan(
             lifecycleChanges.indexOf(
@@ -144,13 +141,13 @@ class LifecycleEventAndDisposableEffectTest(private val navHostParam: NavHostPar
             )
         ).isLessThan(
             lifecycleChanges.indexOf(
-                Screen.B to EventType.DisposableEffect(DisposableEvent.OnDispose)
+                Screen.B to EventType.DisposableEffect.OnDispose
             )
         )
 
         assertThat(
             lifecycleChanges.lastIndexOf(
-                Screen.A to EventType.DisposableEffect(DisposableEvent.OnCreate)
+                Screen.A to EventType.DisposableEffect.OnCreate
             )
         ).isLessThan(
             lifecycleChanges.indexOf(
@@ -171,7 +168,7 @@ class LifecycleEventAndDisposableEffectTest(private val navHostParam: NavHostPar
             )
         ).isLessThan(
             lifecycleChanges.indexOf(
-                Screen.A to EventType.DisposableEffect(DisposableEvent.OnDispose)
+                Screen.A to EventType.DisposableEffect.OnDispose
             )
         )
     }
@@ -191,7 +188,7 @@ class LifecycleEventAndDisposableEffectTest(private val navHostParam: NavHostPar
             )
         ).isLessThan(
             lifecycleChanges.indexOf(
-                Screen.B to EventType.DisposableEffect(DisposableEvent.OnDispose)
+                Screen.B to EventType.DisposableEffect.OnDispose
             )
         )
     }

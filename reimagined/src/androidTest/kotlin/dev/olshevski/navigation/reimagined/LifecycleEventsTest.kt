@@ -2,8 +2,7 @@ package dev.olshevski.navigation.reimagined
 
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -31,28 +30,27 @@ class LifecycleEventsTest(private val navHostParam: NavHostParam) {
         A, B, C
     }
 
-    private lateinit var navController: NavController<Screen>
-    private lateinit var lifecycleChanges: MutableList<Pair<Screen, Lifecycle.Event>>
+    private val navController = navController(Screen.A)
+    private val lifecycleChanges = mutableListOf<Pair<Screen, Lifecycle.Event>>()
 
     @OptIn(ExperimentalAnimationApi::class)
     @Before
     fun before() {
-        navController = navController(Screen.A)
-        lifecycleChanges = mutableListOf()
         composeRule.setContent {
             val state = rememberNavHostState(navController.backstack)
-            val observedEntries = remember { mutableSetOf<LifecycleOwner>() }
 
-            DisposableEffect(state.hostEntries) {
-                state.hostEntries.forEach {
-                    if (!observedEntries.contains(it)) {
-                        it.lifecycle.addObserver(LifecycleEventObserver { _, event ->
-                            lifecycleChanges.add(it.destination to event)
-                        })
-                        observedEntries.add(it)
+            ImmediateLaunchedEffect(state) {
+                val observedEntries = mutableSetOf<LifecycleOwner>()
+                snapshotFlow { state.hostEntries }.collect { hostEntries ->
+                    hostEntries.forEach {
+                        if (!observedEntries.contains(it)) {
+                            it.lifecycle.addObserver(LifecycleEventObserver { _, event ->
+                                lifecycleChanges.add(it.destination to event)
+                            })
+                            observedEntries.add(it)
+                        }
                     }
                 }
-                onDispose {}
             }
 
             when (navHostParam) {
@@ -88,8 +86,8 @@ class LifecycleEventsTest(private val navHostParam: NavHostParam) {
         composeRule.waitForIdle()
 
         assertThat(lifecycleChanges).containsExactly(
-            Screen.A to Lifecycle.Event.ON_PAUSE,
             Screen.B to Lifecycle.Event.ON_CREATE,
+            Screen.A to Lifecycle.Event.ON_PAUSE,
             Screen.B to Lifecycle.Event.ON_START,
             Screen.A to Lifecycle.Event.ON_STOP,
             Screen.B to Lifecycle.Event.ON_RESUME
@@ -103,8 +101,152 @@ class LifecycleEventsTest(private val navHostParam: NavHostParam) {
             Screen.B to Lifecycle.Event.ON_PAUSE,
             Screen.A to Lifecycle.Event.ON_START,
             Screen.B to Lifecycle.Event.ON_STOP,
-            Screen.B to Lifecycle.Event.ON_DESTROY,
-            Screen.A to Lifecycle.Event.ON_RESUME
+            Screen.A to Lifecycle.Event.ON_RESUME,
+            Screen.B to Lifecycle.Event.ON_DESTROY
+        ).inOrder()
+    }
+
+    @Test
+    fun navigateBetweenThreeEntries() {
+        navController.navigate(Screen.B)
+        composeRule.waitForIdle()
+
+        lifecycleChanges.clear()
+        navController.navigate(Screen.C)
+        composeRule.waitForIdle()
+
+        assertThat(lifecycleChanges).containsExactly(
+            Screen.C to Lifecycle.Event.ON_CREATE,
+            Screen.B to Lifecycle.Event.ON_PAUSE,
+            Screen.C to Lifecycle.Event.ON_START,
+            Screen.B to Lifecycle.Event.ON_STOP,
+            Screen.C to Lifecycle.Event.ON_RESUME
+        ).inOrder()
+
+        lifecycleChanges.clear()
+        navController.pop()
+        composeRule.waitForIdle()
+
+        assertThat(lifecycleChanges).containsExactly(
+            Screen.C to Lifecycle.Event.ON_PAUSE,
+            Screen.B to Lifecycle.Event.ON_START,
+            Screen.C to Lifecycle.Event.ON_STOP,
+            Screen.B to Lifecycle.Event.ON_RESUME,
+            Screen.C to Lifecycle.Event.ON_DESTROY
+        ).inOrder()
+    }
+
+    @Test
+    fun navigateToTwoEntriesAndPop() {
+        lifecycleChanges.clear()
+        navController.navigate(listOf(Screen.B, Screen.C))
+        composeRule.waitForIdle()
+
+        assertThat(lifecycleChanges).containsExactly(
+            Screen.B to Lifecycle.Event.ON_CREATE,
+            Screen.C to Lifecycle.Event.ON_CREATE,
+            Screen.A to Lifecycle.Event.ON_PAUSE,
+            Screen.C to Lifecycle.Event.ON_START,
+            Screen.A to Lifecycle.Event.ON_STOP,
+            Screen.C to Lifecycle.Event.ON_RESUME
+        ).inOrder()
+
+        lifecycleChanges.clear()
+        navController.pop()
+        composeRule.waitForIdle()
+
+        assertThat(lifecycleChanges).containsExactly(
+            Screen.C to Lifecycle.Event.ON_PAUSE,
+            Screen.B to Lifecycle.Event.ON_START,
+            Screen.C to Lifecycle.Event.ON_STOP,
+            Screen.B to Lifecycle.Event.ON_RESUME,
+            Screen.C to Lifecycle.Event.ON_DESTROY
+        ).inOrder()
+    }
+
+    @Test
+    fun pauseActivity_singleEntry() {
+        lifecycleChanges.clear()
+        composeRule.activityRule.scenario.moveToState(Lifecycle.State.STARTED)
+        composeRule.waitForIdle()
+
+        assertThat(lifecycleChanges).containsExactly(
+            Screen.A to Lifecycle.Event.ON_PAUSE,
+        ).inOrder()
+
+        lifecycleChanges.clear()
+        composeRule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
+        composeRule.waitForIdle()
+
+        assertThat(lifecycleChanges).containsExactly(
+            Screen.A to Lifecycle.Event.ON_RESUME,
+        ).inOrder()
+    }
+
+    @Test
+    fun pauseActivity_twoEntries() {
+        navController.navigate(Screen.B)
+        composeRule.waitForIdle()
+
+        lifecycleChanges.clear()
+        composeRule.activityRule.scenario.moveToState(Lifecycle.State.STARTED)
+        composeRule.waitForIdle()
+
+        assertThat(lifecycleChanges).containsExactly(
+            Screen.B to Lifecycle.Event.ON_PAUSE,
+        ).inOrder()
+
+        lifecycleChanges.clear()
+        composeRule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
+        composeRule.waitForIdle()
+
+        assertThat(lifecycleChanges).containsExactly(
+            Screen.B to Lifecycle.Event.ON_RESUME,
+        ).inOrder()
+    }
+
+    @Test
+    fun stopActivity_singleEntry() {
+        lifecycleChanges.clear()
+        composeRule.activityRule.scenario.moveToState(Lifecycle.State.CREATED)
+        composeRule.waitForIdle()
+
+        assertThat(lifecycleChanges).containsExactly(
+            Screen.A to Lifecycle.Event.ON_PAUSE,
+            Screen.A to Lifecycle.Event.ON_STOP,
+        ).inOrder()
+
+        lifecycleChanges.clear()
+        composeRule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
+        composeRule.waitForIdle()
+
+        assertThat(lifecycleChanges).containsExactly(
+            Screen.A to Lifecycle.Event.ON_START,
+            Screen.A to Lifecycle.Event.ON_RESUME,
+        ).inOrder()
+    }
+
+    @Test
+    fun stopActivity_twoEntries() {
+        navController.navigate(Screen.B)
+        composeRule.waitForIdle()
+
+        lifecycleChanges.clear()
+        composeRule.activityRule.scenario.moveToState(Lifecycle.State.CREATED)
+        composeRule.waitForIdle()
+
+        assertThat(lifecycleChanges).containsExactly(
+            Screen.B to Lifecycle.Event.ON_PAUSE,
+            Screen.B to Lifecycle.Event.ON_STOP,
+        ).inOrder()
+
+        lifecycleChanges.clear()
+        composeRule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
+        composeRule.waitForIdle()
+
+        assertThat(lifecycleChanges).containsExactly(
+            Screen.B to Lifecycle.Event.ON_START,
+            Screen.B to Lifecycle.Event.ON_RESUME,
         ).inOrder()
     }
 
