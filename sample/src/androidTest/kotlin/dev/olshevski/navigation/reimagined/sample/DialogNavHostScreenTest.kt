@@ -90,7 +90,7 @@ class DialogNavHostScreenTest {
 
     @Test
     fun generalFlow_recreateActivityAndViewModels() = generalFlow(middleBlock = {
-        recreateActivityAndViewModels()
+        recreateActivityAndClearViewModels()
     })
 
 }

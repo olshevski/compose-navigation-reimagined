@@ -1,8 +1,6 @@
 package dev.olshevski.navigation.reimagined
 
 import androidx.activity.ComponentActivity
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -10,6 +8,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.truth.Truth.assertThat
+import dev.olshevski.navigation.reimagined.param.NavHostParam
+import dev.olshevski.navigation.reimagined.param.ParamNavHost
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -17,7 +17,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
-class LifecycleEventsAndDisposableEffectsTest(private val navHostParam: NavHostParam) {
+class PauseResumeOrderTest(private val param: NavHostParam) {
 
     companion object {
         @JvmStatic
@@ -43,7 +43,6 @@ class LifecycleEventsAndDisposableEffectsTest(private val navHostParam: NavHostP
     private val navController = navController(Screen.A)
     private val lifecycleChanges = mutableListOf<Pair<Screen, EventType>>()
 
-    @OptIn(ExperimentalAnimationApi::class)
     @Before
     fun before() {
         composeRule.setContent {
@@ -63,17 +62,13 @@ class LifecycleEventsAndDisposableEffectsTest(private val navHostParam: NavHostP
                 }
             }
 
-            val content: @Composable (Screen) -> Unit = { screen ->
+            ParamNavHost(param, state) { screen ->
                 DisposableEffect(Unit) {
                     lifecycleChanges.add(screen to EventType.DisposableEffect.OnCreate)
                     onDispose {
                         lifecycleChanges.add(screen to EventType.DisposableEffect.OnDispose)
                     }
                 }
-            }
-            when (navHostParam) {
-                NavHostParam.NavHost -> NavHost(state) { content(it) }
-                NavHostParam.AnimatedNavHost -> AnimatedNavHost(state) { content(it) }
             }
         }
     }

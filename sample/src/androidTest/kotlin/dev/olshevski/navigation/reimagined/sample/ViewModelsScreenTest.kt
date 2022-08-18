@@ -95,7 +95,7 @@ class ViewModelsScreenTest {
 
     @Test
     fun generalFlow_recreateActivityAndViewModels() = generalFlow(middleBlock = {
-        recreateActivityAndViewModels()
+        recreateActivityAndClearViewModels()
     })
 
     @Test

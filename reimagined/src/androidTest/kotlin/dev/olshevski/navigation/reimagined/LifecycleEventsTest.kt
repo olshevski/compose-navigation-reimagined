@@ -1,13 +1,14 @@
 package dev.olshevski.navigation.reimagined
 
 import androidx.activity.ComponentActivity
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.truth.Truth.assertThat
+import dev.olshevski.navigation.reimagined.param.NavHostParam
+import dev.olshevski.navigation.reimagined.param.ParamNavHost
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -15,7 +16,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
-class LifecycleEventsTest(private val navHostParam: NavHostParam) {
+class LifecycleEventsTest(private val param: NavHostParam) {
 
     companion object {
         @JvmStatic
@@ -33,7 +34,6 @@ class LifecycleEventsTest(private val navHostParam: NavHostParam) {
     private val navController = navController(Screen.A)
     private val lifecycleChanges = mutableListOf<Pair<Screen, Lifecycle.Event>>()
 
-    @OptIn(ExperimentalAnimationApi::class)
     @Before
     fun before() {
         composeRule.setContent {
@@ -52,11 +52,7 @@ class LifecycleEventsTest(private val navHostParam: NavHostParam) {
                     }
                 }
             }
-
-            when (navHostParam) {
-                NavHostParam.NavHost -> NavHost(state) {}
-                NavHostParam.AnimatedNavHost -> AnimatedNavHost(state) {}
-            }
+            ParamNavHost(param, state) {}
         }
     }
 

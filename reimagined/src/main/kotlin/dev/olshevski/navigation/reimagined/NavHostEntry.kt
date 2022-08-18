@@ -12,9 +12,15 @@ import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.SAVED_STATE_REGISTRY_OWNER_KEY
 import androidx.lifecycle.SavedStateViewModelFactory
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.enableSavedStateHandles
+import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
@@ -66,8 +72,15 @@ class NavHostEntry<out T>(
         }
     }
 
+    override val savedStateRegistry = savedStateRegistryController.savedStateRegistry
+
     private val defaultFactory by lazy {
         SavedStateViewModelFactory(application, this, null)
+    }
+
+    init {
+        savedStateRegistryController.performAttach()
+        enableSavedStateHandles()
     }
 
     override fun getViewModelStore() = viewModelStore
@@ -91,13 +104,21 @@ class NavHostEntry<out T>(
         }
     }
 
-    override val savedStateRegistry = savedStateRegistryController.savedStateRegistry
-
     internal fun restoreState(savedState: Bundle) {
         savedStateRegistryController.performRestore(savedState)
     }
 
     override fun getDefaultViewModelProviderFactory() = defaultFactory
+
+    override fun getDefaultViewModelCreationExtras(): CreationExtras {
+        val extras = MutableCreationExtras()
+        if (application != null) {
+            extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] = application
+        }
+        extras[SAVED_STATE_REGISTRY_OWNER_KEY] = this
+        extras[VIEW_MODEL_STORE_OWNER_KEY] = this
+        return extras
+    }
 
     @Composable
     internal fun SaveableStateProvider(content: @Composable () -> Unit) =
