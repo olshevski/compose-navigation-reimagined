@@ -6,12 +6,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.common.truth.Truth.assertThat
 import dev.olshevski.navigation.reimagined.param.NavHostParam
 import dev.olshevski.navigation.reimagined.param.ParamNavHost
-import dev.olshevski.navigation.reimagined.param.ViewModelFactoryParam
-import dev.olshevski.navigation.reimagined.param.paramSavedStateViewModel
-import dev.olshevski.navigation.reimagined.param.paramViewModel
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,42 +17,44 @@ import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
 class ViewModelTest(
-    private val hostParam: NavHostParam,
-    private val factoryParam: ViewModelFactoryParam,
+    private val hostParam: NavHostParam
 ) {
 
     companion object {
         @JvmStatic
-        @Parameterized.Parameters(name = "{0}, {1}")
-        fun data() = cartesianProduct(
-            NavHostParam.values().asList(),
-            ViewModelFactoryParam.values().asList()
-        )
+        @Parameterized.Parameters(name = "{0}")
+        fun data() = NavHostParam.values().asList()
     }
 
     @get:Rule
     val composeRule = createAndroidIntentComposeRule<TestActivity> {
         Intent(it, TestActivity::class.java).apply {
             putExtra(TestActivity.Extra.NavHostParam, hostParam)
-            putExtra(TestActivity.Extra.FactoryParam, factoryParam)
         }
     }
 
     enum class Screen {
-        A, B, C
+        A, B, WithNestedEntries
     }
 
     enum class SubScreen {
         X, Y
     }
 
-    class TestViewModel : ViewModel()
+    class TestViewModel : ViewModel() {
+
+        var cleared = false
+            private set
+
+        override fun onCleared() {
+            cleared = true
+        }
+    }
 
     class TestActivity : ComponentActivity() {
 
         object Extra {
             const val NavHostParam = "NavHostParam"
-            const val FactoryParam = "FactoryParam"
         }
 
         lateinit var screenController: NavController<Screen>
@@ -66,23 +66,20 @@ class ViewModelTest(
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             val hostParam = intent.getSerializableExtra(Extra.NavHostParam) as NavHostParam
-            val factoryParam =
-                intent.getSerializableExtra(Extra.FactoryParam) as ViewModelFactoryParam
             setContent {
                 screenController = rememberNavController(Screen.A)
                 screenState = rememberNavHostState(screenController.backstack)
                 ParamNavHost(hostParam, screenState) { screen ->
                     hostEntries.forEach {
-                        paramViewModel(
-                            viewModelStoreOwner = it,
-                            factoryParam = factoryParam
+                        viewModel(
+                            viewModelStoreOwner = it
                         ) {
                             TestViewModel()
                         }
                     }
 
-                    if (screen == Screen.C) {
-                        SubScreenHost(hostParam, factoryParam)
+                    if (screen == Screen.WithNestedEntries) {
+                        SubScreenHost(hostParam)
                     }
                 }
             }
@@ -90,14 +87,13 @@ class ViewModelTest(
 
         @Suppress("TestFunctionName")
         @Composable
-        private fun SubScreenHost(hostParam: NavHostParam, factoryParam: ViewModelFactoryParam) {
+        private fun SubScreenHost(hostParam: NavHostParam) {
             subScreenController = rememberNavController(SubScreen.X)
             subScreenState = rememberNavHostState(subScreenController.backstack)
             ParamNavHost(hostParam, subScreenState) {
                 hostEntries.forEach {
-                    paramSavedStateViewModel(
-                        viewModelStoreOwner = it,
-                        factoryParam = factoryParam
+                    viewModel(
+                        viewModelStoreOwner = it
                     ) {
                         TestViewModel()
                     }
@@ -110,7 +106,8 @@ class ViewModelTest(
         val viewModel1 =
             getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
 
-        composeRule.activityRule.scenario.recreateAndClearViewModels()
+        composeRule.recreateActivityAndClearViewModels()
+        assertThat(viewModel1.cleared).isTrue()
 
         val viewModel2 =
             getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
@@ -121,7 +118,8 @@ class ViewModelTest(
         val viewModel1 =
             getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
 
-        composeRule.activityRule.scenario.recreate()
+        composeRule.recreateActivity()
+        assertThat(viewModel1.cleared).isFalse()
 
         val viewModel2 =
             getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
@@ -170,7 +168,8 @@ class ViewModelTest(
         val viewModel1 =
             getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[0])
 
-        composeRule.activityRule.scenario.recreateAndClearViewModels()
+        composeRule.recreateActivityAndClearViewModels()
+        assertThat(viewModel1.cleared).isTrue()
 
         val viewModel2 =
             getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[0])
@@ -181,7 +180,8 @@ class ViewModelTest(
         val viewModel1 =
             getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[0])
 
-        composeRule.activityRule.scenario.recreate()
+        composeRule.recreateActivity()
+        assertThat(viewModel1.cleared).isFalse()
 
         val viewModel2 =
             getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[0])
@@ -190,7 +190,7 @@ class ViewModelTest(
 
     @Test
     fun viewModelIsRecreated_currentNestedEntry() {
-        composeRule.activity.screenController.navigate(Screen.C)
+        composeRule.activity.screenController.navigate(Screen.WithNestedEntries)
         composeRule.waitForIdle()
 
         viewModelIsRecreated_firstNestedEntry()
@@ -198,7 +198,7 @@ class ViewModelTest(
 
     @Test
     fun viewModelIsRestored_currentNestedEntry() {
-        composeRule.activity.screenController.navigate(Screen.C)
+        composeRule.activity.screenController.navigate(Screen.WithNestedEntries)
         composeRule.waitForIdle()
 
         viewModelIsRestored_firstNestedEntry()
@@ -206,7 +206,7 @@ class ViewModelTest(
 
     @Test
     fun viewModelIsRecreated_backstackNestedEntry() {
-        composeRule.activity.screenController.navigate(Screen.C)
+        composeRule.activity.screenController.navigate(Screen.WithNestedEntries)
         composeRule.waitForIdle()
         composeRule.activity.subScreenController.navigate(SubScreen.Y)
         composeRule.waitForIdle()
@@ -216,7 +216,7 @@ class ViewModelTest(
 
     @Test
     fun viewModelIsRestored_backstackNestedEntry() {
-        composeRule.activity.screenController.navigate(Screen.C)
+        composeRule.activity.screenController.navigate(Screen.WithNestedEntries)
         composeRule.waitForIdle()
         composeRule.activity.subScreenController.navigate(SubScreen.Y)
         composeRule.waitForIdle()
@@ -226,7 +226,7 @@ class ViewModelTest(
 
     @Test
     fun viewModelsAreDifferentForNestedEntries() {
-        composeRule.activity.screenController.navigate(Screen.C)
+        composeRule.activity.screenController.navigate(Screen.WithNestedEntries)
         composeRule.waitForIdle()
         composeRule.activity.subScreenController.navigate(SubScreen.Y)
         composeRule.waitForIdle()

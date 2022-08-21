@@ -15,8 +15,8 @@ import dev.olshevski.navigation.reimagined.param.ActivityRecreateParam
 import dev.olshevski.navigation.reimagined.param.NavHostParam
 import dev.olshevski.navigation.reimagined.param.ParamNavHost
 import dev.olshevski.navigation.reimagined.param.ViewModelFactoryParam
-import dev.olshevski.navigation.reimagined.param.paramSavedStateViewModel
-import dev.olshevski.navigation.reimagined.param.recreate
+import dev.olshevski.navigation.reimagined.param.paramViewModel
+import dev.olshevski.navigation.reimagined.param.recreateActivity
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,9 +33,9 @@ class SavedStateHandleTest(
         @JvmStatic
         @Parameterized.Parameters(name = "{0}, {1}, {2}")
         fun data() = cartesianProduct(
-            NavHostParam.values().asList(),
-            ViewModelFactoryParam.values().asList(),
-            ActivityRecreateParam.values().asList()
+            NavHostParam.values(),
+            ViewModelFactoryParam.values(),
+            ActivityRecreateParam.values()
         )
     }
 
@@ -48,7 +48,7 @@ class SavedStateHandleTest(
     }
 
     enum class Screen {
-        A, B, C
+        A, B, WithNestedEntries
     }
 
     enum class SubScreen {
@@ -90,14 +90,14 @@ class SavedStateHandleTest(
                 screenController = rememberNavController(Screen.A)
                 screenState = rememberNavHostState(screenController.backstack)
                 ParamNavHost(hostParam, screenState) { screen ->
-                    paramSavedStateViewModel(
-                        viewModelStoreOwner = hostEntries.find { it.destination == Screen.A }!!,
-                        factoryParam = factoryParam
+                    paramViewModel(
+                        factoryParam = factoryParam,
+                        viewModelStoreOwner = hostEntries.find { it.destination == Screen.A }!!
                     ) { savedStateHandle ->
                         TestViewModel(savedStateHandle)
                     }
 
-                    if (screen == Screen.C) {
+                    if (screen == Screen.WithNestedEntries) {
                         SubScreenHost(hostParam, factoryParam)
                     }
                 }
@@ -110,9 +110,9 @@ class SavedStateHandleTest(
             subScreenController = rememberNavController(SubScreen.X)
             subScreenState = rememberNavHostState(subScreenController.backstack)
             ParamNavHost(hostParam, subScreenState) {
-                paramSavedStateViewModel(
-                    viewModelStoreOwner = hostEntries.find { it.destination == SubScreen.X }!!,
-                    factoryParam = factoryParam
+                paramViewModel(
+                    factoryParam = factoryParam,
+                    viewModelStoreOwner = hostEntries.find { it.destination == SubScreen.X }!!
                 ) { savedStateHandle ->
                     TestViewModel(savedStateHandle)
                 }
@@ -130,14 +130,14 @@ class SavedStateHandleTest(
         assertThat(viewModel1.state).isEqualTo(Value.Value1)
 
         viewModel1.state = Value.Value2
-        composeRule.activityRule.scenario.recreate(recreateParam)
+        composeRule.recreateActivity(recreateParam)
 
         val viewModel2 =
             getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
         assertThat(viewModel2.state).isEqualTo(Value.Value2)
 
         viewModel2.state = Value.Value3
-        composeRule.activityRule.scenario.recreate(recreateParam)
+        composeRule.recreateActivity(recreateParam)
 
         val viewModel3 =
             getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
@@ -163,14 +163,14 @@ class SavedStateHandleTest(
         assertThat(viewModel1.state).isEqualTo(Value.Value1)
 
         viewModel1.state = Value.Value2
-        composeRule.activityRule.scenario.recreate(recreateParam)
+        composeRule.recreateActivity(recreateParam)
 
         val viewModel2 =
             getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[0])
         assertThat(viewModel2.state).isEqualTo(Value.Value2)
 
         viewModel2.state = Value.Value3
-        composeRule.activityRule.scenario.recreate(recreateParam)
+        composeRule.recreateActivity(recreateParam)
 
         val viewModel3 =
             getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[0])
@@ -179,7 +179,7 @@ class SavedStateHandleTest(
 
     @Test
     fun currentNestedEntry() {
-        composeRule.activity.screenController.navigate(Screen.C)
+        composeRule.activity.screenController.navigate(Screen.WithNestedEntries)
         composeRule.waitForIdle()
 
         testFirstNestedEntry()
@@ -187,7 +187,7 @@ class SavedStateHandleTest(
 
     @Test
     fun backstackNestedEntry() {
-        composeRule.activity.screenController.navigate(Screen.C)
+        composeRule.activity.screenController.navigate(Screen.WithNestedEntries)
         composeRule.waitForIdle()
         composeRule.activity.subScreenController.navigate(SubScreen.Y)
         composeRule.waitForIdle()

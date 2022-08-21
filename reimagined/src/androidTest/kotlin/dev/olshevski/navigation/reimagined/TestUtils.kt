@@ -9,12 +9,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
-import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import androidx.test.internal.runner.junit4.statement.UiThreadStatement
-import org.checkerframework.checker.units.qual.A
-import org.checkerframework.checker.units.qual.C
 
 // TODO share this code in common module
 
@@ -40,21 +36,24 @@ private fun <A : ComponentActivity> ActivityScenarioRule<A>.getActivity(): A {
     return activity!!
 }
 
+fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.recreateActivity() {
+    activityRule.scenario.recreate()
+    waitForIdle()
+}
+
 /**
  * Additionally cleans ViewModelStore when Activity is recreated. This emulates the case of
  * full Activity recreation when no non-configuration instances are restored.
  */
-fun <A : ComponentActivity> ActivityScenario<A>.recreateAndClearViewModels() {
-    UiThreadStatement.runOnUiThread {
-        onActivity {
-            it.lifecycle.addObserver(object : DefaultLifecycleObserver {
-                override fun onDestroy(owner: LifecycleOwner) {
-                    (owner as ComponentActivity).viewModelStore.clear()
-                }
-            })
-        }
+fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.recreateActivityAndClearViewModels() {
+    runOnUiThread {
+        activity.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                (owner as ComponentActivity).viewModelStore.clear()
+            }
+        })
     }
-    recreate()
+    recreateActivity()
 }
 
 inline fun <reified T : ViewModel> getExistingViewModel(viewModelStoreOwner: ViewModelStoreOwner) =
@@ -68,18 +67,18 @@ inline fun <reified T : ViewModel> getExistingViewModel(viewModelStoreOwner: Vie
     )[T::class.java]
 
 fun <A, B> cartesianProduct(
-    listA: List<A>,
-    listB: List<B>
-) = listA.flatMap { a ->
-    listB.map { b -> arrayOf(a, b) }
+    arrayA: Array<A>,
+    arrayB: Array<B>
+) = arrayA.flatMap { a ->
+    arrayB.map { b -> arrayOf(a, b) }
 }
 
 fun <A, B, C> cartesianProduct(
-    listA: List<A>,
-    listB: List<B>,
-    listC: List<C>
-) = listA.flatMap { a ->
-    listB.flatMap { b ->
-        listC.map { c -> arrayOf(a, b, c) }
+    arrayA: Array<A>,
+    arrayB: Array<B>,
+    arrayC: Array<C>
+) = arrayA.flatMap { a ->
+    arrayB.flatMap { b ->
+        arrayC.map { c -> arrayOf(a, b, c) }
     }
 }

@@ -2,8 +2,8 @@ package dev.olshevski.navigation.reimagined
 
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.ViewModel
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
@@ -11,7 +11,7 @@ import org.junit.Test
 class RecreateAndClearViewModelsTest {
 
     @get:Rule
-    val scenarioRule = ActivityScenarioRule(ComponentActivity::class.java)
+    val composeRule = createAndroidComposeRule<ComponentActivity>()
 
     class TestViewModel : ViewModel() {
 
@@ -26,16 +26,10 @@ class RecreateAndClearViewModelsTest {
 
     @Test
     fun test() {
-        lateinit var viewModel1: TestViewModel
-        scenarioRule.scenario.onActivity {
-            viewModel1 = it.viewModels<TestViewModel>().value
-        }
-        scenarioRule.scenario.recreateAndClearViewModels()
+        val viewModel1 = composeRule.activity.viewModels<TestViewModel>().value
+        composeRule.recreateActivityAndClearViewModels()
 
-        lateinit var viewModel2: TestViewModel
-        scenarioRule.scenario.onActivity {
-            viewModel2 = it.viewModels<TestViewModel>().value
-        }
+        val viewModel2 = composeRule.activity.viewModels<TestViewModel>().value
 
         assertThat(viewModel1.cleared).isTrue()
         assertThat(viewModel1).isNotSameInstanceAs(viewModel2)
