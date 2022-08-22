@@ -4,6 +4,7 @@ import android.app.Application
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -74,6 +75,7 @@ private const val PACKAGE_KEY = "dev.olshevski.navigation.reimagined.key"
 /**
  * Stores and manages all components (lifecycles, saved states, view models).
  */
+@Stable
 internal class NavHostState<T>(
     val id: NavHostId = NavHostId(),
     restoredHostEntryIds: Set<NavId> = emptySet(),

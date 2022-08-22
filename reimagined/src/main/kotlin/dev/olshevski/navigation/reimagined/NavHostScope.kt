@@ -1,5 +1,6 @@
 package dev.olshevski.navigation.reimagined
 
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSavedStateRegistryOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -8,6 +9,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
  * Provides access to the list of all current [NavHostEntries][NavHostEntry] as well as other
  * convenient methods only available within [NavHost].
  */
+@Stable
 interface NavHostScope<out T> {
 
     /**
