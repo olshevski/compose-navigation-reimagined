@@ -93,9 +93,6 @@ class NavController<T> internal constructor(
     /**
      * The current backstack. This property is backed up by [MutableState] and any changes to it
      * will notify composition.
-     *
-     * If you want to listen for changes outside of composition, you may set [onBackstackChange]
-     * listener.
      */
     val backstack get() = _backstack
 
@@ -104,6 +101,7 @@ class NavController<T> internal constructor(
      * to [setNewBackstack].
      */
     @Suppress("MemberVisibilityCanBePrivate")
+    @Deprecated("Use recommended Compose methods to listen for 'backstack' changes, e.g. snapshotFlow, derivedStateOf, etc.")
     var onBackstackChange: ((backstack: NavBackstack<T>) -> Unit)? = null
 
     /**
