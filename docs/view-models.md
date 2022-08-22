@@ -14,6 +14,20 @@ fun SomeScreen() {
 }
 ```
 
+## Accessing ViewModels of backstack entries
+
+Since version 1.2.0 it is possible to access ViewModelStoreOwner for any entry that is currently present on the backstack. It is done through the `NavHostScope` that is available inside NavHost/AnimatedNavHost:
+
+```kotlin
+@Composable
+fun NavHostScope<Screen>.SomeScreen() {
+    val previousViewModel = viewModel<PreviousViewModel>(
+        viewModelStoreOwner = findHostEntry { it is Screen.Previous }!!
+    )
+    // ...
+}
+```
+
 ## Passing parameters into a ViewModel
 
 There is no such thing as a Bundle of arguments for navigation entries in this library. This means that there is literally nothing to pass into `SavedStateHandle` of your ViewModel as the default arguments.
