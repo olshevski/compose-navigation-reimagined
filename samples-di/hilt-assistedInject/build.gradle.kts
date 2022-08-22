@@ -70,7 +70,6 @@ dependencies {
     // Hilt libs
     implementation(Libs.Google.Dagger.HiltAndroid)
     kapt(Libs.Google.Dagger.HiltCompiler)
-    implementation(Libs.Olshevski.EasyFactoriesCompose)
 }
 
 kapt {

@@ -60,8 +60,4 @@ object Libs {
         const val Compose = "io.insert-koin:koin-androidx-compose:3.2.0"
     }
 
-    object Olshevski {
-        const val EasyFactoriesCompose = "dev.olshevski.viewmodel:easy-factories-compose:1.0.0"
-    }
-
 }

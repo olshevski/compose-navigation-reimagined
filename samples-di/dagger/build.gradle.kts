@@ -69,5 +69,4 @@ dependencies {
     // Dagger libs
     implementation(Libs.Google.Dagger.Api)
     kapt(Libs.Google.Dagger.Compiler)
-    implementation(Libs.Olshevski.EasyFactoriesCompose)
 }

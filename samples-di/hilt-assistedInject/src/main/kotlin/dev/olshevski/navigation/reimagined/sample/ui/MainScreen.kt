@@ -6,13 +6,13 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.olshevski.navigation.reimagined.NavBackHandler
 import dev.olshevski.navigation.reimagined.NavHost
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.sample.viewModelEntryPoint
-import dev.olshevski.viewmodel.easyfactories.savedStateViewModel
-import dev.olshevski.viewmodel.easyfactories.viewModel
 
 @Composable
 fun MainScreen() = ScreenLayout(
@@ -86,7 +86,7 @@ private fun ThirdScreen(
     title = "Third screen text=$text"
 ) {
     val viewModelEntryPoint = LocalContext.current.viewModelEntryPoint
-    val viewModel = savedStateViewModel { savedStateHandle ->
-        viewModelEntryPoint.thirdViewModelFactory().create(text, savedStateHandle)
+    val viewModel = viewModel {
+        viewModelEntryPoint.thirdViewModelFactory().create(text, createSavedStateHandle())
     }
 }

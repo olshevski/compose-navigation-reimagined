@@ -6,10 +6,13 @@ import android.content.ContextWrapper
 import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.DEFAULT_ARGS_KEY
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.internal.lifecycle.HiltViewModelFactory
@@ -89,10 +92,29 @@ private fun createHiltViewModelFactory(
                     "NavHostEntry but instead found: $ctx"
         )
     }
-    return HiltViewModelFactory.createInternal(
+    val hiltViewModelFactory = HiltViewModelFactory.createInternal(
         activity,
         hostEntry,
-        defaultArguments,
+        defaultArguments, // not used internally anymore
         hostEntry.defaultViewModelProviderFactory,
     )
+    return DefaultArgumentsWrapperFactory(hiltViewModelFactory, defaultArguments)
+}
+
+private class DefaultArgumentsWrapperFactory(
+    private val factory: ViewModelProvider.Factory,
+    private val defaultArguments: Bundle?
+) : ViewModelProvider.Factory {
+
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T =
+        factory.create(modelClass, if (defaultArguments != null) {
+            MutableCreationExtras(extras).apply {
+                set(DEFAULT_ARGS_KEY, defaultArguments)
+            }
+        } else {
+            extras
+        })
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = factory.create(modelClass)
+
 }
