@@ -13,7 +13,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.NavHost
 import dev.olshevski.navigation.reimagined.navController
 import dev.olshevski.navigation.reimagined.navigate
@@ -58,9 +60,11 @@ fun ViewModelsScreen() = ScreenLayout(
 
 class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
-    private val navController by savedStateHandle.navController<ViewModelsDestination>(
-        startDestination = ViewModelsDestination.First
-    )
+    private val navController by savedStateHandle.saveable<NavController<ViewModelsDestination>> {
+        navController(
+            startDestination = ViewModelsDestination.First
+        )
+    }
 
     // You may either make navController public or just its navBackstack. The latter is convenient
     // when you don't want to expose navigation methods in the UI layer.

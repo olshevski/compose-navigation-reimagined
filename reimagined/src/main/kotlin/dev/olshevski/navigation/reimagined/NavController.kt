@@ -12,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import kotlin.properties.ReadOnlyProperty
 
 /**
  * Creates and remembers a new [NavController] instance. Its backstack will be prefilled with
@@ -64,44 +63,6 @@ fun <T> navController(initialBackstack: List<T>) =
  */
 fun <T> navController(startDestination: T) =
     navController(initialBackstack = listOf(startDestination))
-
-/**
- * Returns a property delegate that creates and saves a new [NavController] instance in
- * a receiver [SavedStateHandle]. NavController's backstack will be prefilled with destinations
- * from the [initialBackstack].
- *
- * The order of the items in the list is interpreted as going from the bottom of the backstack
- * to the top. It means that the last item of the list will become the currently displayed item
- * in [NavHost]. The first item of the list will be the last item that can be popped of
- * the backstack.
- *
- * The [initialBackstack] list may be empty.
- *
- * @param key an optional key to use for saving NavController instance inside a SavedStateHandle.
- * By default, the name of the property will be used as a key.
- */
-fun <T> SavedStateHandle.navController(
-    key: String? = null,
-    initialBackstack: List<T>
-) = ReadOnlyProperty<Any, NavController<T>> { _, property ->
-    val navControllerKey = key ?: property.name
-    this.get<NavController<T>>(navControllerKey) ?: navController(initialBackstack).also {
-        this[navControllerKey] = it
-    }
-}
-
-/**
- * Returns a property delegate that creates and saves a new [NavController] instance in
- * a receiver [SavedStateHandle]. NavController's backstack will contain a single item -
- * [startDestination].
- *
- * @param key an optional key to use for saving NavController instance inside a SavedStateHandle.
- * By default, the name of the property will be used as a key.
- */
-fun <T> SavedStateHandle.navController(
-    key: String? = null,
-    startDestination: T
-) = navController(key, listOf(startDestination))
 
 /**
  * A backstack controller which is used for all navigation.

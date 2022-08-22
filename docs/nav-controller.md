@@ -24,14 +24,14 @@ val navController = rememberNavController<Screen>(
 
 ## NavController in a ViewModel
 
-The library provides a property delegate for creating and saving NavController in a SavedStateHandle:
+Use `saveable` delegate for SavedStateHandle:
 
 ```kotlin
 class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
-    val navController by savedStateHandle.navController<Screen>(
-        startDestination = Screen.First
-    )
+    val navController by savedStateHandle.saveable<NavController<Screen>> {
+        navController(startDestination = Screen.First)
+    }
 
 }
 ```
