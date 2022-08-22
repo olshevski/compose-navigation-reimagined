@@ -50,3 +50,6 @@ DialogNavHost definitely wins this battle.
 
 !!! note
     DialogNavHost doesn't wrap your composables into a Dialog. You need to use either Dialog or AlertDialog composable inside a `contentSelector` yourself.
+
+!!! tip
+    For BottomSheets, I recommend using DialogNavHost with BottomSheetDialog from this library: [https://github.com/holixfactory/bottomsheetdialog-compose](https://github.com/holixfactory/bottomsheetdialog-compose). Simple and convenient.

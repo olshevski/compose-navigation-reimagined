@@ -83,6 +83,14 @@ As you can see, `NavController` is used for switching between screens, `NavBackH
 
 Full documentation is available [here](https://olshevski.github.io/compose-navigation-reimagined).
 
+## Additional dependencies
+
+Library-specific `hiltViewModel()` implementation:
+
+```koltin
+implementation("dev.olshevski.navigation:reimagined-hilt:<latest-version>")
+```
+
 ## Sample
 
 Explore the [sample](https://github.com/olshevski/compose-navigation-reimagined/tree/main/sample). It demonstrates:
