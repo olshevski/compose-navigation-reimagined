@@ -7,11 +7,8 @@ object Libs {
         }
 
         object Compose {
+            const val CompilerVersion = "1.3.1"
             private const val Version = "1.2.1"
-
-            @Suppress("MemberVisibilityCanBePrivate")
-            const val CompilerVersion = "1.3.0"
-
             const val Ui = "androidx.compose.ui:ui:$Version"
             const val Animation = "androidx.compose.animation:animation:$Version"
             const val Material = "androidx.compose.material:material:$Version"

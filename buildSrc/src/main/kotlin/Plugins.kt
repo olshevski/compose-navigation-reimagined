@@ -9,7 +9,7 @@ fun PluginDependenciesSpec.plugin(pluginSpec: PluginSpec) {
 
 object Plugins {
     object Android {
-        private const val Version = "7.2.2"
+        private const val Version = "7.3.0"
         val Application = PluginSpec("com.android.application", Version)
         val Library = PluginSpec("com.android.library", Version)
     }
@@ -21,7 +21,7 @@ object Plugins {
         val Parcelize = PluginSpec("org.jetbrains.kotlin.plugin.parcelize", Version)
     }
 
-    val Anvil = PluginSpec("com.squareup.anvil", "2.4.1")
+    val Anvil = PluginSpec("com.squareup.anvil", "2.4.2")
     val Hilt = PluginSpec("com.google.dagger.hilt.android", Libs.Google.Dagger.Version)
     val NexusPublishing = PluginSpec("io.github.gradle-nexus.publish-plugin", "1.1.0")
     val Versions = PluginSpec("dev.olshevski.versions", "1.0.1")
