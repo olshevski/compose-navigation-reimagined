@@ -19,10 +19,9 @@ dependencies {
     implementation(project(":reimagined"))
     implementation(Libs.AndroidX.Activity.Compose)
     implementation(Libs.AndroidX.Compose.Material)
+    implementation(Libs.AndroidX.Compose.MaterialIconsExtended)
     debugImplementation(Libs.AndroidX.Compose.UiTooling)
     implementation(Libs.AndroidX.Compose.UiToolingPreview)
-    implementation(Libs.AndroidX.Compose.RuntimeLivedata)
-    implementation(Libs.AndroidX.Compose.MaterialIconsExtended)
     implementation(Libs.AndroidX.Lifecycle.ViewModel.Compose)
 
     androidTestImplementation(project(":test-utils"))

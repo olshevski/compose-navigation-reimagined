@@ -5,12 +5,11 @@ import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.saveable
@@ -44,12 +43,12 @@ fun ViewModelsScreen() = ScreenLayout(
             )
             ViewModelsDestination.Second -> {
                 val secondViewModel = viewModel<SecondViewModel>()
-                val text by secondViewModel.text.observeAsState()
+                val text by secondViewModel.text.collectAsState()
                 SecondScreen(
-                    text = text!!,
+                    text = text,
                     onTextChange = secondViewModel::onTextChange,
                     toThirdScreenButtonClick = {
-                        navigationViewModel.toThirdScreenButtonClick(text!!)
+                        navigationViewModel.toThirdScreenButtonClick(text)
                     }
                 )
             }
@@ -111,13 +110,12 @@ private fun FirstScreen(
 
 }
 
-class SecondViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
+class SecondViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
 
-    private val _text = savedStateHandle.getLiveData("text", "")
-    val text = _text as LiveData<String>
+    val text = savedStateHandle.getStateFlow("text", "")
 
     fun onTextChange(text: String) {
-        _text.value = text
+        savedStateHandle["text"] = text
     }
 
 }
