@@ -22,8 +22,8 @@ object Plugins {
     }
 
     val Anvil = PluginSpec("com.squareup.anvil", "2.4.1")
-    val BenManesVersions = PluginSpec("com.github.ben-manes.versions", "0.42.0")
     val Hilt = PluginSpec("com.google.dagger.hilt.android", Libs.Google.Dagger.Version)
     val NexusPublishing = PluginSpec("io.github.gradle-nexus.publish-plugin", "1.1.0")
+    val Versions = PluginSpec("dev.olshevski.versions", "1.0.1")
 
 }

@@ -1,5 +1,6 @@
 plugins {
     `kotlin-dsl`
+    id("dev.olshevski.versions") version "1.0.1"
 }
 
 repositories {
