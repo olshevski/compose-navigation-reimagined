@@ -10,6 +10,9 @@ import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.google.common.truth.Truth
 import dev.olshevski.navigation.reimagined.sample.ui.TestInputTag
+import dev.olshevski.navigation.testutils.createAndroidIntentComposeRule
+import dev.olshevski.navigation.testutils.recreateActivity
+import dev.olshevski.navigation.testutils.recreateActivityAndClearViewModels
 
 typealias MainActivityComposeRule = AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
 
@@ -27,8 +30,7 @@ open class MainActivityScope(protected val composeRule: MainActivityComposeRule)
     }
 
     fun recreateActivity() {
-        composeRule.activityRule.scenario.recreate()
-        composeRule.waitForIdle()
+        composeRule.recreateActivity()
     }
 
     /**
@@ -36,8 +38,7 @@ open class MainActivityScope(protected val composeRule: MainActivityComposeRule)
      * full Activity recreation when no non-configuration instances are restored.
      */
     fun recreateActivityAndClearViewModels() {
-        composeRule.activityRule.scenario.recreateAndClearViewModels()
-        composeRule.waitForIdle()
+        composeRule.recreateActivityAndClearViewModels()
     }
 
     fun assertActivityClosed() {

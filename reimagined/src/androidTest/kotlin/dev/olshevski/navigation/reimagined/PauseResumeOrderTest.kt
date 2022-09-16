@@ -10,6 +10,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.google.common.truth.Truth.assertThat
 import dev.olshevski.navigation.reimagined.param.NavHostParam
 import dev.olshevski.navigation.reimagined.param.ParamNavHost
+import dev.olshevski.navigation.testutils.ImmediateLaunchedEffect
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

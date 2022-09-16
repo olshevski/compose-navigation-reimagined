@@ -16,6 +16,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "compose-navigation-reimagined"
+include(":test-utils")
 include(":reimagined")
 include(":reimagined-hilt")
 include(":sample")

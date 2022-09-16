@@ -1,8 +1,9 @@
-package dev.olshevski.navigation.reimagined
+package dev.olshevski.navigation.testutils
 
 import android.content.Context
 import android.content.Intent
 import androidx.activity.ComponentActivity
+import androidx.annotation.StringRes
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -11,8 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-
-// TODO share this code in common module
+import androidx.test.platform.app.InstrumentationRegistry
 
 /**
  * Factory method to provide android specific implementation of createComposeRule, for a given
@@ -65,6 +65,9 @@ inline fun <reified T : ViewModel> getExistingViewModel(viewModelStoreOwner: Vie
             }
         }
     )[T::class.java]
+
+fun getString(@StringRes resId: Int, vararg formatArgs: Any) =
+    InstrumentationRegistry.getInstrumentation().targetContext.getString(resId, *formatArgs)
 
 fun <A, B> cartesianProduct(
     arrayA: Array<A>,

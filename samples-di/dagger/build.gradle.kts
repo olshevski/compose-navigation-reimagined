@@ -17,9 +17,7 @@ dependencies {
     implementation(Libs.AndroidX.Compose.Material)
     debugImplementation(Libs.AndroidX.Compose.UiTooling)
     implementation(Libs.AndroidX.Compose.UiToolingPreview)
-    implementation(Libs.AndroidX.Lifecycle.ViewModel.Ktx)
     implementation(Libs.AndroidX.Lifecycle.ViewModel.Compose)
-    implementation(Libs.AndroidX.Lifecycle.ViewModel.SavedState)
 
     // Dagger libs
     implementation(Libs.Google.Dagger.Api)

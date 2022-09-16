@@ -1,6 +1,6 @@
 @file:Suppress("unused", "TestFunctionName")
 
-package dev.olshevski.navigation.reimagined
+package dev.olshevski.navigation.testutils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

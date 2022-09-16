@@ -9,31 +9,31 @@ object Libs {
         object Compose {
             const val CompilerVersion = "1.3.1"
             private const val Version = "1.2.1"
-            const val Ui = "androidx.compose.ui:ui:$Version"
             const val Animation = "androidx.compose.animation:animation:$Version"
             const val Material = "androidx.compose.material:material:$Version"
+            const val MaterialIconsExtended =
+                "androidx.compose.material:material-icons-extended:$Version"
+            const val Runtime = "androidx.compose.runtime:runtime:$Version"
+            const val RuntimeLivedata = "androidx.compose.runtime:runtime-livedata:$Version"
+            const val Ui = "androidx.compose.ui:ui:$Version"
             const val UiTooling = "androidx.compose.ui:ui-tooling:$Version"
             const val UiToolingPreview = "androidx.compose.ui:ui-tooling-preview:$Version"
             const val UiTestJunit4 = "androidx.compose.ui:ui-test-junit4:$Version"
             const val UiTestManifest = "androidx.compose.ui:ui-test-manifest:$Version"
-            const val RuntimeLivedata = "androidx.compose.runtime:runtime-livedata:$Version"
-            const val MaterialIconsExtended =
-                "androidx.compose.material:material-icons-extended:$Version"
         }
 
         object Lifecycle {
             private const val Version = "2.5.1"
 
             object ViewModel {
-                const val Ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$Version"
+                const val Api = "androidx.lifecycle:lifecycle-viewmodel:$Version"
                 const val Compose = "androidx.lifecycle:lifecycle-viewmodel-compose:$Version"
-                const val SavedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:$Version"
             }
         }
 
         object Test {
-            const val Runner = "androidx.test:runner:1.4.0"
             const val Espresso = "androidx.test.espresso:espresso-core:3.4.0"
+            const val Runner = "androidx.test:runner:1.4.0"
         }
     }
 

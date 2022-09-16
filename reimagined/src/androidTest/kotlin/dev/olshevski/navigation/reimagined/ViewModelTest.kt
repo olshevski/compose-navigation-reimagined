@@ -10,6 +10,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.common.truth.Truth.assertThat
 import dev.olshevski.navigation.reimagined.param.NavHostParam
 import dev.olshevski.navigation.reimagined.param.ParamNavHost
+import dev.olshevski.navigation.testutils.createAndroidIntentComposeRule
+import dev.olshevski.navigation.testutils.getExistingViewModel
+import dev.olshevski.navigation.testutils.recreateActivity
+import dev.olshevski.navigation.testutils.recreateActivityAndClearViewModels
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -5,6 +5,7 @@ import androidx.activity.viewModels
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.ViewModel
 import com.google.common.truth.Truth.assertThat
+import dev.olshevski.navigation.testutils.recreateActivityAndClearViewModels
 import org.junit.Rule
 import org.junit.Test
 
