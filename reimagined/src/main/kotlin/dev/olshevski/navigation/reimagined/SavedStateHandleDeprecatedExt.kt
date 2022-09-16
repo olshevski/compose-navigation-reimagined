@@ -35,11 +35,7 @@ private fun <T> SavedStateHandle.navControllerInternal(
  * By default, the name of the property will be used as a key.
  */
 @Deprecated(
-    "Use official 'saveable' delegate instead",
-    replaceWith = ReplaceWith(
-        expression = "this.saveable<NavController<T>>(key) { navController<T>(initialBackstack) }",
-        imports = ["androidx.lifecycle.viewmodel.compose.saveable"]
-    )
+    "Use official 'saveable' delegate instead"
 )
 fun <T> SavedStateHandle.navController(
     key: String,
@@ -61,6 +57,7 @@ fun <T> SavedStateHandle.navController(
  * @param key an optional key to use for saving NavController instance inside a SavedStateHandle.
  * By default, the name of the property will be used as a key.
  */
+@Suppress("UNUSED_PARAMETER")
 @Deprecated(
     "Use official 'saveable' delegate instead",
     replaceWith = ReplaceWith(
@@ -82,11 +79,7 @@ fun <T> SavedStateHandle.navController(
  * By default, the name of the property will be used as a key.
  */
 @Deprecated(
-    "Use official 'saveable' delegate instead",
-    replaceWith = ReplaceWith(
-        expression = "this.saveable<NavController<T>>(key) { navController<T>(startDestination) }",
-        imports = ["androidx.lifecycle.viewmodel.compose.saveable"]
-    )
+    "Use official 'saveable' delegate instead"
 )
 fun <T> SavedStateHandle.navController(
     key: String,
@@ -101,6 +94,7 @@ fun <T> SavedStateHandle.navController(
  * @param key an optional key to use for saving NavController instance inside a SavedStateHandle.
  * By default, the name of the property will be used as a key.
  */
+@Suppress("UNUSED_PARAMETER")
 @Deprecated(
     "Use official 'saveable' delegate instead",
     replaceWith = ReplaceWith(

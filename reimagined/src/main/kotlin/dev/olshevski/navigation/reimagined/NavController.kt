@@ -151,6 +151,7 @@ class NavController<T> internal constructor(
      * You may also extend [NavAction] interface to create new actions appropriate for your use
      * case.
      */
+    @Suppress("DEPRECATION")
     @MainThread
     fun setNewBackstack(entries: List<NavEntry<T>>, action: NavAction = NavAction.Navigate) {
         _backstack = NavBackstack(
