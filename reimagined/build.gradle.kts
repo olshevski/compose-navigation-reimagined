@@ -1,68 +1,12 @@
 plugins {
-    plugin(Plugins.Android.Library)
-    plugin(Plugins.Kotlin.Android)
-    plugin(Plugins.Kotlin.Parcelize)
+    `android-library-config`
+    `kotlin-parcelize`
     `publishing-config`
+    `compose-compiler-reports`
 }
 
 android {
     namespace = "${project.group}.reimagined"
-    compileSdk = AndroidSdkVersion.Compile
-
-    defaultConfig {
-        minSdk = AndroidSdkVersion.Min
-        targetSdk = AndroidSdkVersion.Target
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        named("release") {
-            isMinifyEnabled = false
-            setProguardFiles(
-                listOf(
-                    getDefaultProguardFile("proguard-android-optimize.txt"),
-                    "proguard-rules.pro"
-                )
-            )
-        }
-    }
-
-    kotlinOptions {
-        freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
-
-        // use "-PenableComposeCompilerReports=true" to enable
-        if (project.findProperty("enableComposeCompilerReports") == "true") {
-            val outputDir = project.buildDir.path + "/compose-reports"
-            freeCompilerArgs = freeCompilerArgs + listOf(
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$outputDir",
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$outputDir"
-            )
-        }
-    }
-
-    buildFeatures {
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = Libs.AndroidX.Compose.CompilerVersion
-    }
-
-    testOptions {
-        unitTests.all {
-            it.useJUnitPlatform()
-        }
-    }
-
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-            withJavadocJar()
-        }
-    }
 }
 
 dependencies {

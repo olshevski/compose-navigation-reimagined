@@ -1,59 +1,17 @@
 plugins {
-    plugin(Plugins.Android.Application)
-    plugin(Plugins.Kotlin.Android)
-    plugin(Plugins.Kotlin.Parcelize)
+    `android-application-config`
+    `kotlin-parcelize`
 }
 
 android {
     namespace = "${project.group}.reimagined.sample"
-    compileSdk = AndroidSdkVersion.Compile
-
-    defaultConfig {
-        applicationId = namespace
-        minSdk = AndroidSdkVersion.Min
-        targetSdk = AndroidSdkVersion.Target
-        versionName = project.property("version").toString()
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        named("release") {
-            isMinifyEnabled = false
-            setProguardFiles(
-                listOf(
-                    getDefaultProguardFile("proguard-android-optimize.txt"),
-                    "proguard-rules.pro"
-                )
-            )
-        }
-    }
-
-    signingConfigs {
-        named("debug") {
-            storeFile = rootProject.file("debug.keystore")
-        }
-    }
+    defaultConfig.applicationId = namespace
 
     kotlinOptions {
         freeCompilerArgs = freeCompilerArgs + listOf(
-            "-opt-in=kotlin.RequiresOptIn",
             "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
             "-opt-in=androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi"
         )
-    }
-
-    buildFeatures {
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = Libs.AndroidX.Compose.CompilerVersion
-    }
-
-    packagingOptions {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
     }
 }
 

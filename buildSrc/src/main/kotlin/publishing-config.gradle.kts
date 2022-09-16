@@ -1,6 +1,16 @@
 plugins {
+    `android-library`
     `maven-publish`
     signing
+}
+
+android {
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 fun createPublicationName() = name.split("-")

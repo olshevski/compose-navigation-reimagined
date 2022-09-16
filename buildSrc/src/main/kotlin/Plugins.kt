@@ -8,18 +8,6 @@ fun PluginDependenciesSpec.plugin(pluginSpec: PluginSpec) {
 }
 
 object Plugins {
-    object Android {
-        private const val Version = "7.3.0"
-        val Application = PluginSpec("com.android.application", Version)
-        val Library = PluginSpec("com.android.library", Version)
-    }
-
-    object Kotlin {
-        private const val Version = "1.7.10"
-        val Android = PluginSpec("org.jetbrains.kotlin.android", Version)
-        val Kapt = PluginSpec("org.jetbrains.kotlin.kapt", Version)
-        val Parcelize = PluginSpec("org.jetbrains.kotlin.plugin.parcelize", Version)
-    }
 
     val Anvil = PluginSpec("com.squareup.anvil", "2.4.2")
     val Hilt = PluginSpec("com.google.dagger.hilt.android", Libs.Google.Dagger.Version)
