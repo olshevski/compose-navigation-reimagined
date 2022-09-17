@@ -5,7 +5,9 @@ plugins {
 
 android {
     namespace = "${project.group}.reimagined.sample"
-    defaultConfig.applicationId = namespace
+    defaultConfig {
+        applicationId = namespace
+    }
 
     kotlinOptions {
         freeCompilerArgs = freeCompilerArgs + listOf(

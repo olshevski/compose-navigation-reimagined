@@ -5,7 +5,9 @@ plugins {
 
 android {
     namespace = "${project.group}.reimagined.sample.koin"
-    defaultConfig.applicationId = namespace
+    defaultConfig {
+        applicationId = namespace
+    }
 }
 
 dependencies {
@@ -20,4 +22,11 @@ dependencies {
 
     // Koin
     implementation(Libs.Koin.Compose)
+
+    // tests
+    androidTestImplementation(project(":test-utils"))
+    androidTestImplementation(Libs.AndroidX.Test.Runner)
+    androidTestImplementation(Libs.AndroidX.Test.Espresso)
+    androidTestImplementation(Libs.AndroidX.Compose.UiTestJunit4)
+    androidTestImplementation(Libs.Google.Truth)
 }

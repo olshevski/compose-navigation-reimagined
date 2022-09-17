@@ -7,7 +7,9 @@ plugins {
 
 android {
     namespace = "${project.group}.reimagined.sample.hilt.assistedinject"
-    defaultConfig.applicationId = namespace
+    defaultConfig {
+        applicationId = namespace
+    }
 }
 
 dependencies {
@@ -23,6 +25,13 @@ dependencies {
     // Hilt libs
     implementation(Libs.Google.Dagger.HiltAndroid)
     kapt(Libs.Google.Dagger.HiltCompiler)
+
+    // tests
+    androidTestImplementation(project(":test-utils"))
+    androidTestImplementation(Libs.AndroidX.Test.Runner)
+    androidTestImplementation(Libs.AndroidX.Test.Espresso)
+    androidTestImplementation(Libs.AndroidX.Compose.UiTestJunit4)
+    androidTestImplementation(Libs.Google.Truth)
 }
 
 kapt {

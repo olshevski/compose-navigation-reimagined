@@ -11,4 +11,5 @@ dependencies {
     api(Libs.AndroidX.Compose.Runtime)
     api(Libs.AndroidX.Lifecycle.ViewModel.Api)
     api(Libs.AndroidX.Compose.UiTestJunit4)
+    api(Libs.AndroidX.Test.Espresso)
 }

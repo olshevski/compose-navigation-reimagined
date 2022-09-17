@@ -7,7 +7,9 @@ plugins {
 
 android {
     namespace = "${project.group}.reimagined.sample.anvil"
-    defaultConfig.applicationId = namespace
+    defaultConfig {
+        applicationId = namespace
+    }
 }
 
 dependencies {
@@ -23,4 +25,11 @@ dependencies {
     // Dagger libs
     implementation(Libs.Google.Dagger.Api)
     kapt(Libs.Google.Dagger.Compiler)
+
+    // tests
+    androidTestImplementation(project(":test-utils"))
+    androidTestImplementation(Libs.AndroidX.Test.Runner)
+    androidTestImplementation(Libs.AndroidX.Test.Espresso)
+    androidTestImplementation(Libs.AndroidX.Compose.UiTestJunit4)
+    androidTestImplementation(Libs.Google.Truth)
 }

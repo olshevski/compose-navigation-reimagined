@@ -11,6 +11,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.google.common.truth.Truth
 import dev.olshevski.navigation.reimagined.sample.ui.TestInputTag
 import dev.olshevski.navigation.testutils.createAndroidIntentComposeRule
+import dev.olshevski.navigation.testutils.pressBack
 import dev.olshevski.navigation.testutils.recreateActivity
 import dev.olshevski.navigation.testutils.recreateActivityAndClearViewModels
 
@@ -47,8 +48,7 @@ open class MainActivityScope(protected val composeRule: MainActivityComposeRule)
     }
 
     fun pressBack() {
-        Espresso.pressBack()
-        composeRule.waitForIdle()
+        composeRule.pressBack()
     }
 
     fun pressBackUnconditionally() {

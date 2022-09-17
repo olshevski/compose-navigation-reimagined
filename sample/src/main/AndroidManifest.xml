@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NavigationReimagined">
         <activity
-            android:name="dev.olshevski.navigation.reimagined.sample.MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.NavigationReimagined.NoActionBar">
             <intent-filter>
