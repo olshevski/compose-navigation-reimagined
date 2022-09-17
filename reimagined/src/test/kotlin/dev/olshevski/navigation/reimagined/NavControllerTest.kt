@@ -69,6 +69,7 @@ class NavControllerTest {
 
     }
 
+    @Suppress("DEPRECATION")
     @Nested
     inner class onBackstackChange {
 
