@@ -38,12 +38,16 @@ internal fun <T> BaseNavHost(
     }
 
     DisposableEffect(state, currentHostEntries.lastOrNull()) {
-        state.onTransitionFinish()
+        if (currentHostEntries.lastOrNull() == targetHostEntries.lastOrNull()) {
+            state.onTransitionFinish()
+        }
         onDispose {}
     }
 
     DisposableEffect(state, currentHostEntries) {
-        state.removeOutdatedHostEntries()
+        if (currentHostEntries == targetHostEntries) {
+            state.removeOutdatedHostEntries()
+        }
         onDispose {}
     }
 

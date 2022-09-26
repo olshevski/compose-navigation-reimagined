@@ -3,6 +3,7 @@ package dev.olshevski.navigation.reimagined
 import android.app.Application
 import android.os.Bundle
 import android.os.Parcelable
+import android.text.method.TextKeyListener.clear
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
@@ -134,10 +135,7 @@ internal class NavHostState<T>(
                 hostEntry.restoreState(savedState ?: Bundle())
             }
             hostSavedStateRegistry.unregisterSavedStateProvider(key)
-            hostSavedStateRegistry.registerSavedStateProvider(
-                key,
-                hostEntry.savedStateProvider
-            )
+            hostSavedStateRegistry.registerSavedStateProvider(key, hostEntry.savedStateProvider)
         }
 
         // apply actual states only after state restoration
