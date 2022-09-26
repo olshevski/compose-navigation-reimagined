@@ -122,18 +122,19 @@ fun <T> AnimatedNavHost(
 )
 
 /**
- * Queues a new target state and animates to it only when all previous transitions finish (one by
+ * Enqueues a new target state and animates to it only when all previous transitions finish (one by
  * one).
  *
  * Workaround for [this issue](https://issuetracker.google.com/issues/205726882).
  */
 @Suppress("SameParameterValue")
 @Composable
-private fun <T> queueTransition(
+private fun <T> enqueueTransition(
     targetState: T,
     label: String? = null
 ): Transition<T> {
-    // queue of pending transitions
+    // Queue of pending transitions. The first item in the queue is the currently running
+    // transition.
     val queue = remember { mutableStateListOf<T>() }
 
     val transition = updateTransition(
@@ -141,8 +142,11 @@ private fun <T> queueTransition(
         label = label
     )
 
-    if (transition.currentState != targetState && queue.lastOrNull() != targetState) {
-        queue.add(targetState)
+    DisposableEffect(targetState) {
+        if (transition.currentState != targetState) {
+            queue.add(targetState)
+        }
+        onDispose {}
     }
 
     DisposableEffect(transition.currentState) {
@@ -165,7 +169,7 @@ internal fun <T> AnimatedNavHost(
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
 ) = BaseNavHost(state) { targetHostEntries ->
-    val transition = queueTransition(
+    val transition = enqueueTransition(
         targetState = targetHostEntries,
         label = "AnimatedNavHost"
     )
