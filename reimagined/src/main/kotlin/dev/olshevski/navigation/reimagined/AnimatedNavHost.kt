@@ -15,6 +15,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.with
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 
 @ExperimentalAnimationApi
@@ -127,10 +129,26 @@ internal fun <T> AnimatedNavHost(
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
 ) = BaseNavHost(state) { targetHostEntries ->
+    // Queue of pending transitions. Workaround for https://issuetracker.google.com/issues/205726882
+    val queue = remember { mutableStateListOf<List<NavHostEntry<T>>>() }
+
     val transition = updateTransition(
-        targetState = targetHostEntries,
+        targetState = queue.firstOrNull() ?: targetHostEntries,
         label = "AnimatedNavHost"
     )
+
+    if (transition.currentState != targetHostEntries && queue.lastOrNull() != targetHostEntries) {
+        queue.add(targetHostEntries)
+    }
+
+    DisposableEffect(transition.currentState) {
+        onDispose {
+            if (queue.isNotEmpty()) {
+                queue.removeFirst()
+            }
+        }
+    }
+
     transition.AnimatedContent(
         transitionSpec = {
             selectTransition(transitionSpec, state.backstack.action)
