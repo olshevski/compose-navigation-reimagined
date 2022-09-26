@@ -8,6 +8,7 @@ import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.Transition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
@@ -120,25 +121,28 @@ fun <T> AnimatedNavHost(
     contentSelector = contentSelector
 )
 
-@ExperimentalAnimationApi
-@VisibleForTesting
+/**
+ * Queues a new target state and animates to it only when all previous transitions finish (one by
+ * one).
+ *
+ * Workaround for [this issue](https://issuetracker.google.com/issues/205726882).
+ */
+@Suppress("SameParameterValue")
 @Composable
-internal fun <T> AnimatedNavHost(
-    state: NavHostState<T>,
-    transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
-    emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
-    contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
-) = BaseNavHost(state) { targetHostEntries ->
-    // Queue of pending transitions. Workaround for https://issuetracker.google.com/issues/205726882
-    val queue = remember { mutableStateListOf<List<NavHostEntry<T>>>() }
+private fun <T> queueTransition(
+    targetState: T,
+    label: String? = null
+): Transition<T> {
+    // queue of pending transitions
+    val queue = remember { mutableStateListOf<T>() }
 
     val transition = updateTransition(
-        targetState = queue.firstOrNull() ?: targetHostEntries,
-        label = "AnimatedNavHost"
+        targetState = queue.firstOrNull() ?: targetState,
+        label = label
     )
 
-    if (transition.currentState != targetHostEntries && queue.lastOrNull() != targetHostEntries) {
-        queue.add(targetHostEntries)
+    if (transition.currentState != targetState && queue.lastOrNull() != targetState) {
+        queue.add(targetState)
     }
 
     DisposableEffect(transition.currentState) {
@@ -149,6 +153,22 @@ internal fun <T> AnimatedNavHost(
         }
     }
 
+    return transition
+}
+
+@ExperimentalAnimationApi
+@VisibleForTesting
+@Composable
+internal fun <T> AnimatedNavHost(
+    state: NavHostState<T>,
+    transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
+    emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
+    contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
+) = BaseNavHost(state) { targetHostEntries ->
+    val transition = queueTransition(
+        targetState = targetHostEntries,
+        label = "AnimatedNavHost"
+    )
     transition.AnimatedContent(
         transitionSpec = {
             selectTransition(transitionSpec, state.backstack.action)
