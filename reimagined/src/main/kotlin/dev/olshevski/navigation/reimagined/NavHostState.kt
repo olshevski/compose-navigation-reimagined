@@ -119,7 +119,8 @@ internal class NavHostState<T>(
             hostEntries = backstack.entries.map {
                 hostEntriesMap.getOrPut(it.id) { newHostEntry(it) }
             },
-            action = backstack.action
+            action = backstack.action,
+            outdatedEntryIds = hostEntriesMap.keys.filter { it !in entryIds }
         )
     }
 
@@ -176,7 +177,7 @@ internal class NavHostState<T>(
         lastHostEntry?.maxLifecycleState = Lifecycle.State.STARTED
     }
 
-    fun onTransitionFinish() {
+    fun onAllTransitionsFinish() {
         val lastHostEntry = targetSnapshot.hostEntries.lastOrNull()
 
         // last entry is resumed, everything else is stopped
@@ -189,10 +190,10 @@ internal class NavHostState<T>(
     }
 
     /**
-     * Remove entries that are no longer in the backstack.
+     * Remove entries that are no longer in the snapshot.
      */
-    fun removeOutdatedHostEntries() {
-        hostEntriesMap.keys.filter { it !in entryIds }.forEach { entryId ->
+    fun removeOutdatedHostEntries(snapshot: NavSnapshot<T>) {
+        snapshot.outdatedEntryIds.forEach { entryId ->
             hostEntriesMap.remove(entryId)?.let { hostEntry ->
                 hostEntry.maxLifecycleState = Lifecycle.State.DESTROYED
             }

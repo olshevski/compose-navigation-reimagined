@@ -1,6 +1,7 @@
 package dev.olshevski.navigation.reimagined
 
-data class NavSnapshot<out T> internal constructor(
+internal data class NavSnapshot<out T> internal constructor(
     val hostEntries: List<NavHostEntry<T>>,
-    val action: NavAction
+    val action: NavAction,
+    internal val outdatedEntryIds: List<NavId>
 )
