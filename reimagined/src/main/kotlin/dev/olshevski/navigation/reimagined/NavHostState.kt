@@ -3,7 +3,6 @@ package dev.olshevski.navigation.reimagined
 import android.app.Application
 import android.os.Bundle
 import android.os.Parcelable
-import android.text.method.TextKeyListener.clear
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
@@ -115,10 +114,13 @@ internal class NavHostState<T>(
         }
     }
 
-    val hostEntries by derivedStateOf {
-        backstack.entries.map {
-            hostEntriesMap.getOrPut(it.id) { newHostEntry(it) }
-        }
+    val targetSnapshot by derivedStateOf {
+        NavSnapshot(
+            hostEntries = backstack.entries.map {
+                hostEntriesMap.getOrPut(it.id) { newHostEntry(it) }
+            },
+            action = backstack.action
+        )
     }
 
     private fun newHostEntry(entry: NavEntry<T>): NavHostEntry<T> {
@@ -159,7 +161,7 @@ internal class NavHostState<T>(
     }
 
     fun onTransitionStart() {
-        val lastHostEntry = hostEntries.lastOrNull()
+        val lastHostEntry = targetSnapshot.hostEntries.lastOrNull()
 
         // Before transition:
         // - all entries except newLastHostEntry are capped at STARTED state
@@ -175,7 +177,7 @@ internal class NavHostState<T>(
     }
 
     fun onTransitionFinish() {
-        val lastHostEntry = hostEntries.lastOrNull()
+        val lastHostEntry = targetSnapshot.hostEntries.lastOrNull()
 
         // last entry is resumed, everything else is stopped
         hostEntriesMap.values

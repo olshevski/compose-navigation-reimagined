@@ -168,23 +168,23 @@ internal fun <T> AnimatedNavHost(
     transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
-) = BaseNavHost(state) { targetHostEntries ->
+) = BaseNavHost(state) { targetSnapshot ->
     val transition = enqueueTransition(
-        targetState = targetHostEntries,
+        targetState = targetSnapshot,
         label = "AnimatedNavHost"
     )
     transition.AnimatedContent(
         transitionSpec = {
-            selectTransition(transitionSpec, state.backstack.action)
+            selectTransition(transitionSpec, targetState.action)
         },
-        contentKey = { it.lastOrNull()?.id }
-    ) { hostEntries ->
-        val lastHostEntry = hostEntries.lastOrNull()
+        contentKey = { it.hostEntries.lastOrNull()?.id }
+    ) { snapshot ->
+        val lastHostEntry = snapshot.hostEntries.lastOrNull()
         if (lastHostEntry != null) {
             lastHostEntry.ComponentProvider {
-                val scope = remember(hostEntries, this@AnimatedContent) {
+                val scope = remember(snapshot.hostEntries, this@AnimatedContent) {
                     AnimatedNavHostScopeImpl(
-                        hostEntries = hostEntries,
+                        hostEntries = snapshot.hostEntries,
                         animatedVisibilityScope = this@AnimatedContent
                     )
                 }
@@ -198,12 +198,12 @@ internal fun <T> AnimatedNavHost(
 }
 
 @ExperimentalAnimationApi
-private fun <T> AnimatedContentScope<List<NavHostEntry<T>>>.selectTransition(
+private fun <T> AnimatedContentScope<NavSnapshot<T>>.selectTransition(
     transitionSpec: AnimatedNavHostTransitionSpec<T>,
     action: NavAction,
 ): ContentTransform {
-    val initialStateLastEntry = initialState.lastOrNull()
-    val targetStateLastEntry = targetState.lastOrNull()
+    val initialStateLastEntry = initialState.hostEntries.lastOrNull()
+    val targetStateLastEntry = targetState.hostEntries.lastOrNull()
 
     // Request transition spec only when anything actually changes and should be animated.
     // For some reason AnimatedContent calls for transitionSpec even when created initially

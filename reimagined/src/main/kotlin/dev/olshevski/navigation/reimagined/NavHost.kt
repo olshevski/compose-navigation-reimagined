@@ -80,13 +80,13 @@ internal fun <T> NavHost(
     state: NavHostState<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable NavHostScope<T>.(T) -> Unit
-) = BaseNavHost(state) { hostEntries ->
-    val lastHostEntry = hostEntries.lastOrNull()
+) = BaseNavHost(state) { snapshot ->
+    val lastHostEntry = snapshot.hostEntries.lastOrNull()
     key(lastHostEntry?.id) {
         if (lastHostEntry != null) {
             lastHostEntry.ComponentProvider {
-                val scope = remember(hostEntries) {
-                    NavHostScopeImpl(hostEntries)
+                val scope = remember(snapshot.hostEntries) {
+                    NavHostScopeImpl(snapshot.hostEntries)
                 }
                 scope.contentSelector(lastHostEntry.destination)
             }
@@ -94,5 +94,5 @@ internal fun <T> NavHost(
             emptyBackstackPlaceholder()
         }
     }
-    hostEntries
+    snapshot
 }

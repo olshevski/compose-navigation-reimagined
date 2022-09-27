@@ -4,14 +4,15 @@ import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.key
+import androidx.compose.runtime.snapshots.Snapshot
 
 @VisibleForTesting
 @Composable
 internal fun <T> BaseNavHost(
     state: NavHostState<T>,
-    entryTransition: @Composable (List<NavHostEntry<T>>) -> List<NavHostEntry<T>>
+    transition: @Composable (NavSnapshot<T>) -> NavSnapshot<T>
 ) {
-    val targetHostEntries = state.hostEntries
+    val targetSnapshot = state.targetSnapshot
 
     DisposableEffect(state) {
         state.onCreate()
@@ -22,30 +23,30 @@ internal fun <T> BaseNavHost(
         }
     }
 
-    val currentHostEntries = key(state.id) {
-        entryTransition(targetHostEntries)
+    val currentSnapshot = key(state.id) {
+        transition(targetSnapshot)
 
-        // For NavHost: currentHostEntries is the same as state.hostEntries.
+        // For NavHost: currentSnapshot is the same as targetSnapshot.
         //
-        // For AnimatedNavHost: currentHostEntries are the entries in transition. When transition
-        // finishes, currentHostEntries will become the same as state.hostEntries.
+        // For AnimatedNavHost: currentSnapshot is the snapshot in transition. When transition
+        // finishes, currentSnapshot will become the same as targetSnapshot.
     }
 
-    DisposableEffect(state, targetHostEntries.lastOrNull()) {
+    DisposableEffect(state, targetSnapshot.hostEntries.lastOrNull()) {
         onDispose {
             state.onTransitionStart()
         }
     }
 
-    DisposableEffect(state, currentHostEntries.lastOrNull()) {
-        if (currentHostEntries.lastOrNull() == targetHostEntries.lastOrNull()) {
+    DisposableEffect(state, currentSnapshot.hostEntries.lastOrNull()) {
+        if (currentSnapshot.hostEntries.lastOrNull() == targetSnapshot.hostEntries.lastOrNull()) {
             state.onTransitionFinish()
         }
         onDispose {}
     }
 
-    DisposableEffect(state, currentHostEntries) {
-        if (currentHostEntries == targetHostEntries) {
+    DisposableEffect(state, currentSnapshot.hostEntries) {
+        if (currentSnapshot.hostEntries == targetSnapshot.hostEntries) {
             state.removeOutdatedHostEntries()
         }
         onDispose {}
