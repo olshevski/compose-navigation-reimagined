@@ -17,6 +17,7 @@ import androidx.compose.animation.with
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 
@@ -138,7 +139,7 @@ private fun <T> enqueueTransition(
     val queue = remember { mutableStateListOf<T>() }
 
     val transition = updateTransition(
-        targetState = queue.firstOrNull() ?: targetState,
+        targetState = derivedStateOf { queue.firstOrNull() ?: targetState }.value,
         label = label
     )
 
