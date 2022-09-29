@@ -1,6 +1,5 @@
 package dev.olshevski.navigation.reimagined
 
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -34,21 +33,18 @@ internal fun <T> BaseNavHost(
 
     DisposableEffect(state, targetSnapshot.hostEntries.lastOrNull()) {
         onDispose {
-            Log.v("ERASEME", "onTransitionStart ${targetSnapshot.hostEntries.lastOrNull()}")
             state.onTransitionStart()
         }
     }
 
     DisposableEffect(state, currentSnapshot.hostEntries.lastOrNull()) {
         if (currentSnapshot.hostEntries.lastOrNull() == targetSnapshot.hostEntries.lastOrNull()) {
-            Log.v("ERASEME", "onAllTransitionsFinish ${currentSnapshot.hostEntries.lastOrNull()}")
             state.onAllTransitionsFinish()
         }
         onDispose {}
     }
 
     DisposableEffect(state, currentSnapshot) {
-        Log.v("ERASEME", "removeOutdatedHostEntries ${currentSnapshot.outdatedEntryIds}")
         state.removeOutdatedHostEntries(currentSnapshot)
         onDispose {}
     }
