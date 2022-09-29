@@ -22,7 +22,7 @@ internal fun <T> BaseNavHost(
         }
     }
 
-    val currentSnapshot = key(state.id) {
+    val currentSnapshot = key(state.hostId) {
         transition(targetSnapshot)
 
         // For NavHost: currentSnapshot is the same as targetSnapshot.

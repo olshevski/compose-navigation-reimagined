@@ -3,6 +3,7 @@ package dev.olshevski.navigation.reimagined
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSavedStateRegistryOwner
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 
 /**
@@ -23,11 +24,19 @@ interface NavHostScope<out T> {
      * and implement your own ViewModel-sharing behaviour.
      */
     val hostEntries: List<NavHostEntry<T>>
+
+    fun getSharedHostEntry(key: NavKey): SharedNavHostEntry
 }
 
 internal open class NavHostScopeImpl<out T>(
+    private val hostState: NavHostState<T>,
     override val hostEntries: List<NavHostEntry<T>>
-) : NavHostScope<T>
+) : NavHostScope<T> {
+
+    override fun getSharedHostEntry(key: NavKey) =
+        hostState.getSharedHostEntry(key, currentHostEntry.id)
+
+}
 
 /**
  * Currently displayed [NavHostEntry]. Its destination is the one that is being passed into
@@ -58,3 +67,6 @@ fun <T> NavHostScope<T>.findHostEntry(
         }
     }
 }
+
+fun <T> NavHostScope<T>.getSharedViewModelStoreOwner(key: NavKey): ViewModelStoreOwner =
+    getSharedHostEntry(key)

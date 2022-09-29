@@ -32,10 +32,6 @@ class NavEntry<out T> internal constructor(
 
     override fun toString() = "NavEntry(id=$id, destination=$destination)"
 
-    operator fun component1() = id
-
-    operator fun component2() = destination
-
 }
 
 /**

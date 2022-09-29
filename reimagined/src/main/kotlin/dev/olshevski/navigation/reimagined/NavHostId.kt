@@ -1,6 +1,7 @@
 package dev.olshevski.navigation.reimagined
 
 import android.os.Parcelable
+import androidx.compose.runtime.Immutable
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -8,6 +9,7 @@ import kotlinx.parcelize.Parcelize
  * just confusing.
  */
 @Parcelize
+@Immutable
 @JvmInline
 internal value class NavHostId(private val id: NavId = NavId()) : Parcelable {
     override fun toString(): String = id.toString()
