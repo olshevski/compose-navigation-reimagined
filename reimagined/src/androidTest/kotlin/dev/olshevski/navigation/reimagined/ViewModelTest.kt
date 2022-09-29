@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.common.truth.Truth.assertThat
@@ -38,11 +37,7 @@ class ViewModelTest(
     }
 
     enum class Screen {
-        A, B, WithNestedEntries
-    }
-
-    enum class SubScreen {
-        X, Y
+        A, B
     }
 
     class TestViewModel : ViewModel() {
@@ -64,9 +59,6 @@ class ViewModelTest(
         lateinit var screenController: NavController<Screen>
         internal lateinit var screenState: NavHostState<Screen>
 
-        lateinit var subScreenController: NavController<SubScreen>
-        internal lateinit var subScreenState: NavHostState<SubScreen>
-
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             val hostParam = intent.getSerializableExtra(Extra.NavHostParam) as NavHostParam
@@ -80,26 +72,6 @@ class ViewModelTest(
                         ) {
                             TestViewModel()
                         }
-                    }
-
-                    if (screen == Screen.WithNestedEntries) {
-                        SubScreenHost(hostParam)
-                    }
-                }
-            }
-        }
-
-        @Suppress("TestFunctionName")
-        @Composable
-        private fun SubScreenHost(hostParam: NavHostParam) {
-            subScreenController = rememberNavController(SubScreen.X)
-            subScreenState = rememberNavHostState(subScreenController.backstack)
-            ParamNavHost(hostParam, subScreenState) {
-                hostEntries.forEach {
-                    viewModel(
-                        viewModelStoreOwner = it
-                    ) {
-                        TestViewModel()
                     }
                 }
             }
@@ -168,78 +140,34 @@ class ViewModelTest(
         assertThat(viewModel1).isNotSameInstanceAs(viewModel2)
     }
 
-    private fun viewModelIsRecreated_firstNestedEntry() {
-        val viewModel1 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[0])
+    @Test
+    fun poppedViewModelIsCleared() {
+        composeRule.activity.screenController.navigate(Screen.B)
+        composeRule.waitForIdle()
 
-        composeRule.recreateActivityAndClearViewModels()
-        assertThat(viewModel1.cleared).isTrue()
+        val viewModel =
+            getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[1])
 
-        val viewModel2 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[0])
-        assertThat(viewModel1).isNotSameInstanceAs(viewModel2)
-    }
+        composeRule.activity.screenController.pop()
+        composeRule.waitForIdle()
 
-    private fun viewModelIsRestored_firstNestedEntry() {
-        val viewModel1 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[0])
-
-        composeRule.recreateActivity()
-        assertThat(viewModel1.cleared).isFalse()
-
-        val viewModel2 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[0])
-        assertThat(viewModel1).isSameInstanceAs(viewModel2)
+        assertThat(viewModel.cleared).isTrue()
     }
 
     @Test
-    fun viewModelIsRecreated_currentNestedEntry() {
-        composeRule.activity.screenController.navigate(Screen.WithNestedEntries)
+    fun removedBackstackViewModelIsCleared() {
+        composeRule.activity.screenController.navigate(Screen.B)
         composeRule.waitForIdle()
 
-        viewModelIsRecreated_firstNestedEntry()
-    }
+        val viewModel =
+            getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
 
-    @Test
-    fun viewModelIsRestored_currentNestedEntry() {
-        composeRule.activity.screenController.navigate(Screen.WithNestedEntries)
+        composeRule.activity.screenController.setNewBackstack(
+            entries = composeRule.activity.screenController.backstack.entries.drop(1)
+        )
         composeRule.waitForIdle()
 
-        viewModelIsRestored_firstNestedEntry()
-    }
-
-    @Test
-    fun viewModelIsRecreated_backstackNestedEntry() {
-        composeRule.activity.screenController.navigate(Screen.WithNestedEntries)
-        composeRule.waitForIdle()
-        composeRule.activity.subScreenController.navigate(SubScreen.Y)
-        composeRule.waitForIdle()
-
-        viewModelIsRecreated_firstNestedEntry()
-    }
-
-    @Test
-    fun viewModelIsRestored_backstackNestedEntry() {
-        composeRule.activity.screenController.navigate(Screen.WithNestedEntries)
-        composeRule.waitForIdle()
-        composeRule.activity.subScreenController.navigate(SubScreen.Y)
-        composeRule.waitForIdle()
-
-        viewModelIsRestored_firstNestedEntry()
-    }
-
-    @Test
-    fun viewModelsAreDifferentForNestedEntries() {
-        composeRule.activity.screenController.navigate(Screen.WithNestedEntries)
-        composeRule.waitForIdle()
-        composeRule.activity.subScreenController.navigate(SubScreen.Y)
-        composeRule.waitForIdle()
-
-        val viewModel1 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[0])
-        val viewModel2 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[1])
-        assertThat(viewModel1).isNotSameInstanceAs(viewModel2)
+        assertThat(viewModel.cleared).isTrue()
     }
 
 }
