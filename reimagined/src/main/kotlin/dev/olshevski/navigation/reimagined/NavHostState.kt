@@ -2,7 +2,6 @@ package dev.olshevski.navigation.reimagined
 
 import android.app.Application
 import android.os.Bundle
-import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
@@ -42,19 +41,16 @@ internal fun <T> rememberNavHostState(
             save = { hostState ->
                 listOf(
                     hostState.hostId,
-                    hostState.hostEntriesMap.keys.toTypedArray(),
+                    hostState.hostEntriesMap.keys.toList(),
                     hostState.sharedEntriesMap.values.map { it.toSharedHostEntryRecord() }
-                        .toTypedArray()
                 )
             },
             restore = { restored ->
                 @Suppress("UNCHECKED_CAST")
                 NavHostState(
                     hostId = restored[0] as NavHostId,
-                    restoredHostEntryIds = (restored[1] as Array<Parcelable>)
-                        .map { it as NavId },
-                    restoredSharedEntryRecords = (restored[2] as Array<Parcelable>)
-                        .map { it as SharedNavHostEntryRecord },
+                    restoredHostEntryIds = restored[1] as List<NavId>,
+                    restoredSharedEntryRecords = restored[2] as List<SharedNavHostEntryRecord>,
                     initialBackstack = backstack,
                     saveableStateHolder = saveableStateHolder,
                     hostViewModelStoreOwner = viewModelStoreOwner,
@@ -76,8 +72,8 @@ internal fun <T> rememberNavHostState(
             hostSavedStateRegistry = savedStateRegistry,
             application = application
         )
-    }.apply {
-        this.backstack = backstack
+    }.also {
+        it.backstack = backstack
     }
 }
 
@@ -122,9 +118,9 @@ internal class NavHostState<T>(
 
         // Shared entries are all restored. Let them be re-acquired during the first composition.
         // Outdated entries will be removed later in removeOutdatedHostEntries.
-        restoredSharedEntryRecords.forEach {
-            sharedEntriesMap[it.key] = newSharedEntry(it.id, it.key).apply {
-                associatedEntryIds.addAll(it.associatedEntryIds)
+        restoredSharedEntryRecords.forEach { record ->
+            sharedEntriesMap[record.key] = newSharedEntry(record.id, record.key).also {
+                it.addAssociatedEntryIds(record.associatedEntryIds)
             }
         }
     }
@@ -146,21 +142,22 @@ internal class NavHostState<T>(
         saveableStateHolder = saveableStateHolder,
         viewModelStore = viewModelStoreProvider.getViewModelStore(entry.id),
         application = application
-    ).apply {
-        initComponents(this)
+    ).also {
+        initComponents(it)
     }
 
-    fun getSharedHostEntry(
-        key: NavKey,
-        associatedEntryId: NavId
-    ) = sharedEntriesMap.getOrPut(key) {
-        newSharedEntry(
-            sharedEntryId = NavId(),
-            sharedEntryKey = key
-        )
-    }.apply {
-        associatedEntryIds.add(associatedEntryId)
-    }
+    fun getSharedViewModelStoreOwner(key: NavKey, associatedEntryId: NavId): ViewModelStoreOwner =
+        sharedEntriesMap.getOrPut(key) {
+            newSharedEntry(
+                sharedEntryId = NavId(),
+                sharedEntryKey = key
+            )
+        }.also {
+            it.addAssociatedEntryId(associatedEntryId)
+            hostEntriesMap[associatedEntryId]?.let { associatedHostEntry ->
+                it.maxLifecycleState = associatedHostEntry.maxLifecycleState
+            }
+        }
 
     private fun newSharedEntry(
         sharedEntryId: NavId,
@@ -170,8 +167,8 @@ internal class NavHostState<T>(
         key = sharedEntryKey,
         viewModelStore = viewModelStoreProvider.getViewModelStore(sharedEntryId),
         application = application
-    ).apply {
-        initComponents(this)
+    ).also {
+        initComponents(it)
     }
 
     private fun initComponents(baseEntry: BaseNavHostEntry) {
@@ -206,29 +203,46 @@ internal class NavHostState<T>(
     fun onTransitionStart() {
         val lastHostEntry = targetSnapshot.hostEntries.lastOrNull()
 
-        // Before transition:
-        // - all entries except newLastHostEntry are capped at STARTED state
-        // - newLastHostEntry gets promoted to STARTED state
+        // When transition starts:
+        // - all hostEntries except lastHostEntry are capped at STARTED state
+        // - lastHostEntry gets promoted to STARTED state
         //
-        // Further state changes will be done when transition finishes.
-        hostEntriesMap.values
-            .filter { it != lastHostEntry }
+        // For sharedEntries it is similar, but based on presence of lastHostEntry in
+        // associatedEntryIds.
+        //
+        // Further state changes will be done when all transitions finish.
+        val (hostEntriesToStart, hostEntriesToPause) = hostEntriesMap.values
+            .partition { lastHostEntry?.id == it.id }
+        val (sharedEntriesToStart, sharedEntriesToPause) = sharedEntriesMap.values
+            .partition { lastHostEntry?.id in it.associatedEntryIds }
+
+        listOf(hostEntriesToPause, sharedEntriesToPause).flatten()
             .forEach {
                 it.maxLifecycleState = minOf(it.maxLifecycleState, Lifecycle.State.STARTED)
             }
-        lastHostEntry?.maxLifecycleState = Lifecycle.State.STARTED
+        listOf(hostEntriesToStart, sharedEntriesToStart).flatten()
+            .forEach {
+                it.maxLifecycleState = Lifecycle.State.STARTED
+            }
     }
 
     fun onAllTransitionsFinish() {
         val lastHostEntry = targetSnapshot.hostEntries.lastOrNull()
 
-        // last entry is resumed, everything else is stopped
-        hostEntriesMap.values
-            .filter { it != lastHostEntry }
+        // lastHostEntry and associated shared entries are resumed, everything else is stopped
+        val (hostEntriesToResume, hostEntriesToStop) = hostEntriesMap.values
+            .partition { lastHostEntry?.id == it.id }
+        val (sharedEntriesToResume, sharedEntriesToStop) = sharedEntriesMap.values
+            .partition { lastHostEntry?.id in it.associatedEntryIds }
+
+        listOf(hostEntriesToStop, sharedEntriesToStop).flatten()
             .forEach {
                 it.maxLifecycleState = Lifecycle.State.CREATED
             }
-        lastHostEntry?.maxLifecycleState = Lifecycle.State.RESUMED
+        listOf(hostEntriesToResume, sharedEntriesToResume).flatten()
+            .forEach {
+                it.maxLifecycleState = Lifecycle.State.RESUMED
+            }
     }
 
     /**

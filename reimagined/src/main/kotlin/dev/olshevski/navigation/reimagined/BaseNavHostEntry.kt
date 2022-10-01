@@ -26,7 +26,7 @@ import kotlin.properties.Delegates
  */
 @Suppress("LeakingThis")
 @Stable
-abstract class BaseNavHostEntry internal constructor(
+sealed class BaseNavHostEntry(
     val id: NavId,
     private val viewModelStore: ViewModelStore,
     private val application: Application?

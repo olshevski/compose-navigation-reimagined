@@ -10,4 +10,7 @@ import kotlinx.parcelize.RawValue
 @JvmInline
 value class NavKey internal constructor(private val key: @RawValue Any) : Parcelable
 
-fun navKey(key: Any) = NavKey(key)
+fun navKey(key: Any): NavKey {
+    require(key !is NavKey) { "Do not place NavKey inside a NavKey" }
+    return NavKey(key)
+}

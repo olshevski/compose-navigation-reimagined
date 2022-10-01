@@ -116,6 +116,7 @@ private fun SecondScreen(
 
     CenteredText(
         text = """Note: use it carefully. Mutable state increases the complexity of the backstack 
-            logic. Sometimes it is more reasonable to have a hoisted data holder.""".singleLine(),
+            logic. Sometimes it is more reasonable to have a hoisted/shared data holder.
+            """.singleLine(),
     )
 }

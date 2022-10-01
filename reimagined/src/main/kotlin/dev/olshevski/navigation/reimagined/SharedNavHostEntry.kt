@@ -15,8 +15,15 @@ class SharedNavHostEntry internal constructor(
     application: Application?
 ) : BaseNavHostEntry(id, viewModelStore, application) {
 
-    internal val associatedEntryIds: MutableSet<NavId> = mutableSetOf()
+    private val _associatedEntryIds = mutableSetOf<NavId>()
 
-    override fun toString() = "SharedNavHostEntry(id=$id, key=$key)"
+    val associatedEntryIds: Set<NavId> get() = _associatedEntryIds
+
+    internal fun addAssociatedEntryId(id: NavId) = _associatedEntryIds.add(id)
+
+    internal fun addAssociatedEntryIds(ids: List<NavId>) = _associatedEntryIds.addAll(ids)
+
+    override fun toString() =
+        "SharedNavHostEntry(id=$id, key=$key, associatedEntryIds=$associatedEntryIds)"
 
 }

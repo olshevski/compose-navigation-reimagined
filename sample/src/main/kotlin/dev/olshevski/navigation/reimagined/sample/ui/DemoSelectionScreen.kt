@@ -22,6 +22,7 @@ fun DemoSelectionScreen(
     onAnimatedNavHostButtonClick: () -> Unit,
     onDialogNavHostButtonClick: () -> Unit,
     onViewModelsButtonClick: () -> Unit,
+    onSharedViewModelsButtonClick: () -> Unit,
     onBottomNavigationButtonClick: () -> Unit,
     onDeeplinksButtonClick: () -> Unit,
 ) = ScreenLayout(stringResource(R.string.demo_selection__screen_title)) {
@@ -33,55 +34,27 @@ fun DemoSelectionScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { onPassValuesButtonClick() }
-        ) {
-            Text(stringResource(R.string.demo_selection__pass_values_button))
+        listOf(
+            R.string.demo_selection__pass_values_button to onPassValuesButtonClick,
+            R.string.demo_selection__return_results_button to onReturnResultsButtonClick,
+            R.string.demo_selection__animated_nav_host_button to onAnimatedNavHostButtonClick,
+            R.string.demo_selection__dialog_nav_host_button to onDialogNavHostButtonClick,
+            R.string.demo_selection__view_models_button to onViewModelsButtonClick,
+            R.string.demo_selection__shared_view_models_button to onSharedViewModelsButtonClick,
+            R.string.demo_selection__bottom_navigation_button to onBottomNavigationButtonClick,
+            R.string.demo_selection__deeplinks_button to onDeeplinksButtonClick
+        ).forEach {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .width(IntrinsicSize.Max),
+                onClick = { it.second() }
+            ) {
+                Text(
+                    text = stringResource(it.first)
+                )
+            }
         }
-
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { onReturnResultsButtonClick() }
-        ) {
-            Text(stringResource(R.string.demo_selection__return_results_button))
-        }
-
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { onAnimatedNavHostButtonClick() }
-        ) {
-            Text(stringResource(R.string.demo_selection__animated_nav_host_button))
-        }
-
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { onDialogNavHostButtonClick() }
-        ) {
-            Text(stringResource(R.string.demo_selection__dialog_nav_host_button))
-        }
-
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { onViewModelsButtonClick() }
-        ) {
-            Text(stringResource(R.string.demo_selection__view_models_button))
-        }
-
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { onBottomNavigationButtonClick() }
-        ) {
-            Text(stringResource(R.string.demo_selection__bottom_navigation_button))
-        }
-
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { onDeeplinksButtonClick() }
-        ) {
-            Text(stringResource(R.string.demo_selection__deeplinks_button))
-        }
-
     }
 
 }

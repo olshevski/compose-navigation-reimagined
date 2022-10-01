@@ -41,17 +41,9 @@ fun ViewModelsScreen() = ScreenLayout(
             ViewModelsDestination.First -> FirstScreen(
                 toSecondScreenButtonClick = navigationViewModel::toSecondScreenButtonClick
             )
-            ViewModelsDestination.Second -> {
-                val secondViewModel = viewModel<SecondViewModel>()
-                val text by secondViewModel.text.collectAsState()
-                SecondScreen(
-                    text = text,
-                    onTextChange = secondViewModel::onTextChange,
-                    toThirdScreenButtonClick = {
-                        navigationViewModel.toThirdScreenButtonClick(text)
-                    }
-                )
-            }
+            ViewModelsDestination.Second -> SecondScreen(
+                toThirdScreenButtonClick = navigationViewModel::toThirdScreenButtonClick
+            )
             is ViewModelsDestination.Third -> ThirdScreen(destination.text)
         }
     }
@@ -87,7 +79,9 @@ class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 @Composable
 private fun FirstScreen(
     toSecondScreenButtonClick: () -> Unit,
-) = ContentLayout(title = stringResource(R.string.view_models__first_screen_title)) {
+) = ContentLayout(
+    title = stringResource(R.string.view_models__first_screen_title)
+) {
 
     CenteredText(
         text = "This demo shows two use cases:",
@@ -110,6 +104,30 @@ private fun FirstScreen(
 
 }
 
+@Composable
+private fun SecondScreen(
+    toThirdScreenButtonClick: (String) -> Unit,
+) = ContentLayout(
+    title = stringResource(R.string.view_models__second_screen_title)
+) {
+    val secondViewModel = viewModel<SecondViewModel>()
+    val text by secondViewModel.text.collectAsState()
+
+    CenteredText(
+        text = """Please enter some text. It will be stored in ViewModel as well as its state
+            preserved by SavedStateHandle.""".singleLine(),
+    )
+
+    OutlinedTextField(
+        modifier = Modifier.testTag(TestInputTag),
+        value = text,
+        onValueChange = { secondViewModel.onTextChange(it) })
+
+    Button(onClick = { toThirdScreenButtonClick(text) }) {
+        Text(stringResource(R.string.view_models__to_third_screen_button))
+    }
+}
+
 class SecondViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
 
     val text = savedStateHandle.getStateFlow("text", "")
@@ -121,31 +139,10 @@ class SecondViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
 }
 
 @Composable
-private fun SecondScreen(
-    text: String,
-    onTextChange: (String) -> Unit,
-    toThirdScreenButtonClick: () -> Unit,
-) = ContentLayout(title = stringResource(R.string.view_models__second_screen_title)) {
-
+private fun ThirdScreen(text: String) = ContentLayout(
+    title = stringResource(R.string.view_models__third_screen_title)
+) {
     CenteredText(
-        text = """Please enter some text. It will be stored in ViewModel as well as its state
-            preserved by SavedStateHandle.""".singleLine(),
+        text = stringResource(R.string.view_models__text_from_previous_screen, text),
     )
-
-    OutlinedTextField(
-        modifier = Modifier.testTag(TestInputTag),
-        value = text,
-        onValueChange = { onTextChange(it) })
-
-    Button(onClick = toThirdScreenButtonClick) {
-        Text(stringResource(R.string.view_models__to_third_screen_button))
-    }
 }
-
-@Composable
-private fun ThirdScreen(text: String) =
-    ContentLayout(title = stringResource(R.string.view_models__third_screen_title)) {
-        CenteredText(
-            text = stringResource(R.string.view_models__text_from_previous_screen, text),
-        )
-    }

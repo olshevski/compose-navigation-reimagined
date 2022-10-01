@@ -12,8 +12,8 @@ import androidx.compose.runtime.Stable
 interface AnimatedNavHostScope<out T> : NavHostScope<T>, AnimatedVisibilityScope
 
 internal class AnimatedNavHostScopeImpl<out T>(
-    hostState: NavHostState<T>,
     hostEntries: List<NavHostEntry<T>>,
+    baseHostScope: BaseNavHostScope<T>,
     animatedVisibilityScope: AnimatedVisibilityScope
-) : NavHostScopeImpl<T>(hostState, hostEntries), AnimatedNavHostScope<T>,
+) : NavHostScopeImpl<T>(hostEntries, baseHostScope), AnimatedNavHostScope<T>,
     AnimatedVisibilityScope by animatedVisibilityScope

@@ -65,7 +65,7 @@ class ViewModelTest(
             setContent {
                 screenController = rememberNavController(Screen.A)
                 screenState = rememberNavHostState(screenController.backstack)
-                ParamNavHost(hostParam, screenState) { screen ->
+                ParamNavHost(hostParam, screenState) { _ ->
                     hostEntries.forEach {
                         viewModel(
                             viewModelStoreOwner = it

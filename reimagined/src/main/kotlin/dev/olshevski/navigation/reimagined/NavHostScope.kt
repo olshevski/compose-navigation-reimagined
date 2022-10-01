@@ -25,16 +25,16 @@ interface NavHostScope<out T> {
      */
     val hostEntries: List<NavHostEntry<T>>
 
-    fun getSharedHostEntry(key: NavKey): SharedNavHostEntry
+    fun getSharedViewModelStoreOwner(key: NavKey): ViewModelStoreOwner
 }
 
 internal open class NavHostScopeImpl<out T>(
-    private val hostState: NavHostState<T>,
-    override val hostEntries: List<NavHostEntry<T>>
+    override val hostEntries: List<NavHostEntry<T>>,
+    private val baseHostScope: BaseNavHostScope<T>
 ) : NavHostScope<T> {
 
-    override fun getSharedHostEntry(key: NavKey) =
-        hostState.getSharedHostEntry(key, currentHostEntry.id)
+    override fun getSharedViewModelStoreOwner(key: NavKey) =
+        baseHostScope.getSharedViewModelStoreOwner(key, currentHostEntry.id)
 
 }
 
@@ -67,6 +67,3 @@ fun <T> NavHostScope<T>.findHostEntry(
         }
     }
 }
-
-fun <T> NavHostScope<T>.getSharedViewModelStoreOwner(key: NavKey): ViewModelStoreOwner =
-    getSharedHostEntry(key)

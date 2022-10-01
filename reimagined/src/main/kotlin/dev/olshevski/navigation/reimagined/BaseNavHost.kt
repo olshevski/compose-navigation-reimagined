@@ -4,12 +4,13 @@ import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 
 @VisibleForTesting
 @Composable
 internal fun <T> BaseNavHost(
     state: NavHostState<T>,
-    transition: @Composable (NavSnapshot<T>) -> NavSnapshot<T>
+    transition: @Composable BaseNavHostScope<T>.(NavSnapshot<T>) -> NavSnapshot<T>
 ) {
     val targetSnapshot = state.targetSnapshot
 
@@ -23,7 +24,8 @@ internal fun <T> BaseNavHost(
     }
 
     val currentSnapshot = key(state.hostId) {
-        transition(targetSnapshot)
+        val scope = remember(state) { BaseNavHostScopeImpl(state) }
+        scope.transition(targetSnapshot)
 
         // For NavHost: currentSnapshot is the same as targetSnapshot.
         //

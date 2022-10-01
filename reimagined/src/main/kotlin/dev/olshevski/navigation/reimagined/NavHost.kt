@@ -86,7 +86,10 @@ internal fun <T> NavHost(
         if (lastHostEntry != null) {
             lastHostEntry.ComponentProvider {
                 val scope = remember(snapshot.hostEntries) {
-                    NavHostScopeImpl(hostState = state, hostEntries = snapshot.hostEntries)
+                    NavHostScopeImpl(
+                        hostEntries = snapshot.hostEntries,
+                        baseHostScope = this@BaseNavHost
+                    )
                 }
                 scope.contentSelector(lastHostEntry.destination)
             }

@@ -187,8 +187,8 @@ internal fun <T> AnimatedNavHost(
             lastHostEntry.ComponentProvider {
                 val scope = remember(snapshot.hostEntries, this@AnimatedContent) {
                     AnimatedNavHostScopeImpl(
-                        hostState = state,
                         hostEntries = snapshot.hostEntries,
+                        baseHostScope = this@BaseNavHost,
                         animatedVisibilityScope = this@AnimatedContent
                     )
                 }

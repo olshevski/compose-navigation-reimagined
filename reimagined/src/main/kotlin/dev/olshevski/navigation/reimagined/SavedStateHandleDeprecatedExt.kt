@@ -9,7 +9,7 @@ private fun <T> SavedStateHandle.navControllerInternal(
 ) = ReadOnlyProperty<Any, NavController<T>> { _, property ->
     val navControllerKey = key ?: property.name
     this.get<NavController<T>>(navControllerKey)
-        ?: dev.olshevski.navigation.reimagined.navController(initialBackstack).also {
+        ?: navController(initialBackstack).also {
             this[navControllerKey] = it
         }
 }

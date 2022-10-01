@@ -40,6 +40,11 @@ open class DemoSelectionScreenScope(composeRule: MainActivityComposeRule) :
             .performClick()
     }
 
+    fun performSharedViewModelsButtonClick() {
+        composeRule.onNodeWithText(getString(R.string.demo_selection__shared_view_models_button))
+            .performClick()
+    }
+
     fun performBottomNavigationButtonClick() {
         composeRule.onNodeWithText(getString(R.string.demo_selection__bottom_navigation_button))
             .performClick()
