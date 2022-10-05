@@ -26,7 +26,8 @@ import androidx.savedstate.SavedStateRegistry
 
 @Composable
 internal fun <T> rememberNavHostState(
-    backstack: NavBackstack<T>
+    backstack: NavBackstack<T>,
+    scopeSpec: NavScopeSpec<T> = EmptyScopeSpec
 ): NavHostState<T> {
     val saveableStateHolder = rememberSaveableStateHolder()
     val viewModelStoreOwner = LocalViewModelStoreOwner.current!!
@@ -42,7 +43,8 @@ internal fun <T> rememberNavHostState(
                 listOf(
                     hostState.hostId,
                     hostState.hostEntriesMap.keys.toList(),
-                    hostState.sharedEntriesMap.values.map { it.toSharedHostEntryRecord() }
+                    hostState.scopedHostEntriesMap.values.map { it.toScopedHostEntryRecord() },
+                    hostState.outdatedHostEntriesQueue.getAllEntries().map { it.id }
                 )
             },
             restore = { restored ->
@@ -50,8 +52,10 @@ internal fun <T> rememberNavHostState(
                 NavHostState(
                     hostId = restored[0] as NavHostId,
                     restoredHostEntryIds = restored[1] as List<NavId>,
-                    restoredSharedEntryRecords = restored[2] as List<SharedNavHostEntryRecord>,
+                    restoredScopedHostEntryRecords = restored[2] as List<ScopedNavHostEntryRecord>,
+                    restoredOutdatedHostEntryIds = restored[3] as List<NavId>,
                     initialBackstack = backstack,
+                    scopeSpec = scopeSpec,
                     saveableStateHolder = saveableStateHolder,
                     hostViewModelStoreOwner = viewModelStoreOwner,
                     hostLifecycle = lifecycle,
@@ -64,8 +68,10 @@ internal fun <T> rememberNavHostState(
         NavHostState(
             hostId = NavHostId(),
             restoredHostEntryIds = emptyList(),
-            restoredSharedEntryRecords = emptyList(),
+            restoredScopedHostEntryRecords = emptyList(),
+            restoredOutdatedHostEntryIds = emptyList(),
             initialBackstack = backstack,
+            scopeSpec = scopeSpec,
             saveableStateHolder = saveableStateHolder,
             hostViewModelStoreOwner = viewModelStoreOwner,
             hostLifecycle = lifecycle,
@@ -84,8 +90,10 @@ internal fun <T> rememberNavHostState(
 internal class NavHostState<T>(
     val hostId: NavHostId,
     restoredHostEntryIds: List<NavId>,
-    restoredSharedEntryRecords: List<SharedNavHostEntryRecord>,
+    restoredScopedHostEntryRecords: List<ScopedNavHostEntryRecord>,
+    restoredOutdatedHostEntryIds: List<NavId>,
     initialBackstack: NavBackstack<T>,
+    scopeSpec: NavScopeSpec<T>,
     private val saveableStateHolder: SaveableStateHolder,
     hostViewModelStoreOwner: ViewModelStoreOwner,
     private val hostLifecycle: Lifecycle,
@@ -97,7 +105,9 @@ internal class NavHostState<T>(
 
     val hostEntriesMap = mutableMapOf<NavId, NavHostEntry<T>>()
 
-    val sharedEntriesMap = mutableMapOf<NavKey, SharedNavHostEntry>()
+    val scopedHostEntriesMap = mutableMapOf<NavScope, ScopedNavHostEntry>()
+
+    val outdatedHostEntriesQueue = ArrayDeque<OutdatedHostEntriesQueueItem<T>>()
 
     private val viewModelStoreProvider: ViewModelStoreProvider =
         ViewModelProvider(hostViewModelStoreOwner)[viewModelStoreProviderKey(hostId), NavHostViewModel::class.java]
@@ -106,34 +116,65 @@ internal class NavHostState<T>(
 
     private val lifecycleEventObserver = LifecycleEventObserver { _, event ->
         hostLifecycleState = event.targetState
-        listOf(hostEntriesMap, sharedEntriesMap).flatMap { it.values }.forEach {
+        listOf(hostEntriesMap, scopedHostEntriesMap).flatMap { it.values }.forEach {
             it.hostLifecycleState = hostLifecycleState
         }
     }
 
     init {
         // Remove components of the entries that are no longer present in the backstack.
-        val backstackEntryIds = backstack.entryIdsSet()
+        val backstackEntryIds = backstack.entries.map { it.id }.toHashSet()
         restoredHostEntryIds.filter { it !in backstackEntryIds }.forEach { removeComponents(it) }
 
-        // Shared entries are all restored. Let them be re-acquired during the first composition.
-        // Outdated entries will be removed later in removeOutdatedHostEntries.
-        restoredSharedEntryRecords.forEach { record ->
-            sharedEntriesMap[record.key] = newSharedEntry(record.id, record.key).also {
-                it.addAssociatedEntryIds(record.associatedEntryIds)
+        val backstackEntryScopes =
+            backstack.entries.flatMap { scopeSpec.getDestinationScopes(it.destination) }.toHashSet()
+        val (scopedRecordsToRestore, scopedRecordsToRemove) = restoredScopedHostEntryRecords.partition { it.scope in backstackEntryScopes }
+        scopedRecordsToRemove.forEach { removeComponents(it.id) }
+        scopedRecordsToRestore.forEach {
+            scopedHostEntriesMap.getOrPut(it.scope) {
+                newScopedHostEntry(id = it.id, scope = it.scope)
             }
         }
+
+        restoredOutdatedHostEntryIds.forEach { removeComponents(it) }
     }
 
     val targetSnapshot by derivedStateOf {
-        val backstackEntryIds = backstack.entryIdsSet()
         NavSnapshot(
-            hostEntries = backstack.entries.map {
-                hostEntriesMap.getOrPut(it.id) { newHostEntry(it) }
+            items = backstack.entries.map { entry ->
+                NavSnapshotItem(
+                    hostEntry = hostEntriesMap.getOrPut(entry.id) {
+                        newHostEntry(entry)
+                    },
+                    scopedHostEntries = scopeSpec.getDestinationScopes(entry.destination)
+                        .associateWith { scope ->
+                            scopedHostEntriesMap.getOrPut(scope) {
+                                newScopedHostEntry(id = NavId(), scope = scope)
+                            }
+                        }
+                )
             },
-            action = backstack.action,
-            outdatedHostEntryIds = hostEntriesMap.keys.filter { it !in backstackEntryIds },
-        )
+            action = backstack.action
+        ).also { snapshot ->
+            val backstackEntryIds = snapshot.items
+                .map { it.hostEntry.id }.toHashSet()
+            val outdatedHostEntries = hostEntriesMap.keys
+                .filter { it !in backstackEntryIds }
+                .mapNotNull { hostEntriesMap.remove(it) }
+
+            val backstackEntryScopes = snapshot.items
+                .flatMap { it.scopedHostEntries.keys }.toHashSet()
+            val outdatedScopedHostEntries = scopedHostEntriesMap.keys
+                .filter { it !in backstackEntryScopes }
+                .mapNotNull { scopedHostEntriesMap.remove(it) }
+
+            outdatedHostEntriesQueue.addLast(
+                OutdatedHostEntriesQueueItem(
+                    snapshot = snapshot,
+                    outdatedHostEntries = outdatedHostEntries + outdatedScopedHostEntries
+                )
+            )
+        }
     }
 
     private fun newHostEntry(entry: NavEntry<T>) = NavHostEntry(
@@ -146,26 +187,13 @@ internal class NavHostState<T>(
         initComponents(it)
     }
 
-    fun getSharedViewModelStoreOwner(key: NavKey, associatedEntryId: NavId): ViewModelStoreOwner =
-        sharedEntriesMap.getOrPut(key) {
-            newSharedEntry(
-                sharedEntryId = NavId(),
-                sharedEntryKey = key
-            )
-        }.also {
-            it.addAssociatedEntryId(associatedEntryId)
-            hostEntriesMap[associatedEntryId]?.let { associatedHostEntry ->
-                it.maxLifecycleState = associatedHostEntry.maxLifecycleState
-            }
-        }
-
-    private fun newSharedEntry(
-        sharedEntryId: NavId,
-        sharedEntryKey: NavKey
-    ) = SharedNavHostEntry(
-        id = sharedEntryId,
-        key = sharedEntryKey,
-        viewModelStore = viewModelStoreProvider.getViewModelStore(sharedEntryId),
+    private fun newScopedHostEntry(
+        id: NavId,
+        scope: NavScope
+    ) = ScopedNavHostEntry(
+        id = id,
+        scope = scope,
+        viewModelStore = viewModelStoreProvider.getViewModelStore(id),
         application = application
     ).also {
         initComponents(it)
@@ -195,13 +223,19 @@ internal class NavHostState<T>(
 
     fun onDispose() {
         hostLifecycle.removeObserver(lifecycleEventObserver)
-        listOf(hostEntriesMap, sharedEntriesMap).flatMap { it.values }.forEach {
+        listOf(
+            hostEntriesMap.values,
+            scopedHostEntriesMap.values,
+            outdatedHostEntriesQueue.getAllEntries()
+        ).flatten().forEach {
             it.hostLifecycleState = Lifecycle.State.DESTROYED
         }
     }
 
     fun onTransitionStart() {
-        val lastHostEntry = targetSnapshot.hostEntries.lastOrNull()
+        val lastSnapshotEntry = targetSnapshot.items.lastOrNull()
+        val lastSnapshotEntryId = lastSnapshotEntry?.hostEntry?.id
+        val lastSnapshotEntryScopes = lastSnapshotEntry?.scopedHostEntries?.keys ?: emptySet()
 
         // When transition starts:
         // - all hostEntries except lastHostEntry are capped at STARTED state
@@ -212,62 +246,64 @@ internal class NavHostState<T>(
         //
         // Further state changes will be done when all transitions finish.
         val (hostEntriesToStart, hostEntriesToPause) = hostEntriesMap.values
-            .partition { lastHostEntry?.id == it.id }
-        val (sharedEntriesToStart, sharedEntriesToPause) = sharedEntriesMap.values
-            .partition { lastHostEntry?.id in it.associatedEntryIds }
+            .partition { it.id == lastSnapshotEntryId }
+        val (scopedHostEntriesToStart, scopedHostEntriesToPause) = scopedHostEntriesMap.values
+            .partition { it.scope in lastSnapshotEntryScopes }
 
-        listOf(hostEntriesToPause, sharedEntriesToPause).flatten()
-            .forEach {
-                it.maxLifecycleState = minOf(it.maxLifecycleState, Lifecycle.State.STARTED)
-            }
-        listOf(hostEntriesToStart, sharedEntriesToStart).flatten()
-            .forEach {
-                it.maxLifecycleState = Lifecycle.State.STARTED
-            }
+        listOf(
+            hostEntriesToPause,
+            scopedHostEntriesToPause,
+            outdatedHostEntriesQueue.getAllEntries()
+        ).flatten().forEach {
+            it.maxLifecycleState = minOf(it.maxLifecycleState, Lifecycle.State.STARTED)
+        }
+        listOf(
+            hostEntriesToStart,
+            scopedHostEntriesToStart
+        ).flatten().forEach {
+            it.maxLifecycleState = Lifecycle.State.STARTED
+        }
     }
 
     fun onAllTransitionsFinish() {
-        val lastHostEntry = targetSnapshot.hostEntries.lastOrNull()
+        val lastSnapshotEntry = targetSnapshot.items.lastOrNull()
+        val lastSnapshotEntryId = lastSnapshotEntry?.hostEntry?.id
+        val lastSnapshotEntryScopes = lastSnapshotEntry?.scopedHostEntries?.keys ?: emptySet()
 
         // lastHostEntry and associated shared entries are resumed, everything else is stopped
         val (hostEntriesToResume, hostEntriesToStop) = hostEntriesMap.values
-            .partition { lastHostEntry?.id == it.id }
-        val (sharedEntriesToResume, sharedEntriesToStop) = sharedEntriesMap.values
-            .partition { lastHostEntry?.id in it.associatedEntryIds }
+            .partition { it.id == lastSnapshotEntryId }
+        val (sharedEntriesToResume, sharedEntriesToStop) = scopedHostEntriesMap.values
+            .partition { it.scope in lastSnapshotEntryScopes }
 
-        listOf(hostEntriesToStop, sharedEntriesToStop).flatten()
-            .forEach {
-                it.maxLifecycleState = Lifecycle.State.CREATED
-            }
-        listOf(hostEntriesToResume, sharedEntriesToResume).flatten()
-            .forEach {
-                it.maxLifecycleState = Lifecycle.State.RESUMED
-            }
+        listOf(
+            hostEntriesToStop,
+            sharedEntriesToStop,
+            outdatedHostEntriesQueue.getAllEntries()
+        ).flatten().forEach {
+            it.maxLifecycleState = Lifecycle.State.CREATED
+        }
+        listOf(
+            hostEntriesToResume,
+            sharedEntriesToResume
+        ).flatten().forEach {
+            it.maxLifecycleState = Lifecycle.State.RESUMED
+        }
     }
 
     /**
      * Remove entries that are no longer in the snapshot.
      */
-    fun removeOutdatedHostEntries(snapshot: NavSnapshot<T>) {
-        snapshot.outdatedHostEntryIds
-            .forEach { entryId ->
-                hostEntriesMap.remove(entryId)?.let { hostEntry ->
-                    hostEntry.maxLifecycleState = Lifecycle.State.DESTROYED
+    fun removeOutdatedEntries(snapshot: NavSnapshot<T>) {
+        if (outdatedHostEntriesQueue.any { it.snapshot == snapshot }) {
+            do {
+                val item = outdatedHostEntriesQueue.removeFirst()
+                item.outdatedHostEntries.forEach { entry ->
+                    entry.maxLifecycleState = Lifecycle.State.DESTROYED
+                    removeComponents(entry.id)
                 }
-                removeComponents(entryId)
-            }
-
-        val snapshotEntryIds = snapshot.entryIdsSet()
-        sharedEntriesMap.entries
-            .filter {
-                it.value.associatedEntryIds.intersect(snapshotEntryIds).isEmpty()
-            }
-            .forEach { entry ->
-                sharedEntriesMap.remove(entry.key)?.let { sharedEntry ->
-                    sharedEntry.maxLifecycleState = Lifecycle.State.DESTROYED
-                }
-                removeComponents(entry.value.id)
-            }
+            } while (item.snapshot != snapshot)
+        }
     }
 
     /**
@@ -281,8 +317,13 @@ internal class NavHostState<T>(
 
 }
 
-private fun <T> NavBackstack<T>.entryIdsSet() = entries.map { it.id }.toHashSet()
-private fun <T> NavSnapshot<T>.entryIdsSet() = hostEntries.map { it.id }.toHashSet()
+private fun <T> ArrayDeque<OutdatedHostEntriesQueueItem<T>>.getAllEntries() =
+    flatMap { it.outdatedHostEntries }
+
+internal class OutdatedHostEntriesQueueItem<T>(
+    val snapshot: NavSnapshot<T>,
+    val outdatedHostEntries: List<BaseNavHostEntry>
+)
 
 private interface ViewModelStoreProvider {
 

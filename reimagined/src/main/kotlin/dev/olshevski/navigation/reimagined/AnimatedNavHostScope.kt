@@ -13,7 +13,7 @@ interface AnimatedNavHostScope<out T> : NavHostScope<T>, AnimatedVisibilityScope
 
 internal class AnimatedNavHostScopeImpl<out T>(
     hostEntries: List<NavHostEntry<T>>,
-    baseHostScope: BaseNavHostScope<T>,
+    scopedHostEntries: Map<NavScope, ScopedNavHostEntry>,
     animatedVisibilityScope: AnimatedVisibilityScope
-) : NavHostScopeImpl<T>(hostEntries, baseHostScope), AnimatedNavHostScope<T>,
+) : NavHostScopeImpl<T>(hostEntries, scopedHostEntries), AnimatedNavHostScope<T>,
     AnimatedVisibilityScope by animatedVisibilityScope

@@ -8,64 +8,64 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-private class SharedViewModelsScreenScope(composeRule: MainActivityComposeRule) :
+private class ScopedViewModelsScreenScope(composeRule: MainActivityComposeRule) :
     DemoSelectionScreenScope(composeRule) {
 
-    fun assertSharedViewModelScreenIsDisplayed() {
-        composeRule.onNodeWithText(getString(R.string.shared_view_models__demo_screen_title))
+    fun assertScopedViewModelScreenIsDisplayed() {
+        composeRule.onNodeWithText(getString(R.string.scoped_view_models__demo_screen_title))
             .assertIsDisplayed()
     }
 
     fun assertFirstScreenIsDisplayed() {
-        composeRule.onNodeWithText(getString(R.string.shared_view_models__first_screen_title))
+        composeRule.onNodeWithText(getString(R.string.scoped_view_models__first_screen_title))
             .assertIsDisplayed()
     }
 
     fun assertSecondScreenIsDisplayed() {
-        composeRule.onNodeWithText(getString(R.string.shared_view_models__second_screen_title))
+        composeRule.onNodeWithText(getString(R.string.scoped_view_models__second_screen_title))
             .assertIsDisplayed()
     }
 
     fun assertThirdScreenIsDisplayed() {
-        composeRule.onNodeWithText(getString(R.string.shared_view_models__third_screen_title))
+        composeRule.onNodeWithText(getString(R.string.scoped_view_models__third_screen_title))
             .assertIsDisplayed()
     }
 
     fun performToSecondScreenButtonClick() {
-        composeRule.onNodeWithText(getString(R.string.shared_view_models__to_second_screen_button))
+        composeRule.onNodeWithText(getString(R.string.scoped_view_models__to_second_screen_button))
             .performClick()
     }
 
     fun performToThirdScreenButtonClick() {
-        composeRule.onNodeWithText(getString(R.string.shared_view_models__to_third_screen_button))
+        composeRule.onNodeWithText(getString(R.string.scoped_view_models__to_third_screen_button))
             .performClick()
     }
 
     fun assertPassedTextIsDisplayed() {
         composeRule.onNodeWithText(
-            getString(R.string.shared_view_models__text_from_shared_view_model, SomeText)
+            getString(R.string.scoped_view_models__text_from_shared_view_model, SomeText)
         ).assertIsDisplayed()
     }
 
 }
 
-private fun MainActivityComposeRule.sharedViewModelsScreenScope(block: SharedViewModelsScreenScope.() -> Unit) =
-    SharedViewModelsScreenScope(this).block()
+private fun MainActivityComposeRule.scopedViewModelsScreenScope(block: ScopedViewModelsScreenScope.() -> Unit) =
+    ScopedViewModelsScreenScope(this).block()
 
-class SharedViewModelsScreenTest {
+class ScopedViewModelsScreenTest {
 
     @get:Rule
     val composeRule = createMainActivityComposeRule()
 
     @Before
-    fun before() = composeRule.sharedViewModelsScreenScope {
-        performSharedViewModelsButtonClick()
-        assertSharedViewModelScreenIsDisplayed()
+    fun before() = composeRule.scopedViewModelsScreenScope {
+        performScopedViewModelsButtonClick()
+        assertScopedViewModelScreenIsDisplayed()
         assertFirstScreenIsDisplayed()
     }
 
-    private fun generalFlow(middleBlock: SharedViewModelsScreenScope.() -> Unit) =
-        composeRule.sharedViewModelsScreenScope {
+    private fun generalFlow(middleBlock: ScopedViewModelsScreenScope.() -> Unit) =
+        composeRule.scopedViewModelsScreenScope {
             performToSecondScreenButtonClick()
             assertSecondScreenIsDisplayed()
             performTextInput()
@@ -100,7 +100,7 @@ class SharedViewModelsScreenTest {
     })
 
     @Test
-    fun textInputIsClearedWhenEntryIsRemoved() = composeRule.sharedViewModelsScreenScope {
+    fun textInputIsClearedWhenEntryIsRemoved() = composeRule.scopedViewModelsScreenScope {
         performToSecondScreenButtonClick()
         assertInputIsEmpty()
         performTextInput()

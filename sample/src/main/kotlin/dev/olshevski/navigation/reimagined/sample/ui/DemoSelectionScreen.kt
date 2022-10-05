@@ -22,7 +22,7 @@ fun DemoSelectionScreen(
     onAnimatedNavHostButtonClick: () -> Unit,
     onDialogNavHostButtonClick: () -> Unit,
     onViewModelsButtonClick: () -> Unit,
-    onSharedViewModelsButtonClick: () -> Unit,
+    onScopedViewModelsButtonClick: () -> Unit,
     onBottomNavigationButtonClick: () -> Unit,
     onDeeplinksButtonClick: () -> Unit,
 ) = ScreenLayout(stringResource(R.string.demo_selection__screen_title)) {
@@ -40,7 +40,7 @@ fun DemoSelectionScreen(
             R.string.demo_selection__animated_nav_host_button to onAnimatedNavHostButtonClick,
             R.string.demo_selection__dialog_nav_host_button to onDialogNavHostButtonClick,
             R.string.demo_selection__view_models_button to onViewModelsButtonClick,
-            R.string.demo_selection__shared_view_models_button to onSharedViewModelsButtonClick,
+            R.string.demo_selection__scoped_view_models_button to onScopedViewModelsButtonClick,
             R.string.demo_selection__bottom_navigation_button to onBottomNavigationButtonClick,
             R.string.demo_selection__deeplinks_button to onDeeplinksButtonClick
         ).forEach {

@@ -4,13 +4,12 @@ import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
 
 @VisibleForTesting
 @Composable
 internal fun <T> BaseNavHost(
     state: NavHostState<T>,
-    transition: @Composable BaseNavHostScope<T>.(NavSnapshot<T>) -> NavSnapshot<T>
+    transition: @Composable (NavSnapshot<T>) -> NavSnapshot<T>
 ) {
     val targetSnapshot = state.targetSnapshot
 
@@ -19,13 +18,12 @@ internal fun <T> BaseNavHost(
 
         onDispose {
             state.onDispose()
-            state.removeOutdatedHostEntries(targetSnapshot)
+            state.removeOutdatedEntries(targetSnapshot)
         }
     }
 
     val currentSnapshot = key(state.hostId) {
-        val scope = remember(state) { BaseNavHostScopeImpl(state) }
-        scope.transition(targetSnapshot)
+        transition(targetSnapshot)
 
         // For NavHost: currentSnapshot is the same as targetSnapshot.
         //
@@ -33,21 +31,21 @@ internal fun <T> BaseNavHost(
         // finishes, currentSnapshot will become the same as targetSnapshot.
     }
 
-    DisposableEffect(state, targetSnapshot.hostEntries.lastOrNull()) {
+    DisposableEffect(state, targetSnapshot.items.lastOrNull()?.hostEntry) {
         onDispose {
             state.onTransitionStart()
         }
     }
 
-    DisposableEffect(state, currentSnapshot.hostEntries.lastOrNull()) {
-        if (currentSnapshot.hostEntries.lastOrNull() == targetSnapshot.hostEntries.lastOrNull()) {
+    DisposableEffect(state, currentSnapshot.items.lastOrNull()?.hostEntry) {
+        if (currentSnapshot.items.lastOrNull()?.hostEntry == targetSnapshot.items.lastOrNull()?.hostEntry) {
             state.onAllTransitionsFinish()
         }
         onDispose {}
     }
 
     DisposableEffect(state, currentSnapshot) {
-        state.removeOutdatedHostEntries(currentSnapshot)
+        state.removeOutdatedEntries(currentSnapshot)
         onDispose {}
     }
 

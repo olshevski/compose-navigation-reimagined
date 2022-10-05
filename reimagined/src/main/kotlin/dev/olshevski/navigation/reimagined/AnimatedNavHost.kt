@@ -74,11 +74,13 @@ private val CrossfadeTransitionSpec = object : AnimatedNavHostTransitionSpec<Any
 @Composable
 fun <T> AnimatedNavHost(
     controller: NavController<T>,
+    scopeSpec: NavScopeSpec<T> = EmptyScopeSpec,
     transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
 ) = AnimatedNavHost(
     backstack = controller.backstack,
+    scopeSpec = scopeSpec,
     transitionSpec = transitionSpec,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
@@ -113,11 +115,12 @@ fun <T> AnimatedNavHost(
 @Composable
 fun <T> AnimatedNavHost(
     backstack: NavBackstack<T>,
+    scopeSpec: NavScopeSpec<T> = EmptyScopeSpec,
     transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
 ) = AnimatedNavHost(
-    state = rememberNavHostState(backstack),
+    state = rememberNavHostState(backstack, scopeSpec),
     transitionSpec = transitionSpec,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
@@ -180,19 +183,19 @@ internal fun <T> AnimatedNavHost(
         transitionSpec = {
             selectTransition(transitionSpec, targetState.action)
         },
-        contentKey = { it.hostEntries.lastOrNull()?.id }
+        contentKey = { it.items.lastOrNull()?.hostEntry?.id }
     ) { snapshot ->
-        val lastHostEntry = snapshot.hostEntries.lastOrNull()
-        if (lastHostEntry != null) {
-            lastHostEntry.ComponentProvider {
-                val scope = remember(snapshot.hostEntries, this@AnimatedContent) {
+        val lastSnapshotEntry = snapshot.items.lastOrNull()
+        if (lastSnapshotEntry != null) {
+            lastSnapshotEntry.hostEntry.ComponentProvider {
+                val scope = remember(snapshot.items, this@AnimatedContent) {
                     AnimatedNavHostScopeImpl(
-                        hostEntries = snapshot.hostEntries,
-                        baseHostScope = this@BaseNavHost,
+                        hostEntries = snapshot.items.map { it.hostEntry },
+                        scopedHostEntries = lastSnapshotEntry.scopedHostEntries,
                         animatedVisibilityScope = this@AnimatedContent
                     )
                 }
-                scope.contentSelector(lastHostEntry.destination)
+                scope.contentSelector(lastSnapshotEntry.hostEntry.destination)
             }
         } else {
             emptyBackstackPlaceholder()
@@ -206,8 +209,8 @@ private fun <T> AnimatedContentScope<NavSnapshot<T>>.selectTransition(
     transitionSpec: AnimatedNavHostTransitionSpec<T>,
     action: NavAction,
 ): ContentTransform {
-    val initialStateLastEntry = initialState.hostEntries.lastOrNull()
-    val targetStateLastEntry = targetState.hostEntries.lastOrNull()
+    val initialStateLastEntry = initialState.items.lastOrNull()?.hostEntry
+    val targetStateLastEntry = targetState.items.lastOrNull()?.hostEntry
 
     // Request transition spec only when anything actually changes and should be animated.
     // For some reason AnimatedContent calls for transitionSpec even when created initially

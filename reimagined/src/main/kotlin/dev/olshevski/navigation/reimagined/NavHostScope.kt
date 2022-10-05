@@ -25,16 +25,17 @@ interface NavHostScope<out T> {
      */
     val hostEntries: List<NavHostEntry<T>>
 
-    fun getSharedViewModelStoreOwner(key: NavKey): ViewModelStoreOwner
+    fun getScopedViewModelStoreOwner(scope: NavScope): ViewModelStoreOwner
 }
 
 internal open class NavHostScopeImpl<out T>(
     override val hostEntries: List<NavHostEntry<T>>,
-    private val baseHostScope: BaseNavHostScope<T>
+    private val scopedHostEntries: Map<NavScope, ScopedNavHostEntry>
 ) : NavHostScope<T> {
 
-    override fun getSharedViewModelStoreOwner(key: NavKey) =
-        baseHostScope.getSharedViewModelStoreOwner(key, currentHostEntry.id)
+    override fun getScopedViewModelStoreOwner(scope: NavScope): ViewModelStoreOwner =
+        scopedHostEntries[scope]
+            ?: error("You should associate the scope ($scope) with the destination (${currentHostEntry.destination}) in a scopeSpec")
 
 }
 

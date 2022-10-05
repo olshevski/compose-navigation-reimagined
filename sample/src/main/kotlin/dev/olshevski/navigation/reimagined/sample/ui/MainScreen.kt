@@ -24,7 +24,7 @@ import dev.olshevski.navigation.reimagined.sample.ui.demo.DeeplinksScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.DialogNavHostScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.PassValuesScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.ReturnResultsScreen
-import dev.olshevski.navigation.reimagined.sample.ui.demo.SharedViewModelsScreen
+import dev.olshevski.navigation.reimagined.sample.ui.demo.ScopedViewModelsScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.ViewModelsScreen
 
 private val MainNavHostTransitionSpec =
@@ -89,8 +89,8 @@ fun MainScreen() {
                 onViewModelsButtonClick = {
                     navController.navigate(MainDestination.ViewModels)
                 },
-                onSharedViewModelsButtonClick = {
-                    navController.navigate(MainDestination.SharedViewModels)
+                onScopedViewModelsButtonClick = {
+                    navController.navigate(MainDestination.ScopedViewModels)
                 },
                 onBottomNavigationButtonClick = {
                     navController.navigate(MainDestination.BottomNavigation)
@@ -104,7 +104,7 @@ fun MainScreen() {
             MainDestination.AnimatedNavHost -> AnimatedNavHostScreen()
             MainDestination.DialogNavHost -> DialogNavHostScreen()
             MainDestination.ViewModels -> ViewModelsScreen()
-            MainDestination.SharedViewModels -> SharedViewModelsScreen()
+            MainDestination.ScopedViewModels -> ScopedViewModelsScreen()
             MainDestination.BottomNavigation -> BottomNavigationScreen()
             is MainDestination.Deeplinks -> DeeplinksScreen(destination.initialBackstack)
 

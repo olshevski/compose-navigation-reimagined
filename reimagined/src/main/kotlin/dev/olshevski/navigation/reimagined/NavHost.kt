@@ -32,10 +32,12 @@ import androidx.compose.runtime.remember
 @Composable
 fun <T> NavHost(
     controller: NavController<T>,
+    scopeSpec: NavScopeSpec<T> = EmptyScopeSpec,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable NavHostScope<T>.(T) -> Unit
 ) = NavHost(
     backstack = controller.backstack,
+    scopeSpec = scopeSpec,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
 )
@@ -66,10 +68,11 @@ fun <T> NavHost(
 @Composable
 fun <T> NavHost(
     backstack: NavBackstack<T>,
+    scopeSpec: NavScopeSpec<T> = EmptyScopeSpec,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable NavHostScope<T>.(T) -> Unit
 ) = NavHost(
-    state = rememberNavHostState(backstack),
+    state = rememberNavHostState(backstack, scopeSpec),
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
 )
@@ -81,17 +84,17 @@ internal fun <T> NavHost(
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable NavHostScope<T>.(T) -> Unit
 ) = BaseNavHost(state) { snapshot ->
-    val lastHostEntry = snapshot.hostEntries.lastOrNull()
-    key(lastHostEntry?.id) {
-        if (lastHostEntry != null) {
-            lastHostEntry.ComponentProvider {
-                val scope = remember(snapshot.hostEntries) {
+    val lastSnapshotEntry = snapshot.items.lastOrNull()
+    key(lastSnapshotEntry?.hostEntry?.id) {
+        if (lastSnapshotEntry != null) {
+            lastSnapshotEntry.hostEntry.ComponentProvider {
+                val scope = remember(snapshot.items) {
                     NavHostScopeImpl(
-                        hostEntries = snapshot.hostEntries,
-                        baseHostScope = this@BaseNavHost
+                        hostEntries = snapshot.items.map { it.hostEntry },
+                        scopedHostEntries = lastSnapshotEntry.scopedHostEntries
                     )
                 }
-                scope.contentSelector(lastHostEntry.destination)
+                scope.contentSelector(lastSnapshotEntry.hostEntry.destination)
             }
         } else {
             emptyBackstackPlaceholder()
