@@ -2,6 +2,8 @@ package dev.olshevski.navigation.reimagined
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 
 /**
  * A basic navigation host that selects UI for every destination and provides necessary
@@ -27,12 +29,14 @@ import androidx.compose.runtime.CompositionLocalProvider
  * in the backstack. In other words, here is where you select UI to show (e.g. a screen).
  */
 @Composable
-fun <T> NavHost(
+fun <T, S> ScopedNavHost(
     controller: NavController<T>,
+    scopeSpec: NavScopeSpec<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable NavHostScope<T>.(T) -> Unit
-) = NavHost(
+    contentSelector: @Composable ScopedNavHostScope<T, S>.(T) -> Unit
+) = ScopedNavHost(
     backstack = controller.backstack,
+    scopeSpec = scopeSpec,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
 )
@@ -61,23 +65,38 @@ fun <T> NavHost(
  * in the backstack. In other words, here is where you select UI to show (e.g. a screen).
  */
 @Composable
-fun <T> NavHost(
+fun <T, S> ScopedNavHost(
     backstack: NavBackstack<T>,
+    scopeSpec: NavScopeSpec<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable NavHostScope<T>.(T) -> Unit
-) = NavHost(
-    state = rememberNavHostState(backstack, EmptyScopeSpec),
+    contentSelector: @Composable ScopedNavHostScope<T, S>.(T) -> Unit
+) = ScopedNavHost(
+    state = rememberNavHostState(backstack, scopeSpec),
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
 )
 
 @Composable
-internal fun <T, S> NavHost(
+internal fun <T, S> ScopedNavHost(
     state: NavHostState<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable ScopedNavHostScope<T, S>.(T) -> Unit
-) = ScopedNavHost(
-    state = state,
-    emptyBackstackPlaceholder = emptyBackstackPlaceholder,
-    contentSelector = contentSelector
-)
+) = BaseNavHost(state) { snapshot ->
+    val lastSnapshotEntry = snapshot.items.lastOrNull()
+    key(lastSnapshotEntry?.hostEntry?.id) {
+        if (lastSnapshotEntry != null) {
+            lastSnapshotEntry.hostEntry.ComponentProvider {
+                val scope = remember(snapshot.items) {
+                    ScopedNavHostScopeImpl(
+                        hostEntries = snapshot.items.map { it.hostEntry },
+                        scopedHostEntries = lastSnapshotEntry.scopedHostEntries
+                    )
+                }
+                scope.contentSelector(lastSnapshotEntry.hostEntry.destination)
+            }
+        } else {
+            emptyBackstackPlaceholder()
+        }
+    }
+    snapshot
+}

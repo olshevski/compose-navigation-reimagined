@@ -8,13 +8,13 @@ import androidx.lifecycle.ViewModelStore
  * @param scope User key of this entry.
  */
 @Stable
-class ScopedNavHostEntry internal constructor(
+class ScopedNavHostEntry<S> internal constructor(
     id: NavId,
-    val scope: NavScope,
+    val scope: S,
     viewModelStore: ViewModelStore,
     application: Application?
 ) : BaseNavHostEntry(id, viewModelStore, application) {
 
-    override fun toString() = "SharedNavHostEntry(id=$id, scope=$scope)"
+    override fun toString() = "ScopedNavHostEntry(id=$id, scope=$scope)"
 
 }

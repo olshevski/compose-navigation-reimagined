@@ -76,10 +76,10 @@ class SavedStateHandleTest(
         }
 
         lateinit var screenController: NavController<Screen>
-        internal lateinit var screenState: NavHostState<Screen>
+        internal lateinit var screenState: NavHostState<Screen, Nothing>
 
         lateinit var subScreenController: NavController<SubScreen>
-        internal lateinit var subScreenState: NavHostState<SubScreen>
+        internal lateinit var subScreenState: NavHostState<SubScreen, Nothing>
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -88,7 +88,7 @@ class SavedStateHandleTest(
                 intent.getSerializableExtra(Extra.FactoryParam) as ViewModelFactoryParam
             setContent {
                 screenController = rememberNavController(Screen.A)
-                screenState = rememberNavHostState(screenController.backstack)
+                screenState = rememberNavHostState(screenController.backstack, EmptyScopeSpec)
                 ParamNavHost(hostParam, screenState) { screen ->
                     paramViewModel(
                         factoryParam = factoryParam,
@@ -108,7 +108,7 @@ class SavedStateHandleTest(
         @Composable
         private fun SubScreenHost(hostParam: NavHostParam, factoryParam: ViewModelFactoryParam) {
             subScreenController = rememberNavController(SubScreen.X)
-            subScreenState = rememberNavHostState(subScreenController.backstack)
+            subScreenState = rememberNavHostState(subScreenController.backstack, EmptyScopeSpec)
             ParamNavHost(hostParam, subScreenState) {
                 paramViewModel(
                     factoryParam = factoryParam,

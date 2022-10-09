@@ -1,5 +1,6 @@
 package dev.olshevski.navigation.reimagined.sample.ui.demo
 
+import android.os.Parcelable
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -13,10 +14,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.olshevski.navigation.reimagined.NavBackHandler
-import dev.olshevski.navigation.reimagined.NavHost
-import dev.olshevski.navigation.reimagined.NavHostScope
 import dev.olshevski.navigation.reimagined.NavScopeSpec
-import dev.olshevski.navigation.reimagined.navScope
+import dev.olshevski.navigation.reimagined.ScopedNavHost
+import dev.olshevski.navigation.reimagined.ScopedNavHostScope
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.sample.R
@@ -25,10 +25,12 @@ import dev.olshevski.navigation.reimagined.sample.ui.CenteredText
 import dev.olshevski.navigation.reimagined.sample.ui.ContentLayout
 import dev.olshevski.navigation.reimagined.sample.ui.ScreenLayout
 import dev.olshevski.navigation.reimagined.sample.ui.TestInputTag
+import kotlinx.parcelize.Parcelize
 
-private val Scope = navScope("scope-key")
+@Parcelize
+private object Scope : Parcelable
 
-private val ScopeSpec = NavScopeSpec<ScopedViewModelsDestination> {
+private val ScopeSpec = NavScopeSpec<ScopedViewModelsDestination, Scope> {
     if (it is ScopedViewModelsDestination.Second || it is ScopedViewModelsDestination.Third) {
         setOf(Scope)
     } else {
@@ -45,7 +47,7 @@ fun ScopedViewModelsScreen() = ScreenLayout(
 
     NavBackHandler(navController)
 
-    NavHost(
+    ScopedNavHost(
         controller = navController,
         scopeSpec = ScopeSpec
     ) { destination ->
@@ -101,7 +103,7 @@ class ScopedViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
 }
 
 @Composable
-private fun NavHostScope<ScopedViewModelsDestination>.SecondScreen(
+private fun ScopedNavHostScope<ScopedViewModelsDestination, Scope>.SecondScreen(
     toThirdScreenButtonClick: () -> Unit,
 ) = ContentLayout(
     title = stringResource(R.string.scoped_view_models__second_screen_title)
@@ -133,7 +135,7 @@ private fun NavHostScope<ScopedViewModelsDestination>.SecondScreen(
 }
 
 @Composable
-private fun NavHostScope<ScopedViewModelsDestination>.ThirdScreen() = ContentLayout(
+private fun ScopedNavHostScope<ScopedViewModelsDestination, Scope>.ThirdScreen() = ContentLayout(
     title = stringResource(R.string.scoped_view_models__third_screen_title)
 ) {
     val scopedViewModel = viewModel<ScopedViewModel>(

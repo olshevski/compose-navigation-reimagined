@@ -1,15 +1,13 @@
 package dev.olshevski.navigation.reimagined
 
-import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.key
 
-@VisibleForTesting
 @Composable
-internal fun <T> BaseNavHost(
-    state: NavHostState<T>,
-    transition: @Composable (NavSnapshot<T>) -> NavSnapshot<T>
+internal fun <T, S> BaseNavHost(
+    state: NavHostState<T, S>,
+    transition: @Composable (NavSnapshot<T, S>) -> NavSnapshot<T, S>
 ) {
     val targetSnapshot = state.targetSnapshot
 

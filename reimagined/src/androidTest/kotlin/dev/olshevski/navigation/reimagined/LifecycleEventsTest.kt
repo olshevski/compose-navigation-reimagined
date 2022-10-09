@@ -38,7 +38,7 @@ class LifecycleEventsTest(private val param: NavHostParam) {
     @Before
     fun before() {
         composeRule.setContent {
-            val state = rememberNavHostState(navController.backstack)
+            val state = rememberNavHostState(navController.backstack, EmptyScopeSpec)
 
             ImmediateLaunchedEffect(state) {
                 val observedEntries = mutableSetOf<LifecycleOwner>()

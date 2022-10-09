@@ -1,9 +1,9 @@
 package dev.olshevski.navigation.reimagined
 
-fun interface NavScopeSpec<in T> {
+fun interface NavScopeSpec<in T, out S> {
 
-    fun getDestinationScopes(destination: T): Set<NavScope>
+    fun getDestinationScopes(destination: T): Set<S>
 
 }
 
-internal val EmptyScopeSpec = NavScopeSpec<Any?> { emptySet() }
+internal val EmptyScopeSpec = NavScopeSpec<Any?, Nothing> { emptySet() }

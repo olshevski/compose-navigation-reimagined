@@ -15,9 +15,9 @@ enum class NavHostParam {
 @Suppress("TestFunctionName")
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-internal fun <T> ParamNavHost(
+internal fun <T, S> ParamNavHost(
     param: NavHostParam,
-    state: NavHostState<T>,
+    state: NavHostState<T, S>,
     content: @Composable NavHostScope<T>.(T) -> Unit
 ) {
     when (param) {

@@ -25,10 +25,10 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.savedstate.SavedStateRegistry
 
 @Composable
-internal fun <T> rememberNavHostState(
+internal fun <T, S> rememberNavHostState(
     backstack: NavBackstack<T>,
-    scopeSpec: NavScopeSpec<T> = EmptyScopeSpec
-): NavHostState<T> {
+    scopeSpec: NavScopeSpec<T, S>
+): NavHostState<T, S> {
     val saveableStateHolder = rememberSaveableStateHolder()
     val viewModelStoreOwner = LocalViewModelStoreOwner.current!!
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -52,7 +52,7 @@ internal fun <T> rememberNavHostState(
                 NavHostState(
                     hostId = restored[0] as NavHostId,
                     restoredHostEntryIds = restored[1] as List<NavId>,
-                    restoredScopedHostEntryRecords = restored[2] as List<ScopedNavHostEntryRecord>,
+                    restoredScopedHostEntryRecords = restored[2] as List<ScopedNavHostEntryRecord<S>>,
                     restoredOutdatedHostEntryIds = restored[3] as List<NavId>,
                     initialBackstack = backstack,
                     scopeSpec = scopeSpec,
@@ -87,13 +87,13 @@ internal fun <T> rememberNavHostState(
  * Stores and manages all components (lifecycles, saved states, view models).
  */
 @Stable
-internal class NavHostState<T>(
+internal class NavHostState<T, S>(
     val hostId: NavHostId,
     restoredHostEntryIds: List<NavId>,
-    restoredScopedHostEntryRecords: List<ScopedNavHostEntryRecord>,
+    restoredScopedHostEntryRecords: List<ScopedNavHostEntryRecord<S>>,
     restoredOutdatedHostEntryIds: List<NavId>,
     initialBackstack: NavBackstack<T>,
-    scopeSpec: NavScopeSpec<T>,
+    scopeSpec: NavScopeSpec<T, S>,
     private val saveableStateHolder: SaveableStateHolder,
     hostViewModelStoreOwner: ViewModelStoreOwner,
     private val hostLifecycle: Lifecycle,
@@ -105,9 +105,9 @@ internal class NavHostState<T>(
 
     val hostEntriesMap = mutableMapOf<NavId, NavHostEntry<T>>()
 
-    val scopedHostEntriesMap = mutableMapOf<NavScope, ScopedNavHostEntry>()
+    val scopedHostEntriesMap = mutableMapOf<S, ScopedNavHostEntry<S>>()
 
-    val outdatedHostEntriesQueue = ArrayDeque<OutdatedHostEntriesQueueItem<T>>()
+    val outdatedHostEntriesQueue = ArrayDeque<OutdatedHostEntriesQueueItem<T, S>>()
 
     private val viewModelStoreProvider: ViewModelStoreProvider =
         ViewModelProvider(hostViewModelStoreOwner)[viewModelStoreProviderKey(hostId), NavHostViewModel::class.java]
@@ -189,7 +189,7 @@ internal class NavHostState<T>(
 
     private fun newScopedHostEntry(
         id: NavId,
-        scope: NavScope
+        scope: S
     ) = ScopedNavHostEntry(
         id = id,
         scope = scope,
@@ -294,7 +294,7 @@ internal class NavHostState<T>(
     /**
      * Remove entries that are no longer in the snapshot.
      */
-    fun removeOutdatedEntries(snapshot: NavSnapshot<T>) {
+    fun removeOutdatedEntries(snapshot: NavSnapshot<T, S>) {
         if (outdatedHostEntriesQueue.any { it.snapshot == snapshot }) {
             do {
                 val item = outdatedHostEntriesQueue.removeFirst()
@@ -317,11 +317,11 @@ internal class NavHostState<T>(
 
 }
 
-private fun <T> ArrayDeque<OutdatedHostEntriesQueueItem<T>>.getAllEntries() =
+private fun <T, S> ArrayDeque<OutdatedHostEntriesQueueItem<T, S>>.getAllEntries() =
     flatMap { it.outdatedHostEntries }
 
-internal class OutdatedHostEntriesQueueItem<T>(
-    val snapshot: NavSnapshot<T>,
+internal class OutdatedHostEntriesQueueItem<out T, S>(
+    val snapshot: NavSnapshot<T, S>,
     val outdatedHostEntries: List<BaseNavHostEntry>
 )
 

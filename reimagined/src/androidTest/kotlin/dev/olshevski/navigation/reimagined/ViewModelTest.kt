@@ -57,14 +57,14 @@ class ViewModelTest(
         }
 
         lateinit var screenController: NavController<Screen>
-        internal lateinit var screenState: NavHostState<Screen>
+        internal lateinit var screenState: NavHostState<Screen, Nothing>
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             val hostParam = intent.getSerializableExtra(Extra.NavHostParam) as NavHostParam
             setContent {
                 screenController = rememberNavController(Screen.A)
-                screenState = rememberNavHostState(screenController.backstack)
+                screenState = rememberNavHostState(screenController.backstack, EmptyScopeSpec)
                 ParamNavHost(hostParam, screenState) { _ ->
                     hostEntries.forEach {
                         viewModel(

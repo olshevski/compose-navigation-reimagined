@@ -6,6 +6,9 @@ import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.with
 
 /**
@@ -71,5 +74,28 @@ fun interface AnimatedNavHostTransitionSpec<in T> {
         action: NavAction,
         to: T
     ): ContentTransform = EnterTransition.None with ExitTransition.None
+
+}
+
+@ExperimentalAnimationApi
+internal val CrossfadeTransitionSpec = object : AnimatedNavHostTransitionSpec<Any?> {
+
+    private fun crossfade() = fadeIn(tween()) with fadeOut(tween())
+
+    override fun AnimatedNavHostTransitionScope.getContentTransform(
+        action: NavAction,
+        from: Any?,
+        to: Any?
+    ): ContentTransform = crossfade()
+
+    override fun AnimatedNavHostTransitionScope.toEmptyBackstack(
+        action: NavAction,
+        from: Any?
+    ): ContentTransform = crossfade()
+
+    override fun AnimatedNavHostTransitionScope.fromEmptyBackstack(
+        action: NavAction,
+        to: Any?
+    ): ContentTransform = crossfade()
 
 }
