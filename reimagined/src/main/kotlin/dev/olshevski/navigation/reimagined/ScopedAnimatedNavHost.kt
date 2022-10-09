@@ -7,15 +7,10 @@ import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.Transition
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.with
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 
 /**
@@ -99,46 +94,6 @@ fun <T, S> ScopedAnimatedNavHost(
     contentSelector = contentSelector
 )
 
-/**
- * Enqueues a new target state and animates to it only when all previous transitions finish (one by
- * one).
- *
- * Workaround for [this issue](https://issuetracker.google.com/issues/205726882).
- */
-@Suppress("SameParameterValue")
-@Composable
-private fun <T> enqueueTransition(
-    targetState: T,
-    label: String? = null
-): Transition<T> {
-    // Queue of pending transitions. The first item in the queue is the currently running
-    // transition.
-    val queue = remember { mutableStateListOf<T>() }
-    val nextTargetState by derivedStateOf { queue.firstOrNull() ?: targetState }
-
-    val transition = updateTransition(
-        targetState = nextTargetState,
-        label = label
-    )
-
-    DisposableEffect(targetState) {
-        if (transition.currentState != targetState) {
-            queue.add(targetState)
-        }
-        onDispose {}
-    }
-
-    DisposableEffect(transition.currentState) {
-        onDispose {
-            if (queue.isNotEmpty()) {
-                queue.removeFirst()
-            }
-        }
-    }
-
-    return transition
-}
-
 @ExperimentalAnimationApi
 @Composable
 internal fun <T, S> ScopedAnimatedNavHost(
@@ -147,7 +102,7 @@ internal fun <T, S> ScopedAnimatedNavHost(
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopedAnimatedNavHostScope<T, S>.(T) -> Unit
 ) = BaseNavHost(state) { targetSnapshot ->
-    val transition = enqueueTransition(
+    val transition = updateTransition(
         targetState = targetSnapshot,
         label = "AnimatedNavHost"
     )

@@ -139,7 +139,7 @@ internal class NavHostState<T, S>(
         restoredOutdatedHostEntryIds.forEach { removeComponents(it) }
     }
 
-    val targetSnapshot by derivedStateOf {
+    val snapshot by derivedStateOf {
         NavSnapshot(
             items = backstack.entries.map { entry ->
                 NavSnapshotItem(
@@ -232,8 +232,8 @@ internal class NavHostState<T, S>(
         }
     }
 
-    fun onTransitionStart() {
-        val lastSnapshotEntry = targetSnapshot.items.lastOrNull()
+    fun onTransitionStart(snapshot: NavSnapshot<T, S>) {
+        val lastSnapshotEntry = snapshot.items.lastOrNull()
         val lastSnapshotEntryId = lastSnapshotEntry?.hostEntry?.id
         val lastSnapshotEntryScopes = lastSnapshotEntry?.scopedHostEntries?.keys ?: emptySet()
 
@@ -265,27 +265,27 @@ internal class NavHostState<T, S>(
         }
     }
 
-    fun onAllTransitionsFinish() {
-        val lastSnapshotEntry = targetSnapshot.items.lastOrNull()
+    fun onTransitionFinish(snapshot: NavSnapshot<T, S>) {
+        val lastSnapshotEntry = snapshot.items.lastOrNull()
         val lastSnapshotEntryId = lastSnapshotEntry?.hostEntry?.id
         val lastSnapshotEntryScopes = lastSnapshotEntry?.scopedHostEntries?.keys ?: emptySet()
 
         // lastHostEntry and associated shared entries are resumed, everything else is stopped
         val (hostEntriesToResume, hostEntriesToStop) = hostEntriesMap.values
             .partition { it.id == lastSnapshotEntryId }
-        val (sharedEntriesToResume, sharedEntriesToStop) = scopedHostEntriesMap.values
+        val (scopedHostEntriesToResume, scopedHostEntriesToStop) = scopedHostEntriesMap.values
             .partition { it.scope in lastSnapshotEntryScopes }
 
         listOf(
             hostEntriesToStop,
-            sharedEntriesToStop,
+            scopedHostEntriesToStop,
             outdatedHostEntriesQueue.getAllEntries()
         ).flatten().forEach {
             it.maxLifecycleState = Lifecycle.State.CREATED
         }
         listOf(
             hostEntriesToResume,
-            sharedEntriesToResume
+            scopedHostEntriesToResume
         ).flatten().forEach {
             it.maxLifecycleState = Lifecycle.State.RESUMED
         }
