@@ -3,7 +3,6 @@ package dev.olshevski.navigation.reimagined
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -14,7 +13,7 @@ import androidx.compose.runtime.rememberUpdatedState
 @Composable
 internal fun <T, S> BaseNavHost(
     state: NavHostState<T, S>,
-    transition: @Composable (NavSnapshot<T, S>) -> NavSnapshot<T, S>
+    transition: @Composable (NavSnapshot<T, S>) -> NavTransitionState<T, S>
 ): Unit = key(state.hostId) {
     DisposableEffect(state) {
         state.onCreate()
@@ -25,29 +24,24 @@ internal fun <T, S> BaseNavHost(
         }
     }
 
-    val (targetSnapshot, currentSnapshot) = enqueueState(state.snapshot) { targetSnapshot ->
+    val transitionState = enqueueSnapshot(state.snapshot) { targetSnapshot ->
         transition(targetSnapshot)
     }
 
-    // For NavHost: currentSnapshot is the same as targetSnapshot.
-    //
-    // For AnimatedNavHost: currentSnapshot is the snapshot in transition. When transition
-    // finishes, currentSnapshot will become the same as targetSnapshot.
-
-    val updatedTargetSnapshot by rememberUpdatedState(targetSnapshot)
-    DisposableEffect(state, targetSnapshot.items.lastOrNull()?.hostEntry) {
+    val updatedTargetVisibleItems by rememberUpdatedState(transitionState.targetVisibleItems)
+    DisposableEffect(state, transitionState.targetVisibleItems) {
         onDispose {
-            state.onTransitionStart(updatedTargetSnapshot)
+            state.onTransitionStart(updatedTargetVisibleItems)
         }
     }
 
-    DisposableEffect(state, currentSnapshot.items.lastOrNull()?.hostEntry) {
-        state.onTransitionFinish(currentSnapshot)
+    DisposableEffect(state, transitionState.currentVisibleItems) {
+        state.onTransitionFinish(transitionState.currentVisibleItems)
         onDispose {}
     }
 
-    DisposableEffect(state, currentSnapshot) {
-        state.removeOutdatedEntries(currentSnapshot)
+    DisposableEffect(state, transitionState.currentSnapshot) {
+        state.removeOutdatedEntries(transitionState.currentSnapshot)
         onDispose {}
     }
 
@@ -60,26 +54,26 @@ internal fun <T, S> BaseNavHost(
  * @param transition controls the transition behaviour. It may use [updateTransition] internally or
  * switch to a new target state instantaneously.
  */
-@Suppress("SameParameterValue")
 @Composable
-private fun <T> enqueueState(
-    state: T,
-    transition: @Composable (T) -> T
-): StateInfo<T> {
+private fun <T, S> enqueueSnapshot(
+    snapshot: NavSnapshot<T, S>,
+    transition: @Composable (NavSnapshot<T, S>) -> NavTransitionState<T, S>
+): NavTransitionState<T, S> {
     // Queue of pending transitions. The first item in the queue is the currently running
     // transition.
-    val queue = remember { mutableStateListOf<T>() }
-    val targetState by derivedStateOf { queue.firstOrNull() ?: state }
-    val currentState = transition(targetState)
+    val queue = remember { mutableStateListOf<NavSnapshot<T, S>>() }
+    val targetSnapshot by derivedStateOf { queue.firstOrNull() ?: snapshot }
+    val transitionState = transition(targetSnapshot)
+    val currentSnapshot = transitionState.currentSnapshot
 
-    DisposableEffect(state) {
-        if (currentState != state) {
-            queue.add(state)
+    DisposableEffect(snapshot) {
+        if (currentSnapshot != snapshot) {
+            queue.add(snapshot)
         }
         onDispose {}
     }
 
-    DisposableEffect(currentState) {
+    DisposableEffect(currentSnapshot) {
         onDispose {
             if (queue.isNotEmpty()) {
                 queue.removeFirst()
@@ -87,11 +81,5 @@ private fun <T> enqueueState(
         }
     }
 
-    return StateInfo(targetState = targetState, currentState = currentState)
+    return transitionState
 }
-
-@Stable
-private data class StateInfo<T>(
-    val targetState: T,
-    val currentState: T
-)

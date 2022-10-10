@@ -44,7 +44,7 @@ internal fun <T, S> rememberNavHostState(
                     hostState.hostId,
                     hostState.hostEntriesMap.keys.toList(),
                     hostState.scopedHostEntriesMap.values.map { it.toScopedHostEntryRecord() },
-                    hostState.outdatedHostEntriesQueue.getAllEntries().map { it.id }
+                    hostState.outdatedHostEntriesQueue.getAllHostEntries().map { it.id }
                 )
             },
             restore = { restored ->
@@ -116,7 +116,7 @@ internal class NavHostState<T, S>(
 
     private val lifecycleEventObserver = LifecycleEventObserver { _, event ->
         hostLifecycleState = event.targetState
-        listOf(hostEntriesMap, scopedHostEntriesMap).flatMap { it.values }.forEach {
+        getAllHostEntries().forEach {
             it.hostLifecycleState = hostLifecycleState
         }
     }
@@ -177,6 +177,12 @@ internal class NavHostState<T, S>(
         }
     }
 
+    private fun getAllHostEntries() = listOf(
+        hostEntriesMap.values,
+        scopedHostEntriesMap.values,
+        outdatedHostEntriesQueue.getAllHostEntries()
+    ).flatten()
+
     private fun newHostEntry(entry: NavEntry<T>) = NavHostEntry(
         id = entry.id,
         destination = entry.destination,
@@ -223,72 +229,35 @@ internal class NavHostState<T, S>(
 
     fun onDispose() {
         hostLifecycle.removeObserver(lifecycleEventObserver)
-        listOf(
-            hostEntriesMap.values,
-            scopedHostEntriesMap.values,
-            outdatedHostEntriesQueue.getAllEntries()
-        ).flatten().forEach {
+        getAllHostEntries().forEach {
             it.hostLifecycleState = Lifecycle.State.DESTROYED
         }
     }
 
-    fun onTransitionStart(snapshot: NavSnapshot<T, S>) {
-        val lastSnapshotEntry = snapshot.items.lastOrNull()
-        val lastSnapshotEntryId = lastSnapshotEntry?.hostEntry?.id
-        val lastSnapshotEntryScopes = lastSnapshotEntry?.scopedHostEntries?.keys ?: emptySet()
-
-        // When transition starts:
-        // - all hostEntries except lastHostEntry are capped at STARTED state
-        // - lastHostEntry gets promoted to STARTED state
-        //
-        // For sharedEntries it is similar, but based on presence of lastHostEntry in
-        // associatedEntryIds.
-        //
-        // Further state changes will be done when all transitions finish.
-        val (hostEntriesToStart, hostEntriesToPause) = hostEntriesMap.values
-            .partition { it.id == lastSnapshotEntryId }
-        val (scopedHostEntriesToStart, scopedHostEntriesToPause) = scopedHostEntriesMap.values
-            .partition { it.scope in lastSnapshotEntryScopes }
-
-        listOf(
-            hostEntriesToPause,
-            scopedHostEntriesToPause,
-            outdatedHostEntriesQueue.getAllEntries()
-        ).flatten().forEach {
-            it.maxLifecycleState = minOf(it.maxLifecycleState, Lifecycle.State.STARTED)
-        }
-        listOf(
-            hostEntriesToStart,
-            scopedHostEntriesToStart
-        ).flatten().forEach {
-            it.maxLifecycleState = Lifecycle.State.STARTED
-        }
+    fun onTransitionStart(visibleItems: Set<NavSnapshotItem<T, S>>) {
+        val visibleEntryIds = visibleItems.getAllHostEntryIds()
+        getAllHostEntries().partition { it.id in visibleEntryIds }
+            .let { (entriesToStart, entriesToPause) ->
+                entriesToPause.forEach {
+                    it.maxLifecycleState = minOf(it.maxLifecycleState, Lifecycle.State.STARTED)
+                }
+                entriesToStart.forEach {
+                    it.maxLifecycleState = Lifecycle.State.STARTED
+                }
+            }
     }
 
-    fun onTransitionFinish(snapshot: NavSnapshot<T, S>) {
-        val lastSnapshotEntry = snapshot.items.lastOrNull()
-        val lastSnapshotEntryId = lastSnapshotEntry?.hostEntry?.id
-        val lastSnapshotEntryScopes = lastSnapshotEntry?.scopedHostEntries?.keys ?: emptySet()
-
-        // lastHostEntry and associated shared entries are resumed, everything else is stopped
-        val (hostEntriesToResume, hostEntriesToStop) = hostEntriesMap.values
-            .partition { it.id == lastSnapshotEntryId }
-        val (scopedHostEntriesToResume, scopedHostEntriesToStop) = scopedHostEntriesMap.values
-            .partition { it.scope in lastSnapshotEntryScopes }
-
-        listOf(
-            hostEntriesToStop,
-            scopedHostEntriesToStop,
-            outdatedHostEntriesQueue.getAllEntries()
-        ).flatten().forEach {
-            it.maxLifecycleState = Lifecycle.State.CREATED
-        }
-        listOf(
-            hostEntriesToResume,
-            scopedHostEntriesToResume
-        ).flatten().forEach {
-            it.maxLifecycleState = Lifecycle.State.RESUMED
-        }
+    fun onTransitionFinish(visibleItems: Set<NavSnapshotItem<T, S>>) {
+        val visibleEntryIds = visibleItems.getAllHostEntryIds()
+        getAllHostEntries().partition { it.id in visibleEntryIds }
+            .let { (entriesToResume, entriesToStop) ->
+                entriesToStop.forEach {
+                    it.maxLifecycleState = Lifecycle.State.CREATED
+                }
+                entriesToResume.forEach {
+                    it.maxLifecycleState = Lifecycle.State.RESUMED
+                }
+            }
     }
 
     /**
@@ -317,10 +286,14 @@ internal class NavHostState<T, S>(
 
 }
 
-private fun <T, S> ArrayDeque<OutdatedHostEntriesQueueItem<T, S>>.getAllEntries() =
+private fun <T, S> ArrayDeque<OutdatedHostEntriesQueueItem<T, S>>.getAllHostEntries() =
     flatMap { it.outdatedHostEntries }
 
-internal class OutdatedHostEntriesQueueItem<out T, S>(
+private fun <T, S> Set<NavSnapshotItem<T, S>>.getAllHostEntryIds() = flatMap { item ->
+    item.scopedHostEntries.values.map { it.id } + item.hostEntry.id
+}.toHashSet()
+
+internal data class OutdatedHostEntriesQueueItem<out T, S>(
     val snapshot: NavSnapshot<T, S>,
     val outdatedHostEntries: List<BaseNavHostEntry>
 )

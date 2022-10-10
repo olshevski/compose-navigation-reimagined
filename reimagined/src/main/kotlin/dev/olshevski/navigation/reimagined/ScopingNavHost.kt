@@ -82,21 +82,28 @@ internal fun <T, S> ScopingNavHost(
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable ScopingNavHostScope<T, S>.(T) -> Unit
 ) = BaseNavHost(state) { snapshot ->
-    val lastSnapshotEntry = snapshot.items.lastOrNull()
-    key(lastSnapshotEntry?.hostEntry?.id) {
-        if (lastSnapshotEntry != null) {
-            lastSnapshotEntry.hostEntry.ComponentProvider {
+    val lastSnapshotItem = snapshot.items.lastOrNull()
+    key(lastSnapshotItem?.hostEntry?.id) {
+        if (lastSnapshotItem != null) {
+            lastSnapshotItem.hostEntry.ComponentProvider {
                 val scope = remember(snapshot.items) {
                     ScopingNavHostScopeImpl(
                         hostEntries = snapshot.items.map { it.hostEntry },
-                        scopedHostEntries = lastSnapshotEntry.scopedHostEntries
+                        scopedHostEntries = lastSnapshotItem.scopedHostEntries
                     )
                 }
-                scope.contentSelector(lastSnapshotEntry.hostEntry.destination)
+                scope.contentSelector(lastSnapshotItem.hostEntry.destination)
             }
         } else {
             emptyBackstackPlaceholder()
         }
     }
-    snapshot
+
+    val visibleItems = setOfNotNull(snapshot.items.lastOrNull())
+    return@BaseNavHost NavTransitionState(
+        targetSnapshot = snapshot,
+        currentSnapshot = snapshot,
+        targetVisibleItems = visibleItems,
+        currentVisibleItems = visibleItems
+    )
 }

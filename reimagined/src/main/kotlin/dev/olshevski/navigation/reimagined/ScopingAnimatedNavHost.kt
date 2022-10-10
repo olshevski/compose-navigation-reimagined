@@ -112,23 +112,30 @@ internal fun <T, S> ScopingAnimatedNavHost(
         },
         contentKey = { it.items.lastOrNull()?.hostEntry?.id }
     ) { snapshot ->
-        val lastSnapshotEntry = snapshot.items.lastOrNull()
-        if (lastSnapshotEntry != null) {
-            lastSnapshotEntry.hostEntry.ComponentProvider {
+        val lastSnapshotItem = snapshot.items.lastOrNull()
+        if (lastSnapshotItem != null) {
+            lastSnapshotItem.hostEntry.ComponentProvider {
                 val scope = remember(snapshot.items, this@AnimatedContent) {
                     ScopingAnimatedNavHostScopeImpl(
                         hostEntries = snapshot.items.map { it.hostEntry },
-                        scopedHostEntries = lastSnapshotEntry.scopedHostEntries,
+                        scopedHostEntries = lastSnapshotItem.scopedHostEntries,
                         animatedVisibilityScope = this@AnimatedContent
                     )
                 }
-                scope.contentSelector(lastSnapshotEntry.hostEntry.destination)
+                scope.contentSelector(lastSnapshotItem.hostEntry.destination)
             }
         } else {
             emptyBackstackPlaceholder()
         }
     }
-    transition.currentState
+
+    val currentSnapshot = transition.currentState
+    return@BaseNavHost NavTransitionState(
+        targetSnapshot = targetSnapshot,
+        currentSnapshot = currentSnapshot,
+        targetVisibleItems = setOfNotNull(targetSnapshot.items.lastOrNull()),
+        currentVisibleItems = setOfNotNull(currentSnapshot.items.lastOrNull())
+    )
 }
 
 @ExperimentalAnimationApi
