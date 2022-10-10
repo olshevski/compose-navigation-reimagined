@@ -4,16 +4,16 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModelStoreOwner
 
 @Stable
-interface ScopedNavHostScope<out T, S> : NavHostScope<T> {
+interface ScopingNavHostScope<out T, S> : NavHostScope<T> {
 
     fun getScopedViewModelStoreOwner(scope: S): ViewModelStoreOwner
 
 }
 
-internal open class ScopedNavHostScopeImpl<out T, S>(
+internal open class ScopingNavHostScopeImpl<out T, S>(
     override val hostEntries: List<NavHostEntry<T>>,
     private val scopedHostEntries: Map<S, ScopedNavHostEntry<S>>
-) : ScopedNavHostScope<T, S> {
+) : ScopingNavHostScope<T, S> {
 
     override fun getScopedViewModelStoreOwner(scope: S): ViewModelStoreOwner =
         scopedHostEntries[scope]

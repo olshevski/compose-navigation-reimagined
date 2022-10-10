@@ -40,13 +40,13 @@ import androidx.compose.runtime.remember
  */
 @ExperimentalAnimationApi
 @Composable
-fun <T, S> ScopedAnimatedNavHost(
+fun <T, S> ScopingAnimatedNavHost(
     controller: NavController<T>,
     scopeSpec: NavScopeSpec<T, S>,
     transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
-    contentSelector: @Composable ScopedAnimatedNavHostScope<T, S>.(T) -> Unit
-) = ScopedAnimatedNavHost(
+    contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(T) -> Unit
+) = ScopingAnimatedNavHost(
     backstack = controller.backstack,
     scopeSpec = scopeSpec,
     transitionSpec = transitionSpec,
@@ -81,13 +81,13 @@ fun <T, S> ScopedAnimatedNavHost(
  */
 @ExperimentalAnimationApi
 @Composable
-fun <T, S> ScopedAnimatedNavHost(
+fun <T, S> ScopingAnimatedNavHost(
     backstack: NavBackstack<T>,
     scopeSpec: NavScopeSpec<T, S>,
     transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
-    contentSelector: @Composable ScopedAnimatedNavHostScope<T, S>.(T) -> Unit
-) = ScopedAnimatedNavHost(
+    contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(T) -> Unit
+) = ScopingAnimatedNavHost(
     state = rememberNavHostState(backstack, scopeSpec),
     transitionSpec = transitionSpec,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
@@ -96,11 +96,11 @@ fun <T, S> ScopedAnimatedNavHost(
 
 @ExperimentalAnimationApi
 @Composable
-internal fun <T, S> ScopedAnimatedNavHost(
+internal fun <T, S> ScopingAnimatedNavHost(
     state: NavHostState<T, S>,
     transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
-    contentSelector: @Composable ScopedAnimatedNavHostScope<T, S>.(T) -> Unit
+    contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(T) -> Unit
 ) = BaseNavHost(state) { targetSnapshot ->
     val transition = updateTransition(
         targetState = targetSnapshot,
@@ -116,7 +116,7 @@ internal fun <T, S> ScopedAnimatedNavHost(
         if (lastSnapshotEntry != null) {
             lastSnapshotEntry.hostEntry.ComponentProvider {
                 val scope = remember(snapshot.items, this@AnimatedContent) {
-                    ScopedAnimatedNavHostScopeImpl(
+                    ScopingAnimatedNavHostScopeImpl(
                         hostEntries = snapshot.items.map { it.hostEntry },
                         scopedHostEntries = lastSnapshotEntry.scopedHostEntries,
                         animatedVisibilityScope = this@AnimatedContent

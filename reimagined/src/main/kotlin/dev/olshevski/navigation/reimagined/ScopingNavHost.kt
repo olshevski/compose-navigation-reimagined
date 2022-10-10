@@ -29,12 +29,12 @@ import androidx.compose.runtime.remember
  * in the backstack. In other words, here is where you select UI to show (e.g. a screen).
  */
 @Composable
-fun <T, S> ScopedNavHost(
+fun <T, S> ScopingNavHost(
     controller: NavController<T>,
     scopeSpec: NavScopeSpec<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable ScopedNavHostScope<T, S>.(T) -> Unit
-) = ScopedNavHost(
+    contentSelector: @Composable ScopingNavHostScope<T, S>.(T) -> Unit
+) = ScopingNavHost(
     backstack = controller.backstack,
     scopeSpec = scopeSpec,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
@@ -65,29 +65,29 @@ fun <T, S> ScopedNavHost(
  * in the backstack. In other words, here is where you select UI to show (e.g. a screen).
  */
 @Composable
-fun <T, S> ScopedNavHost(
+fun <T, S> ScopingNavHost(
     backstack: NavBackstack<T>,
     scopeSpec: NavScopeSpec<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable ScopedNavHostScope<T, S>.(T) -> Unit
-) = ScopedNavHost(
+    contentSelector: @Composable ScopingNavHostScope<T, S>.(T) -> Unit
+) = ScopingNavHost(
     state = rememberNavHostState(backstack, scopeSpec),
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
 )
 
 @Composable
-internal fun <T, S> ScopedNavHost(
+internal fun <T, S> ScopingNavHost(
     state: NavHostState<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable ScopedNavHostScope<T, S>.(T) -> Unit
+    contentSelector: @Composable ScopingNavHostScope<T, S>.(T) -> Unit
 ) = BaseNavHost(state) { snapshot ->
     val lastSnapshotEntry = snapshot.items.lastOrNull()
     key(lastSnapshotEntry?.hostEntry?.id) {
         if (lastSnapshotEntry != null) {
             lastSnapshotEntry.hostEntry.ComponentProvider {
                 val scope = remember(snapshot.items) {
-                    ScopedNavHostScopeImpl(
+                    ScopingNavHostScopeImpl(
                         hostEntries = snapshot.items.map { it.hostEntry },
                         scopedHostEntries = lastSnapshotEntry.scopedHostEntries
                     )

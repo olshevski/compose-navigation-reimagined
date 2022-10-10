@@ -75,8 +75,8 @@ fun <T> NavHost(
 internal fun <T, S> NavHost(
     state: NavHostState<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable ScopedNavHostScope<T, S>.(T) -> Unit
-) = ScopedNavHost(
+    contentSelector: @Composable ScopingNavHostScope<T, S>.(T) -> Unit
+) = ScopingNavHost(
     state = state,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector

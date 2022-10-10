@@ -15,8 +15,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.olshevski.navigation.reimagined.NavBackHandler
 import dev.olshevski.navigation.reimagined.NavScopeSpec
-import dev.olshevski.navigation.reimagined.ScopedNavHost
-import dev.olshevski.navigation.reimagined.ScopedNavHostScope
+import dev.olshevski.navigation.reimagined.ScopingNavHost
+import dev.olshevski.navigation.reimagined.ScopingNavHostScope
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.sample.R
@@ -47,7 +47,7 @@ fun ScopedViewModelsScreen() = ScreenLayout(
 
     NavBackHandler(navController)
 
-    ScopedNavHost(
+    ScopingNavHost(
         controller = navController,
         scopeSpec = ScopeSpec
     ) { destination ->
@@ -103,7 +103,7 @@ class ScopedViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
 }
 
 @Composable
-private fun ScopedNavHostScope<ScopedViewModelsDestination, Scope>.SecondScreen(
+private fun ScopingNavHostScope<ScopedViewModelsDestination, Scope>.SecondScreen(
     toThirdScreenButtonClick: () -> Unit,
 ) = ContentLayout(
     title = stringResource(R.string.scoped_view_models__second_screen_title)
@@ -135,7 +135,7 @@ private fun ScopedNavHostScope<ScopedViewModelsDestination, Scope>.SecondScreen(
 }
 
 @Composable
-private fun ScopedNavHostScope<ScopedViewModelsDestination, Scope>.ThirdScreen() = ContentLayout(
+private fun ScopingNavHostScope<ScopedViewModelsDestination, Scope>.ThirdScreen() = ContentLayout(
     title = stringResource(R.string.scoped_view_models__third_screen_title)
 ) {
     val scopedViewModel = viewModel<ScopedViewModel>(

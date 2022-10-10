@@ -89,8 +89,8 @@ internal fun <T, S> AnimatedNavHost(
     state: NavHostState<T, S>,
     transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
-    contentSelector: @Composable ScopedAnimatedNavHostScope<T, S>.(T) -> Unit
-) = ScopedAnimatedNavHost(
+    contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(T) -> Unit
+) = ScopingAnimatedNavHost(
     state = state,
     transitionSpec = transitionSpec,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
