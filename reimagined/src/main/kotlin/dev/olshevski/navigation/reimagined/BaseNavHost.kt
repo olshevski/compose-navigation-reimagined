@@ -3,6 +3,7 @@ package dev.olshevski.navigation.reimagined
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -13,58 +14,61 @@ import androidx.compose.runtime.rememberUpdatedState
 @Composable
 internal fun <T, S> BaseNavHost(
     state: NavHostState<T, S>,
-    transition: @Composable (NavSnapshot<T, S>) -> NavTransitionState<T, S>
+    visibleItems: (NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },
+    transition: @Composable (NavSnapshot<T, S>) -> NavSnapshot<T, S>
 ): Unit = key(state.hostId) {
     DisposableEffect(state) {
         state.onCreate()
-
         onDispose {
             state.onDispose()
             state.removeOutdatedEntries(state.snapshot)
         }
     }
 
-    val transitionState = enqueueSnapshot(state.snapshot) { targetSnapshot ->
-        transition(targetSnapshot)
+    val (targetSnapshot, currentSnapshot) = enqueueSnapshotTransition(state.snapshot, transition)
+
+    val targetVisibleItems by remember(targetSnapshot) {
+        derivedStateOf { visibleItems(targetSnapshot) }
+    }
+    val currentVisibleItems by remember(currentSnapshot) {
+        derivedStateOf { visibleItems(currentSnapshot) }
     }
 
-    val updatedTargetVisibleItems by rememberUpdatedState(transitionState.targetVisibleItems)
-    DisposableEffect(state, transitionState.targetVisibleItems) {
+    val updatedTargetVisibleItems by rememberUpdatedState(targetVisibleItems)
+    DisposableEffect(state, targetVisibleItems) {
         onDispose {
             state.onTransitionStart(updatedTargetVisibleItems)
         }
     }
 
-    DisposableEffect(state, transitionState.currentVisibleItems) {
-        state.onTransitionFinish(transitionState.currentVisibleItems)
+    DisposableEffect(state, currentVisibleItems) {
+        state.onTransitionFinish(currentVisibleItems)
         onDispose {}
     }
 
-    DisposableEffect(state, transitionState.currentSnapshot) {
-        state.removeOutdatedEntries(transitionState.currentSnapshot)
+    DisposableEffect(state, currentSnapshot) {
+        state.removeOutdatedEntries(currentSnapshot)
         onDispose {}
     }
-
 }
 
 /**
- * Enqueues a new target state and transitions to it only when all previous transitions finish (one
- * by one).
+ * Enqueues a new target snapshot and transitions to it only when all previous transitions finish
+ * (one by one).
  *
  * @param transition controls the transition behaviour. It may use [updateTransition] internally or
  * switch to a new target state instantaneously.
  */
 @Composable
-private fun <T, S> enqueueSnapshot(
-    snapshot: NavSnapshot<T, S>,
-    transition: @Composable (NavSnapshot<T, S>) -> NavTransitionState<T, S>
-): NavTransitionState<T, S> {
+private fun <T> enqueueSnapshotTransition(
+    snapshot: T,
+    transition: @Composable (T) -> T
+): TransitionState<T> {
     // Queue of pending transitions. The first item in the queue is the currently running
     // transition.
-    val queue = remember { mutableStateListOf<NavSnapshot<T, S>>() }
+    val queue = remember { mutableStateListOf<T>() }
     val targetSnapshot by derivedStateOf { queue.firstOrNull() ?: snapshot }
-    val transitionState = transition(targetSnapshot)
-    val currentSnapshot = transitionState.currentSnapshot
+    val currentSnapshot = transition(targetSnapshot)
 
     DisposableEffect(snapshot) {
         if (currentSnapshot != snapshot) {
@@ -81,5 +85,11 @@ private fun <T, S> enqueueSnapshot(
         }
     }
 
-    return transitionState
+    return TransitionState(targetSnapshot = targetSnapshot, currentSnapshot = currentSnapshot)
 }
+
+@Stable
+private data class TransitionState<T>(
+    val targetSnapshot: T,
+    val currentSnapshot: T
+)

@@ -98,12 +98,5 @@ internal fun <T, S> ScopingNavHost(
             emptyBackstackPlaceholder()
         }
     }
-
-    val visibleItems = setOfNotNull(snapshot.items.lastOrNull())
-    return@BaseNavHost NavTransitionState(
-        targetSnapshot = snapshot,
-        currentSnapshot = snapshot,
-        targetVisibleItems = visibleItems,
-        currentVisibleItems = visibleItems
-    )
+    return@BaseNavHost snapshot
 }

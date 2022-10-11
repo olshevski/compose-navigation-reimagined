@@ -128,14 +128,7 @@ internal fun <T, S> ScopingAnimatedNavHost(
             emptyBackstackPlaceholder()
         }
     }
-
-    val currentSnapshot = transition.currentState
-    return@BaseNavHost NavTransitionState(
-        targetSnapshot = targetSnapshot,
-        currentSnapshot = currentSnapshot,
-        targetVisibleItems = setOfNotNull(targetSnapshot.items.lastOrNull()),
-        currentVisibleItems = setOfNotNull(currentSnapshot.items.lastOrNull())
-    )
+    return@BaseNavHost transition.currentState
 }
 
 @ExperimentalAnimationApi
