@@ -11,6 +11,7 @@ android {
 
     kotlinOptions {
         freeCompilerArgs = freeCompilerArgs + listOf(
+            "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
             "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
             "-opt-in=androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi"
         )
@@ -19,6 +20,7 @@ android {
 
 dependencies {
     implementation(project(":reimagined"))
+    implementation(project(":reimagined-material"))
     implementation(Libs.AndroidX.Activity.Compose)
     implementation(Libs.AndroidX.Compose.Material)
     implementation(Libs.AndroidX.Compose.MaterialIconsExtended)

@@ -25,6 +25,7 @@ fun DemoSelectionScreen(
     onScopedViewModelsButtonClick: () -> Unit,
     onBottomNavigationButtonClick: () -> Unit,
     onDeeplinksButtonClick: () -> Unit,
+    onModalBottomSheetClick: () -> Unit
 ) = ScreenLayout(stringResource(R.string.demo_selection__screen_title)) {
     Column(
         modifier = Modifier
@@ -42,7 +43,8 @@ fun DemoSelectionScreen(
             R.string.demo_selection__view_models_button to onViewModelsButtonClick,
             R.string.demo_selection__scoped_view_models_button to onScopedViewModelsButtonClick,
             R.string.demo_selection__bottom_navigation_button to onBottomNavigationButtonClick,
-            R.string.demo_selection__deeplinks_button to onDeeplinksButtonClick
+            R.string.demo_selection__deeplinks_button to onDeeplinksButtonClick,
+            R.string.demo_selection__modal_bottom_sheet_button to onModalBottomSheetClick
         ).forEach {
             Button(
                 modifier = Modifier

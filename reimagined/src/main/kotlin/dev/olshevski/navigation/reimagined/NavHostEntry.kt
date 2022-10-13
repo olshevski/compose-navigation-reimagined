@@ -41,7 +41,7 @@ class NavHostEntry<out T> internal constructor(
 }
 
 @Composable
-internal fun <T> NavHostEntry<T>.ComponentProvider(
+fun <T> NavHostEntry<T>.ComponentsProvider(
     content: @Composable () -> Unit
 ) = CompositionLocalProvider(
     LocalViewModelStoreOwner provides this,

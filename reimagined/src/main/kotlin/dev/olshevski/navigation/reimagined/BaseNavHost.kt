@@ -12,6 +12,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 
 @Composable
+fun <T, S> BaseNavHost(
+    backstack: NavBackstack<T>,
+    scopeSpec: NavScopeSpec<T, S>,
+    visibleItems: (NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },
+    transition: @Composable (NavSnapshot<T, S>) -> NavSnapshot<T, S>
+) = BaseNavHost(
+    state = rememberNavHostState(backstack, scopeSpec),
+    visibleItems = visibleItems,
+    transition = transition
+)
+
+@Composable
 internal fun <T, S> BaseNavHost(
     state: NavHostState<T, S>,
     visibleItems: (NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },

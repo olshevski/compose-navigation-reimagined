@@ -36,4 +36,7 @@ sealed class MainDestination : Parcelable {
     data class Deeplinks(
         val initialBackstack: List<DeeplinksDestination> = listOf(DeeplinksDestination.First)
     ) : MainDestination()
+
+    @Parcelize
+    object ModalBottomSheet : MainDestination()
 }

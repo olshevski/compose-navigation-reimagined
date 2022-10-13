@@ -6,4 +6,4 @@ fun interface NavScopeSpec<in T, out S> {
 
 }
 
-internal val EmptyScopeSpec = NavScopeSpec<Any?, Nothing> { emptySet() }
+val EmptyScopeSpec = NavScopeSpec<Any?, Nothing> { emptySet() }

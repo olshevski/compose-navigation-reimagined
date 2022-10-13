@@ -22,6 +22,7 @@ import dev.olshevski.navigation.reimagined.sample.ui.demo.BottomNavigationScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.DeeplinksDestination
 import dev.olshevski.navigation.reimagined.sample.ui.demo.DeeplinksScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.DialogNavHostScreen
+import dev.olshevski.navigation.reimagined.sample.ui.demo.ModalBottomSheetScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.PassValuesScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.ReturnResultsScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.ScopedViewModelsScreen
@@ -97,6 +98,9 @@ fun MainScreen() {
                 },
                 onDeeplinksButtonClick = {
                     navController.navigate(MainDestination.Deeplinks())
+                },
+                onModalBottomSheetClick = {
+                    navController.navigate(MainDestination.ModalBottomSheet)
                 }
             )
             MainDestination.PassValues -> PassValuesScreen()
@@ -107,7 +111,7 @@ fun MainScreen() {
             MainDestination.ScopedViewModels -> ScopedViewModelsScreen()
             MainDestination.BottomNavigation -> BottomNavigationScreen()
             is MainDestination.Deeplinks -> DeeplinksScreen(destination.initialBackstack)
-
+            MainDestination.ModalBottomSheet -> ModalBottomSheetScreen()
         }
     }
 }

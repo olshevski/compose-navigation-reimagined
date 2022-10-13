@@ -114,7 +114,7 @@ internal fun <T, S> ScopingAnimatedNavHost(
     ) { snapshot ->
         val lastSnapshotItem = snapshot.items.lastOrNull()
         if (lastSnapshotItem != null) {
-            lastSnapshotItem.hostEntry.ComponentProvider {
+            lastSnapshotItem.hostEntry.ComponentsProvider {
                 val scope = remember(snapshot.items, this@AnimatedContent) {
                     ScopingAnimatedNavHostScopeImpl(
                         hostEntries = snapshot.items.map { it.hostEntry },
