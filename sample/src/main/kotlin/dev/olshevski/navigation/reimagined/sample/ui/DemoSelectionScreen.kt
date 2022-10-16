@@ -44,7 +44,7 @@ fun DemoSelectionScreen(
             R.string.demo_selection__scoped_view_models_button to onScopedViewModelsButtonClick,
             R.string.demo_selection__bottom_navigation_button to onBottomNavigationButtonClick,
             R.string.demo_selection__deeplinks_button to onDeeplinksButtonClick,
-            R.string.demo_selection__modal_bottom_sheet_button to onModalBottomSheetClick
+            R.string.demo_selection__bottom_sheet_button to onModalBottomSheetClick
         ).forEach {
             Button(
                 modifier = Modifier

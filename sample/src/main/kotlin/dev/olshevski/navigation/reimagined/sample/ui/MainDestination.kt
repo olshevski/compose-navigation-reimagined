@@ -38,5 +38,5 @@ sealed class MainDestination : Parcelable {
     ) : MainDestination()
 
     @Parcelize
-    object ModalBottomSheet : MainDestination()
+    object BottomSheet : MainDestination()
 }

@@ -11,7 +11,7 @@
     <string name="demo_selection__scoped_view_models_button">Scoped ViewModels</string>
     <string name="demo_selection__bottom_navigation_button">BottomNavigation</string>
     <string name="demo_selection__deeplinks_button">Deeplinks</string>
-    <string name="demo_selection__modal_bottom_sheet_button">ModalBottomSheet</string>
+    <string name="demo_selection__bottom_sheet_button">BottomSheet</string>
 
     <string name="pass_values__demo_screen_title">Pass values demo</string>
     <string name="pass_values__screen_a_title">Screen A</string>

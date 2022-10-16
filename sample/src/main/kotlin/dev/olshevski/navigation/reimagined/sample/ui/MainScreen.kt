@@ -19,10 +19,10 @@ import dev.olshevski.navigation.reimagined.replaceAll
 import dev.olshevski.navigation.reimagined.sample.MainActivity
 import dev.olshevski.navigation.reimagined.sample.ui.demo.AnimatedNavHostScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.BottomNavigationScreen
+import dev.olshevski.navigation.reimagined.sample.ui.demo.BottomSheetScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.DeeplinksDestination
 import dev.olshevski.navigation.reimagined.sample.ui.demo.DeeplinksScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.DialogNavHostScreen
-import dev.olshevski.navigation.reimagined.sample.ui.demo.ModalBottomSheetScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.PassValuesScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.ReturnResultsScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.ScopedViewModelsScreen
@@ -100,7 +100,7 @@ fun MainScreen() {
                     navController.navigate(MainDestination.Deeplinks())
                 },
                 onModalBottomSheetClick = {
-                    navController.navigate(MainDestination.ModalBottomSheet)
+                    navController.navigate(MainDestination.BottomSheet)
                 }
             )
             MainDestination.PassValues -> PassValuesScreen()
@@ -111,7 +111,7 @@ fun MainScreen() {
             MainDestination.ScopedViewModels -> ScopedViewModelsScreen()
             MainDestination.BottomNavigation -> BottomNavigationScreen()
             is MainDestination.Deeplinks -> DeeplinksScreen(destination.initialBackstack)
-            MainDestination.ModalBottomSheet -> ModalBottomSheetScreen()
+            MainDestination.BottomSheet -> BottomSheetScreen()
         }
     }
 }

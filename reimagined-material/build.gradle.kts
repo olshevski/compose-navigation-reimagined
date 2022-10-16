@@ -1,6 +1,7 @@
 plugins {
     `android-library-config`
     `publishing-config`
+    `kotlin-parcelize`
 }
 
 android {

@@ -73,9 +73,8 @@ import kotlin.math.roundToInt
  * All classes and methods are made internal, so they don't pollute the namespace.
  *
  * ModalBottomSheetLayout changes:
- * - removed `content` parameter. Thus ModalBottomSheetLayout should be overlayed manually.
- * - added `keepScrimVisible`, `isTransitionRunning`, `onDismissRequest` parameters. This affects
- * some internal behaviour of the Scrim.
+ * - removed `content` parameter and Scrim. It is responsible only for showing the bottom sheet now.
+ * - added `isTransitionRunning` parameter to block swipe behaviour while switching bottom sheets.
  */
 
 /**
@@ -328,31 +327,18 @@ internal fun rememberModalBottomSheetState(
 @ExperimentalMaterialApi
 internal fun ModalBottomSheetLayout(
     sheetContent: @Composable() (ColumnScope.() -> Unit),
-    modifier: Modifier = Modifier,
     sheetState: ModalBottomSheetState =
         rememberModalBottomSheetState(Hidden),
     sheetShape: Shape = MaterialTheme.shapes.large,
     sheetElevation: Dp = ModalBottomSheetDefaults.Elevation,
     sheetBackgroundColor: Color = MaterialTheme.colors.surface,
     sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
-    scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
-    keepScrimVisible: Boolean,
     isTransitionRunning: Boolean,
-    onDismissRequest: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    BoxWithConstraints(modifier) {
+    BoxWithConstraints(Modifier.fillMaxSize()) {
         val fullHeight = constraints.maxHeight.toFloat()
         val sheetHeightState = remember { mutableStateOf<Float?>(null) }
-        Scrim(
-            color = scrimColor,
-            onDismiss = {
-                if (sheetState.confirmStateChange(Hidden)) {
-                    onDismissRequest()
-                }
-            },
-            visible = keepScrimVisible || sheetState.targetValue != Hidden
-        )
         Surface(
             Modifier
                 .fillMaxWidth()
@@ -443,7 +429,7 @@ private fun Modifier.bottomSheetSwipeable(
 }
 
 @Composable
-private fun Scrim(
+internal fun Scrim(
     color: Color,
     onDismiss: () -> Unit,
     visible: Boolean

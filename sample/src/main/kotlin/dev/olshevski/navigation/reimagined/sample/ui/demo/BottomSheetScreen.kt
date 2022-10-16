@@ -17,8 +17,8 @@ import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.sample.ui.ScreenLayout
 
 @Composable
-fun ModalBottomSheetScreen() {
-    val navController = rememberNavController<ModalBottomSheetDestination>(
+fun BottomSheetScreen() {
+    val navController = rememberNavController<BottomSheetDestination>(
         initialBackstack = emptyList()
     )
 
@@ -28,11 +28,11 @@ fun ModalBottomSheetScreen() {
 
     Box {
         ScreenLayout(
-            title = "ModalBottomSheet Demo"
+            title = "BottomSheet Demo"
         ) {
             Button(
                 onClick = {
-                    navController.navigate(ModalBottomSheetDestination.First)
+                    navController.navigate(BottomSheetDestination.First)
                 }
             ) {
                 Text("Open First sheet")
@@ -45,17 +45,17 @@ fun ModalBottomSheetScreen() {
             onDismissRequest = { navController.pop() },
         ) { destination ->
             when (destination) {
-                ModalBottomSheetDestination.First -> FirstBottomSheet(
+                BottomSheetDestination.First -> FirstBottomSheet(
                     toSecondSheetClick = {
-                        navController.navigate(ModalBottomSheetDestination.Second)
+                        navController.navigate(BottomSheetDestination.Second)
                     }
                 )
-                ModalBottomSheetDestination.Second -> SecondBottomSheet(
+                BottomSheetDestination.Second -> SecondBottomSheet(
                     toThirdSheetClick = {
-                        navController.navigate(ModalBottomSheetDestination.Third)
+                        navController.navigate(BottomSheetDestination.Third)
                     }
                 )
-                ModalBottomSheetDestination.Third -> ThirdBottomSheet(
+                BottomSheetDestination.Third -> ThirdBottomSheet(
                     onCloseAllClick = {
                         navController.popAll()
                     }
@@ -82,7 +82,7 @@ private fun FirstBottomSheet(
 private fun SecondBottomSheet(
     toThirdSheetClick: () -> Unit
 ) = Box(
-    modifier = Modifier.height(200.dp)
+    modifier = Modifier.height(600.dp)
 ) {
     Button(
         onClick = toThirdSheetClick

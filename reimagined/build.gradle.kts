@@ -1,7 +1,7 @@
 plugins {
     `android-library-config`
-    `kotlin-parcelize`
     `publishing-config`
+    `kotlin-parcelize`
     `compose-compiler-reports`
 }
 
