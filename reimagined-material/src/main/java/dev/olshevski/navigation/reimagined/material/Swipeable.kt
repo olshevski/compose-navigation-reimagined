@@ -64,11 +64,13 @@ import kotlin.math.sign
 import kotlin.math.sin
 
 /*
- * Direct copy of Swipeable.kt from androidx.compose.material package (last commit 32d335a).
+ * Direct copy of Swipeable.kt from androidx.compose.material package (last commit 32d335a). Needed
+ * to access some internal state.
  *
+ * Reference:
  * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:compose/material/material/src/commonMain/kotlin/androidx/compose/material/Swipeable.kt
  *
- * All classes and methods are made internal, so they don't pollute the namespace. Otherwise, no
+ * Some classes and methods are made internal, so they don't pollute the namespace. Otherwise, no
  * changes.
  */
 
@@ -85,7 +87,7 @@ import kotlin.math.sin
  */
 @Stable
 @ExperimentalMaterialApi
-internal open class SwipeableState<T>(
+open class SwipeableState<T> internal constructor(
     initialValue: T,
     internal val animationSpec: AnimationSpec<Float> = AnimationSpec,
     internal val confirmStateChange: (newValue: T) -> Boolean = { true }
@@ -316,7 +318,7 @@ internal open class SwipeableState<T>(
      * @param targetValue The new target value to set [currentValue] to.
      */
     @ExperimentalMaterialApi
-    suspend fun snapTo(targetValue: T) {
+    internal suspend fun snapTo(targetValue: T) {
         latestNonEmptyAnchorsFlow.collect { anchors ->
             val targetOffset = anchors.getOffset(targetValue)
             requireNotNull(targetOffset) {
@@ -334,7 +336,7 @@ internal open class SwipeableState<T>(
      * @param anim The animation that will be used to animate to the new value.
      */
     @ExperimentalMaterialApi
-    suspend fun animateTo(targetValue: T, anim: AnimationSpec<Float> = animationSpec) {
+    internal suspend fun animateTo(targetValue: T, anim: AnimationSpec<Float> = animationSpec) {
         latestNonEmptyAnchorsFlow.collect { anchors ->
             try {
                 val targetOffset = anchors.getOffset(targetValue)
@@ -366,7 +368,7 @@ internal open class SwipeableState<T>(
      *
      * @return the reason fling ended
      */
-    suspend fun performFling(velocity: Float) {
+    internal suspend fun performFling(velocity: Float) {
         latestNonEmptyAnchorsFlow.collect { anchors ->
             val lastAnchor = anchors.getOffset(currentValue)!!
             val targetValue = computeTarget(
@@ -400,7 +402,7 @@ internal open class SwipeableState<T>(
      *
      * @return the amount of [delta] consumed
      */
-    fun performDrag(delta: Float): Float {
+    internal fun performDrag(delta: Float): Float {
         val potentiallyConsumed = absoluteOffset.value + delta
         val clamped = potentiallyConsumed.coerceIn(minBound, maxBound)
         val deltaToConsume = clamped - absoluteOffset.value
@@ -436,7 +438,7 @@ internal open class SwipeableState<T>(
  */
 @Immutable
 @ExperimentalMaterialApi
-internal class SwipeProgress<T>(
+class SwipeProgress<T>(
     val from: T,
     val to: T,
     /*@FloatRange(from = 0.0, to = 1.0)*/

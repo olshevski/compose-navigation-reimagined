@@ -2,19 +2,23 @@ package dev.olshevski.navigation.reimagined.sample.ui.demo
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.olshevski.navigation.reimagined.material.BottomSheetNavHost
+import dev.olshevski.navigation.reimagined.material.BottomSheetNavHostScope
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.popAll
 import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.sample.ui.ScreenLayout
+import kotlinx.coroutines.launch
 
 @Composable
 fun BottomSheetScreen() {
@@ -40,9 +44,8 @@ fun BottomSheetScreen() {
         }
 
         BottomSheetNavHost(
-            modifier = Modifier.fillMaxSize(),
             backstack = navController.backstack,
-            onDismissRequest = { navController.pop() },
+            onDismissRequest = { navController.pop() }
         ) { destination ->
             when (destination) {
                 BottomSheetDestination.First -> FirstBottomSheet(
@@ -79,15 +82,34 @@ private fun FirstBottomSheet(
 }
 
 @Composable
-private fun SecondBottomSheet(
+private fun BottomSheetNavHostScope<BottomSheetDestination>.SecondBottomSheet(
     toThirdSheetClick: () -> Unit
-) = Box(
-    modifier = Modifier.height(600.dp)
+) = Column(
+    modifier = Modifier.fillMaxHeight()
 ) {
     Button(
         onClick = toThirdSheetClick
     ) {
         Text("Open Third sheet")
+    }
+    val scope = rememberCoroutineScope()
+    Button(
+        onClick = {
+            scope.launch {
+                this@SecondBottomSheet.sheetState.expand()
+            }
+        }
+    ) {
+        Text("Expand")
+    }
+    Button(
+        onClick = {
+            scope.launch {
+                this@SecondBottomSheet.sheetState.halfExpand()
+            }
+        }
+    ) {
+        Text("Half expand")
     }
 }
 

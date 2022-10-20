@@ -86,7 +86,7 @@ internal fun <T, S> ScopingNavHost(
     key(lastSnapshotItem?.hostEntry?.id) {
         if (lastSnapshotItem != null) {
             lastSnapshotItem.hostEntry.ComponentsProvider {
-                val scope = remember(snapshot.items) {
+                val scope = remember(snapshot) {
                     ScopingNavHostScopeImpl(
                         hostEntries = snapshot.items.map { it.hostEntry },
                         scopedHostEntries = lastSnapshotItem.scopedHostEntries

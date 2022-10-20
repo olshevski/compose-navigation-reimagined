@@ -28,18 +28,17 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -57,31 +56,27 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import dev.olshevski.navigation.reimagined.material.ModalBottomSheetValue.Expanded
-import dev.olshevski.navigation.reimagined.material.ModalBottomSheetValue.HalfExpanded
-import dev.olshevski.navigation.reimagined.material.ModalBottomSheetValue.Hidden
+import dev.olshevski.navigation.reimagined.NavId
+import dev.olshevski.navigation.reimagined.material.BottomSheetValue.Expanded
+import dev.olshevski.navigation.reimagined.material.BottomSheetValue.HalfExpanded
+import dev.olshevski.navigation.reimagined.material.BottomSheetValue.Hidden
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.roundToInt
 
 /*
- * Copy of ModalBottomSheet.kt from androidx.compose.material package (last commit 047c2ef).
+ * Based on ModalBottomSheet.kt from androidx.compose.material package (last commit 047c2ef).
  *
+ * Reference:
  * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:compose/material/material/src/commonMain/kotlin/androidx/compose/material/ModalBottomSheet.kt
- *
- * All classes and methods are made internal, so they don't pollute the namespace.
- *
- * ModalBottomSheetLayout changes:
- * - removed `content` parameter and Scrim. It is responsible only for showing the bottom sheet now.
- * - added `isTransitionRunning` parameter to block swipe behaviour while switching bottom sheets.
  */
 
 /**
- * Possible values of [ModalBottomSheetState].
+ * Possible values of [BottomSheetState].
  */
 @ExperimentalMaterialApi
-internal enum class ModalBottomSheetValue {
+enum class BottomSheetValue {
     /**
      * The bottom sheet is not visible.
      */
@@ -94,50 +89,70 @@ internal enum class ModalBottomSheetValue {
 
     /**
      * The bottom sheet is partially visible at 50% of the screen height. This state is only
-     * enabled if the height of the bottom sheet is more than 50% of the screen height.
+     * enabled if the height of the bottom sheet is more than 50% of the screen height and
+     * [BottomSheetState.isSkipHalfExpanded] is false.
      */
     HalfExpanded
 }
 
 /**
- * State of the [ModalBottomSheetLayout] composable.
+ * State of the [BottomSheetLayout] composable.
  *
  * @param initialValue The initial value of the state. <b>Must not be set to
- * [ModalBottomSheetValue.HalfExpanded] if [isSkipHalfExpanded] is set to true.</b>
+ * [BottomSheetValue.HalfExpanded] if [isSkipHalfExpanded] is set to true.</b>
  * @param animationSpec The default animation that will be used to animate to a new state.
  * @param isSkipHalfExpanded Whether the half expanded state, if the sheet is tall enough, should
  * be skipped. If true, the sheet will always expand to the [Expanded] state and move to the
  * [Hidden] state when hiding the sheet, either programmatically or by user interaction.
- * <b>Must not be set to true if the [initialValue] is [ModalBottomSheetValue.HalfExpanded].</b>
- * If supplied with [ModalBottomSheetValue.HalfExpanded] for the [initialValue], an
+ * <b>Must not be set to true if the [initialValue] is [BottomSheetValue.HalfExpanded].</b>
+ * If supplied with [BottomSheetValue.HalfExpanded] for the [initialValue], an
  * [IllegalArgumentException] will be thrown.
  * @param confirmStateChange Optional callback invoked to confirm or veto a pending state change.
  */
+@Stable
 @ExperimentalMaterialApi
-internal class ModalBottomSheetState(
-    initialValue: ModalBottomSheetValue,
-    animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
+class BottomSheetState internal constructor(
+    internal val hostEntryId: NavId,
+    initialValue: BottomSheetValue,
+    isTransitionRunningState: State<Boolean>,
+    animationSpec: AnimationSpec<Float>,
     internal val isSkipHalfExpanded: Boolean,
-    confirmStateChange: (ModalBottomSheetValue) -> Boolean = { true }
-) : SwipeableState<ModalBottomSheetValue>(
+    confirmStateChange: (BottomSheetValue) -> Boolean
+) : SwipeableState<BottomSheetValue>(
     initialValue = initialValue,
     animationSpec = animationSpec,
     confirmStateChange = confirmStateChange
 ) {
+
+    internal constructor(
+        hostEntryId: NavId,
+        initialValue: BottomSheetValue,
+        isTransitionRunningState: State<Boolean>,
+        sheetProperties: BottomSheetProperties
+    ) : this(
+        hostEntryId = hostEntryId,
+        initialValue = initialValue,
+        isTransitionRunningState = isTransitionRunningState,
+        animationSpec = sheetProperties.animationSpec,
+        isSkipHalfExpanded = sheetProperties.isSkipHalfExpanded,
+        confirmStateChange = sheetProperties.confirmStateChange
+    )
+
+    internal val isTransitionRunning by isTransitionRunningState
+
     /**
      * Whether the bottom sheet is visible.
      */
     val isVisible: Boolean
         get() = currentValue != Hidden
 
-    internal val hasHalfExpandedState: Boolean
+    /**
+     * Whether the bottom sheet has [HalfExpanded] state. This state is only
+     * enabled if the height of the bottom sheet is more than 50% of the screen height and
+     * [isSkipHalfExpanded] is set to false.
+     */
+    val hasHalfExpandedState: Boolean
         get() = anchors.values.contains(HalfExpanded)
-
-    constructor(
-        initialValue: ModalBottomSheetValue,
-        animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
-        confirmStateChange: (ModalBottomSheetValue) -> Boolean = { true }
-    ) : this(initialValue, animationSpec, isSkipHalfExpanded = false, confirmStateChange)
 
     init {
         if (isSkipHalfExpanded) {
@@ -155,7 +170,7 @@ internal class ModalBottomSheetState(
      *
      * @throws [CancellationException] if the animation is interrupted
      */
-    suspend fun show() {
+    internal suspend fun show() {
         val targetValue = when {
             hasHalfExpandedState -> HalfExpanded
             else -> Expanded
@@ -164,25 +179,33 @@ internal class ModalBottomSheetState(
     }
 
     /**
-     * Half expand the bottom sheet if half expand is enabled with animation and suspend until it
-     * animation is complete or cancelled
+     * Half expand the bottom sheet if half expand is enabled with animation and suspend until the
+     * animation is complete or cancelled.
+     *
+     * This call will be ignored if [BottomSheetNavHost] is in the middle of transition to another
+     * bottom sheet.
      *
      * @throws [CancellationException] if the animation is interrupted
      */
-    internal suspend fun halfExpand() {
-        if (!hasHalfExpandedState) {
-            return
+    suspend fun halfExpand() {
+        if (hasHalfExpandedState && !isTransitionRunning) {
+            animateTo(HalfExpanded)
         }
-        animateTo(HalfExpanded)
     }
 
     /**
      * Fully expand the bottom sheet with animation and suspend until it if fully expanded or
      * animation has been cancelled.
-     * *
+     * This call will be ignored if [BottomSheetNavHost] is in the middle of transition to another
+     * bottom sheet.
+     *
      * @throws [CancellationException] if the animation is interrupted
      */
-    internal suspend fun expand() = animateTo(Expanded)
+    suspend fun expand() {
+        if (!isTransitionRunning) {
+            animateTo(Expanded)
+        }
+    }
 
     /**
      * Hide the bottom sheet with animation and suspend until it if fully hidden or animation has
@@ -190,111 +213,11 @@ internal class ModalBottomSheetState(
      *
      * @throws [CancellationException] if the animation is interrupted
      */
-    suspend fun hide() = animateTo(Hidden)
+    internal suspend fun hide() = animateTo(Hidden)
 
     internal val nestedScrollConnection = this.PreUpPostDownNestedScrollConnection
 
-    companion object {
-        /**
-         * The default [Saver] implementation for [ModalBottomSheetState].
-         */
-        fun Saver(
-            animationSpec: AnimationSpec<Float>,
-            skipHalfExpanded: Boolean,
-            confirmStateChange: (ModalBottomSheetValue) -> Boolean
-        ): Saver<ModalBottomSheetState, *> = Saver(
-            save = { it.currentValue },
-            restore = {
-                ModalBottomSheetState(
-                    initialValue = it,
-                    animationSpec = animationSpec,
-                    isSkipHalfExpanded = skipHalfExpanded,
-                    confirmStateChange = confirmStateChange
-                )
-            }
-        )
-
-        /**
-         * The default [Saver] implementation for [ModalBottomSheetState].
-         */
-        @Deprecated(
-            message = "Please specify the skipHalfExpanded parameter",
-            replaceWith = ReplaceWith(
-                "ModalBottomSheetState.Saver(" +
-                        "animationSpec = animationSpec," +
-                        "skipHalfExpanded = ," +
-                        "confirmStateChange = confirmStateChange" +
-                        ")"
-            )
-        )
-        fun Saver(
-            animationSpec: AnimationSpec<Float>,
-            confirmStateChange: (ModalBottomSheetValue) -> Boolean
-        ): Saver<ModalBottomSheetState, *> = Saver(
-            animationSpec = animationSpec,
-            skipHalfExpanded = false,
-            confirmStateChange = confirmStateChange
-        )
-    }
 }
-
-/**
- * Create a [ModalBottomSheetState] and [remember] it.
- *
- * @param initialValue The initial value of the state.
- * @param animationSpec The default animation that will be used to animate to a new state.
- * @param skipHalfExpanded Whether the half expanded state, if the sheet is tall enough, should
- * be skipped. If true, the sheet will always expand to the [Expanded] state and move to the
- * [Hidden] state when hiding the sheet, either programmatically or by user interaction.
- * <b>Must not be set to true if the [initialValue] is [ModalBottomSheetValue.HalfExpanded].</b>
- * If supplied with [ModalBottomSheetValue.HalfExpanded] for the [initialValue], an
- * [IllegalArgumentException] will be thrown.
- * @param confirmStateChange Optional callback invoked to confirm or veto a pending state change.
- */
-@Composable
-@ExperimentalMaterialApi
-internal fun rememberModalBottomSheetState(
-    initialValue: ModalBottomSheetValue,
-    animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
-    skipHalfExpanded: Boolean,
-    confirmStateChange: (ModalBottomSheetValue) -> Boolean = { true }
-): ModalBottomSheetState {
-    return rememberSaveable(
-        initialValue, animationSpec, skipHalfExpanded, confirmStateChange,
-        saver = ModalBottomSheetState.Saver(
-            animationSpec = animationSpec,
-            skipHalfExpanded = skipHalfExpanded,
-            confirmStateChange = confirmStateChange
-        )
-    ) {
-        ModalBottomSheetState(
-            initialValue = initialValue,
-            animationSpec = animationSpec,
-            isSkipHalfExpanded = skipHalfExpanded,
-            confirmStateChange = confirmStateChange
-        )
-    }
-}
-
-/**
- * Create a [ModalBottomSheetState] and [remember] it.
- *
- * @param initialValue The initial value of the state.
- * @param animationSpec The default animation that will be used to animate to a new state.
- * @param confirmStateChange Optional callback invoked to confirm or veto a pending state change.
- */
-@Composable
-@ExperimentalMaterialApi
-internal fun rememberModalBottomSheetState(
-    initialValue: ModalBottomSheetValue,
-    animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
-    confirmStateChange: (ModalBottomSheetValue) -> Boolean = { true }
-): ModalBottomSheetState = rememberModalBottomSheetState(
-    initialValue = initialValue,
-    animationSpec = animationSpec,
-    skipHalfExpanded = false,
-    confirmStateChange = confirmStateChange
-)
 
 /**
  * <a href="https://material.io/components/sheets-bottom#modal-bottom-sheet" class="external" target="_blank">Material Design modal bottom sheet</a>.
@@ -307,10 +230,7 @@ internal fun rememberModalBottomSheetState(
  *
  * A simple example of a modal bottom sheet looks like this:
  *
- * @sample androidx.compose.material.samples.ModalBottomSheetSample
- *
  * @param sheetContent The content of the bottom sheet.
- * @param modifier Optional [Modifier] for the entire component.
  * @param sheetState The state of the bottom sheet.
  * @param sheetShape The shape of the bottom sheet.
  * @param sheetElevation The elevation of the bottom sheet.
@@ -318,22 +238,17 @@ internal fun rememberModalBottomSheetState(
  * @param sheetContentColor The preferred content color provided by the bottom sheet to its
  * children. Defaults to the matching content color for [sheetBackgroundColor], or if that is not
  * a color from the theme, this will keep the same content color set above the bottom sheet.
- * @param scrimColor The color of the scrim that is applied to the rest of the screen when the
- * bottom sheet is visible. If the color passed is [Color.Unspecified], then a scrim will no
- * longer be applied and the bottom sheet will not block interaction with the rest of the screen
- * when visible.
  */
 @Composable
 @ExperimentalMaterialApi
-internal fun ModalBottomSheetLayout(
-    sheetContent: @Composable() (ColumnScope.() -> Unit),
-    sheetState: ModalBottomSheetState =
-        rememberModalBottomSheetState(Hidden),
-    sheetShape: Shape = MaterialTheme.shapes.large,
-    sheetElevation: Dp = ModalBottomSheetDefaults.Elevation,
-    sheetBackgroundColor: Color = MaterialTheme.colors.surface,
-    sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
-    isTransitionRunning: Boolean,
+internal fun BottomSheetLayout(
+    sheetContent: @Composable (ColumnScope.() -> Unit),
+    sheetState: BottomSheetState,
+    sheetShape: Shape,
+    sheetElevation: Dp,
+    sheetBackgroundColor: Color,
+    sheetContentColor: Color,
+    onDismissRequest: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -353,15 +268,15 @@ internal fun ModalBottomSheetLayout(
                     }
                     IntOffset(0, y)
                 }
-                .bottomSheetSwipeable(sheetState, fullHeight, sheetHeightState, isTransitionRunning)
+                .bottomSheetSwipeable(sheetState, fullHeight, sheetHeightState)
                 .onGloballyPositioned {
                     sheetHeightState.value = it.size.height.toFloat()
                 }
                 .semantics {
-                    if (sheetState.isVisible) {
+                    if (sheetState.isVisible && !sheetState.isTransitionRunning) {
                         dismiss {
                             if (sheetState.confirmStateChange(Hidden)) {
-                                scope.launch { sheetState.hide() }
+                                onDismissRequest()
                             }
                             true
                         }
@@ -395,10 +310,9 @@ internal fun ModalBottomSheetLayout(
 @Suppress("ModifierInspectorInfo")
 @OptIn(ExperimentalMaterialApi::class)
 private fun Modifier.bottomSheetSwipeable(
-    sheetState: ModalBottomSheetState,
+    sheetState: BottomSheetState,
     fullHeight: Float,
     sheetHeightState: State<Float?>,
-    isTransitionRunning: Boolean
 ): Modifier {
     val sheetHeight = sheetHeightState.value
     val modifier = if (sheetHeight != null) {
@@ -418,7 +332,7 @@ private fun Modifier.bottomSheetSwipeable(
             state = sheetState,
             anchors = anchors,
             orientation = Orientation.Vertical,
-            enabled = sheetState.currentValue != Hidden && !isTransitionRunning,
+            enabled = sheetState.isVisible && !sheetState.isTransitionRunning,
             resistance = null
         )
     } else {
@@ -462,19 +376,36 @@ internal fun Scrim(
 }
 
 /**
- * Contains useful Defaults for [ModalBottomSheetLayout].
+ * Contains useful Defaults for [BottomSheetLayout].
  */
-internal object ModalBottomSheetDefaults {
+internal object BottomSheetDefaults {
 
     /**
-     * The default elevation used by [ModalBottomSheetLayout].
+     * The default elevation used by [BottomSheetLayout].
      */
     val Elevation = 16.dp
 
     /**
-     * The default scrim color used by [ModalBottomSheetLayout].
+     * The default scrim color used by [BottomSheetLayout].
      */
     val scrimColor: Color
         @Composable
         get() = MaterialTheme.colors.onSurface.copy(alpha = 0.32f)
+
+    val shape: Shape
+        @Composable
+        get() = MaterialTheme.shapes.large.copy(
+            bottomStart = CornerSize(0.dp),
+            bottomEnd = CornerSize(0.dp)
+        )
 }
+
+@ExperimentalMaterialApi
+class BottomSheetProperties(
+    val animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
+    val isSkipHalfExpanded: Boolean = false,
+    val confirmStateChange: (BottomSheetValue) -> Boolean = { true }
+)
+
+@ExperimentalMaterialApi
+val DefaultBottomSheetProperties = BottomSheetProperties()

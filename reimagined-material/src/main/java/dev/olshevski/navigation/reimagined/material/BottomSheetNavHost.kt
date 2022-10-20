@@ -2,7 +2,7 @@ package dev.olshevski.navigation.reimagined.material
 
 import android.os.Parcelable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.contentColorFor
@@ -21,16 +21,50 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import dev.olshevski.navigation.reimagined.BaseNavHost
 import dev.olshevski.navigation.reimagined.ComponentsProvider
 import dev.olshevski.navigation.reimagined.EmptyScopeSpec
 import dev.olshevski.navigation.reimagined.NavBackstack
+import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.NavId
+import dev.olshevski.navigation.reimagined.NavScopeSpec
 import dev.olshevski.navigation.reimagined.NavSnapshot
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.parcelize.Parcelize
+
+@ExperimentalMaterialApi
+@Parcelize
+private data class BottomSheetSavedState(
+    val id: NavId,
+    val value: BottomSheetValue
+) : Parcelable
+
+@ExperimentalMaterialApi
+@Composable
+fun <T> BottomSheetNavHost(
+    controller: NavController<T>,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    sheetShape: Shape = BottomSheetDefaults.shape,
+    sheetElevation: Dp = BottomSheetDefaults.Elevation,
+    sheetBackgroundColor: Color = MaterialTheme.colors.surface,
+    sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
+    sheetPropertiesSpec: (T) -> BottomSheetProperties = { DefaultBottomSheetProperties },
+    scrimColor: Color = BottomSheetDefaults.scrimColor,
+    contentSelector: @Composable BottomSheetNavHostScope<T>.(T) -> Unit,
+) = BottomSheetNavHost(
+    backstack = controller.backstack,
+    onDismissRequest = onDismissRequest,
+    modifier = modifier,
+    sheetShape = sheetShape,
+    sheetElevation = sheetElevation,
+    sheetBackgroundColor = sheetBackgroundColor,
+    sheetContentColor = sheetContentColor,
+    sheetPropertiesSpec = sheetPropertiesSpec,
+    scrimColor = scrimColor,
+    contentSelector = contentSelector
+)
 
 @ExperimentalMaterialApi
 @Composable
@@ -38,40 +72,107 @@ fun <T> BottomSheetNavHost(
     backstack: NavBackstack<T>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
-    sheetShape: Shape = MaterialTheme.shapes.large.copy(
-        bottomStart = CornerSize(0.dp),
-        bottomEnd = CornerSize(0.dp)
-    ),
-    sheetElevation: Dp = ModalBottomSheetDefaults.Elevation,
+    sheetShape: Shape = BottomSheetDefaults.shape,
+    sheetElevation: Dp = BottomSheetDefaults.Elevation,
     sheetBackgroundColor: Color = MaterialTheme.colors.surface,
     sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
-    scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
-    contentSelector: @Composable (T) -> Unit,
+    sheetPropertiesSpec: (T) -> BottomSheetProperties = { DefaultBottomSheetProperties },
+    scrimColor: Color = BottomSheetDefaults.scrimColor,
+    contentSelector: @Composable BottomSheetNavHostScope<T>.(T) -> Unit,
+) = ScopingBottomSheetNavHost(
+    backstack = backstack,
+    scopeSpec = EmptyScopeSpec,
+    onDismissRequest = onDismissRequest,
+    modifier = modifier,
+    sheetShape = sheetShape,
+    sheetElevation = sheetElevation,
+    sheetBackgroundColor = sheetBackgroundColor,
+    sheetContentColor = sheetContentColor,
+    sheetPropertiesSpec = sheetPropertiesSpec,
+    scrimColor = scrimColor,
+    contentSelector = contentSelector
+)
+
+@ExperimentalMaterialApi
+@Composable
+fun <T, S> ScopingBottomSheetNavHost(
+    controller: NavController<T>,
+    scopeSpec: NavScopeSpec<T, S>,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    sheetShape: Shape = BottomSheetDefaults.shape,
+    sheetElevation: Dp = BottomSheetDefaults.Elevation,
+    sheetBackgroundColor: Color = MaterialTheme.colors.surface,
+    sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
+    sheetPropertiesSpec: (T) -> BottomSheetProperties = { DefaultBottomSheetProperties },
+    scrimColor: Color = BottomSheetDefaults.scrimColor,
+    contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(T) -> Unit,
+) = ScopingBottomSheetNavHost(
+    backstack = controller.backstack,
+    scopeSpec = scopeSpec,
+    onDismissRequest = onDismissRequest,
+    modifier = modifier,
+    sheetShape = sheetShape,
+    sheetElevation = sheetElevation,
+    sheetBackgroundColor = sheetBackgroundColor,
+    sheetContentColor = sheetContentColor,
+    sheetPropertiesSpec = sheetPropertiesSpec,
+    scrimColor = scrimColor,
+    contentSelector = contentSelector
+)
+
+/**
+ * @param scrimColor The color of the scrim that is applied to the rest of the screen when the
+ * bottom sheet is visible. If the color passed is [Color.Unspecified], then a scrim will no
+ * longer be applied and the bottom sheet will not block interaction with the rest of the screen
+ * when visible.
+ */
+@ExperimentalMaterialApi
+@Composable
+fun <T, S> ScopingBottomSheetNavHost(
+    backstack: NavBackstack<T>,
+    scopeSpec: NavScopeSpec<T, S>,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    sheetShape: Shape = BottomSheetDefaults.shape,
+    sheetElevation: Dp = BottomSheetDefaults.Elevation,
+    sheetBackgroundColor: Color = MaterialTheme.colors.surface,
+    sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
+    sheetPropertiesSpec: (T) -> BottomSheetProperties = { DefaultBottomSheetProperties },
+    scrimColor: Color = BottomSheetDefaults.scrimColor,
+    contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(T) -> Unit,
 ) = BaseNavHost(
     backstack = backstack,
-    scopeSpec = EmptyScopeSpec
+    scopeSpec = scopeSpec
 ) { targetSnapshot ->
     var currentSnapshot by remember { mutableStateOf(targetSnapshot) }
-    var sheetState by rememberSaveable(
+    val isTransitionRunningState = remember { mutableStateOf(false) }
+    var isTransitionRunning by isTransitionRunningState
+
+    var sheetState: BottomSheetState? by rememberSaveable(
         saver = Saver(
             save = { mutableState ->
-                val currentLastEntry = currentSnapshot.lastEntry
                 val sheetState = mutableState.value
-                if (sheetState != null && currentLastEntry != null
-                    && sheetState.currentValue != ModalBottomSheetValue.Hidden
-                ) {
-                    ModalBottomSheetSavedState(
-                        id = currentLastEntry.id,
-                        value = sheetState.currentValue
+                if (sheetState != null && sheetState.currentValue != BottomSheetValue.Hidden) {
+                    BottomSheetSavedState(
+                        id = sheetState.hostEntryId,
+                        value = sheetState.currentValue,
                     )
                 } else {
                     null
                 }
             },
             restore = { savedState ->
-                val currentLastEntry = currentSnapshot.lastEntry
-                if (currentLastEntry != null && currentLastEntry.id == savedState.id) {
-                    mutableStateOf(ModalBottomSheetState(savedState.value))
+                val lastEntry = currentSnapshot.lastEntry
+                if (lastEntry != null && lastEntry.id == savedState.id) {
+                    mutableStateOf(
+                        BottomSheetState(
+                            hostEntryId = lastEntry.id,
+                            initialValue = savedState.value,
+                            isTransitionRunningState = isTransitionRunningState,
+                            sheetProperties = sheetPropertiesSpec(lastEntry.destination)
+                        )
+                    )
                 } else {
                     null
                 }
@@ -79,49 +180,54 @@ fun <T> BottomSheetNavHost(
         )
     ) {
         mutableStateOf(
-            currentSnapshot.lastEntry?.let {
-                ModalBottomSheetState(ModalBottomSheetValue.Expanded)
+            currentSnapshot.lastEntry?.let { lastEntry ->
+                val sheetProperties = sheetPropertiesSpec(lastEntry.destination)
+                BottomSheetState(
+                    hostEntryId = lastEntry.id,
+                    initialValue = if (sheetProperties.isSkipHalfExpanded) {
+                        BottomSheetValue.Expanded
+                    } else {
+                        BottomSheetValue.HalfExpanded
+                    },
+                    isTransitionRunningState = isTransitionRunningState,
+                    sheetProperties = sheetProperties
+                )
             }
         )
     }
-    var isTransitionRunning by remember { mutableStateOf(false) }
+
     val isScrimVisible by remember(targetSnapshot) {
         derivedStateOf {
             val visibleBetweenTransitions =
                 isTransitionRunning && targetSnapshot.items.isNotEmpty()
             val visibleForExpandedStates = sheetState?.targetValue.let {
-                it != null && it != ModalBottomSheetValue.Hidden
+                it != null && it != BottomSheetValue.Hidden
             }
             visibleBetweenTransitions || visibleForExpandedStates
         }
     }
 
-    Box(modifier = modifier) {
+    Box(modifier = modifier.fillMaxSize()) {
         Scrim(
             color = scrimColor,
             onDismiss = {
-                if (sheetState?.confirmStateChange?.invoke(ModalBottomSheetValue.Hidden) == true) {
+                if (sheetState?.confirmStateChange?.invoke(BottomSheetValue.Hidden) == true) {
                     onDismissRequest()
                 }
             },
             visible = isScrimVisible
         )
-        currentSnapshot.lastEntry?.let { lastEntry ->
-            key(lastEntry.id) {
-                ModalBottomSheetLayout(
-                    sheetShape = sheetShape,
-                    sheetElevation = sheetElevation,
-                    sheetBackgroundColor = sheetBackgroundColor,
-                    sheetContentColor = sheetContentColor,
-                    sheetState = sheetState!!,
-                    isTransitionRunning = isTransitionRunning,
-                    sheetContent = {
-                        lastEntry.ComponentsProvider {
-                            contentSelector(lastEntry.destination)
-                        }
-                    },
-                )
-            }
+        if (currentSnapshot.items.isNotEmpty()) {
+            SnapshotBottomSheetLayout(
+                snapshot = currentSnapshot,
+                sheetState = sheetState!!,
+                sheetShape = sheetShape,
+                sheetElevation = sheetElevation,
+                sheetBackgroundColor = sheetBackgroundColor,
+                sheetContentColor = sheetContentColor,
+                onDismissRequest = onDismissRequest,
+                contentSelector = contentSelector
+            )
         }
     }
 
@@ -129,11 +235,19 @@ fun <T> BottomSheetNavHost(
         if (targetSnapshot.lastEntry != currentSnapshot.lastEntry) {
             isTransitionRunning = true
             sheetState?.hide()
+
             currentSnapshot = targetSnapshot
-            sheetState = currentSnapshot.lastEntry?.let {
-                ModalBottomSheetState(ModalBottomSheetValue.Hidden)
+            sheetState = currentSnapshot.lastEntry?.let { lastEntry ->
+                BottomSheetState(
+                    hostEntryId = lastEntry.id,
+                    initialValue = BottomSheetValue.Hidden,
+                    isTransitionRunningState = isTransitionRunningState,
+                    sheetProperties = sheetPropertiesSpec(lastEntry.destination)
+                )
             }
+
             sheetState?.let { sheetState ->
+                // wait until anchors are calculated
                 snapshotFlow { sheetState.anchors }.filter { it.isNotEmpty() }.first()
                 sheetState.show()
             }
@@ -145,7 +259,7 @@ fun <T> BottomSheetNavHost(
 
     LaunchedEffect(Unit) {
         snapshotFlow { sheetState?.currentValue }
-            .filter { it == ModalBottomSheetValue.Hidden }
+            .filter { it == BottomSheetValue.Hidden }
             .collect {
                 if (!isTransitionRunning) {
                     onDismissRequest()
@@ -157,11 +271,40 @@ fun <T> BottomSheetNavHost(
 }
 
 @ExperimentalMaterialApi
-@Parcelize
-private data class ModalBottomSheetSavedState(
-    val id: NavId,
-    val value: ModalBottomSheetValue
-) : Parcelable
+@Composable
+fun <T, S> SnapshotBottomSheetLayout(
+    snapshot: NavSnapshot<T, S>,
+    sheetState: BottomSheetState,
+    sheetShape: Shape,
+    sheetElevation: Dp,
+    sheetBackgroundColor: Color,
+    sheetContentColor: Color,
+    onDismissRequest: () -> Unit,
+    contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(T) -> Unit,
+) {
+    val lastSnapshotItem = snapshot.items.last()
+    key(lastSnapshotItem.hostEntry.id) {
+        BottomSheetLayout(
+            sheetState = sheetState,
+            sheetShape = sheetShape,
+            sheetElevation = sheetElevation,
+            sheetBackgroundColor = sheetBackgroundColor,
+            sheetContentColor = sheetContentColor,
+            onDismissRequest = onDismissRequest,
+            sheetContent = {
+                lastSnapshotItem.hostEntry.ComponentsProvider {
+                    val scope = remember(snapshot, sheetState) {
+                        ScopingBottomSheetNavHostScopeImpl(
+                            hostEntries = snapshot.items.map { it.hostEntry },
+                            scopedHostEntries = lastSnapshotItem.scopedHostEntries,
+                            sheetState = sheetState
+                        )
+                    }
+                    scope.contentSelector(lastSnapshotItem.hostEntry.destination)
+                }
+            },
+        )
+    }
+}
 
-private val <T, S> NavSnapshot<T, S>.lastEntry
-    get() = items.lastOrNull()?.hostEntry
+private val <T, S> NavSnapshot<T, S>.lastEntry get() = items.lastOrNull()?.hostEntry
