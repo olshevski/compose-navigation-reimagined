@@ -7,33 +7,40 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 
 /**
- * Provides access to the list of all current [NavHostEntries][NavHostEntry] as well as other
- * convenient methods only available within [NavHost].
+ * Provides access to the list of all current [NavHostEntries][NavHostEntry].
  */
 @Stable
 interface NavHostScope<out T> {
 
     /**
-     * List of all current [NavHostEntries][NavHostEntry] in the same order
+     * List of all current [NavHostEntries][NavHostEntry] in the same order their associated
      * [entries][NavEntry] appear in the backstack.
      *
-     * The last entry of this list is always the currently displayed entry. Guaranteed to not be
-     * empty in [NavHost]/[AnimatedNavHost].
-     *
-     * You may use these entries to access neighbour [ViewModelStoreOwners][ViewModelStoreOwner]
-     * and implement your own ViewModel-sharing behaviour.
+     * The last entry of this list is always the currently displayed entry.
      */
     val hostEntries: List<NavHostEntry<T>>
 
 }
 
+/**
+ * Provides access to the list of all current [NavHostEntries][NavHostEntry] as well as
+ * all scoped [ViewModelStoreOwners][ViewModelStoreOwner] that where specified
+ * in `scopeSpec` of [ScopingNavHost], [ScopingAnimatedNavHost] or other `Scoping...NavHost`
+ * implementation.
+ */
 @Stable
 interface ScopingNavHostScope<out T, S> : NavHostScope<T> {
 
+    /**
+     * Returns [ViewModelStoreOwner] for the [scope]. This scope should be associated with the
+     * current destination in `scopeSpec` of [ScopingNavHost], [ScopingAnimatedNavHost] or
+     * other `Scoping...NavHost` implementation. Otherwise, [IllegalStateException] will be thrown.
+     */
     fun getScopedViewModelStoreOwner(scope: S): ViewModelStoreOwner
 
 }
 
+@Stable
 internal open class ScopingNavHostScopeImpl<out T, S>(
     override val hostEntries: List<NavHostEntry<T>>,
     private val scopedHostEntries: Map<S, ScopedNavHostEntry<S>>

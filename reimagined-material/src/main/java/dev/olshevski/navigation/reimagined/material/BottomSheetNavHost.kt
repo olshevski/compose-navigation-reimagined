@@ -218,7 +218,7 @@ fun <T, S> ScopingBottomSheetNavHost(
             // capture currentSnapshot and sheetState as MutableState instances.
             //
             // The latter causes the underlying SubcomposeLayout to recompose independently of
-            // outer recomposition path, which causes logical issues and may leed to crashes.
+            // outer recomposition path, which causes logical issues and may lead to crashes.
             //
             // The SubcomposeLayout issue is tracked here:
             // https://issuetracker.google.com/issues/254645321
@@ -277,7 +277,7 @@ fun <T, S> ScopingBottomSheetNavHost(
 
 @ExperimentalMaterialApi
 @Composable
-fun <T, S> SnapshotBottomSheetLayout(
+private fun <T, S> SnapshotBottomSheetLayout(
     snapshot: NavSnapshot<T, S>,
     sheetState: BottomSheetState,
     sheetShape: Shape,

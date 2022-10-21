@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
+import androidx.lifecycle.ViewModelStoreOwner
 
 /**
  * A basic navigation host that selects UI for every destination and provides necessary
@@ -89,6 +90,9 @@ internal fun <T, S> NavHost(
  * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
  * for every unique [NavEntry] in the [controller's][controller] backstack.
  *
+ * Additionally, this version of NavHost gives you the ability to define scoped
+ * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
+ *
  * This composable doesn't provide animated transitions between destinations - it will simply
  * jump-cut to the next destination.
  *
@@ -124,6 +128,9 @@ fun <T, S> ScopingNavHost(
  * A basic navigation host that selects UI for every destination and provides necessary
  * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
  * for every unique [NavEntry] in the [backstack].
+ *
+ * Additionally, this version of NavHost gives you the ability to define scoped
+ * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
  *
  * This composable doesn't provide animated transitions between destinations - it will simply
  * jump-cut to the next destination.

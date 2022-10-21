@@ -109,8 +109,8 @@ enum class BottomSheetValue {
  * [IllegalArgumentException] will be thrown.
  * @param confirmStateChange Optional callback invoked to confirm or veto a pending state change.
  */
-@Stable
 @ExperimentalMaterialApi
+@Stable
 class BottomSheetState internal constructor(
     internal val hostEntryId: NavId,
     initialValue: BottomSheetValue,
@@ -239,8 +239,8 @@ class BottomSheetState internal constructor(
  * children. Defaults to the matching content color for [sheetBackgroundColor], or if that is not
  * a color from the theme, this will keep the same content color set above the bottom sheet.
  */
-@Composable
 @ExperimentalMaterialApi
+@Composable
 internal fun BottomSheetLayout(
     sheetContent: @Composable (ColumnScope.() -> Unit),
     sheetState: BottomSheetState,

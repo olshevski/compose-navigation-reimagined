@@ -12,6 +12,7 @@ import androidx.compose.animation.with
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.lifecycle.ViewModelStoreOwner
 
 /**
  * An animated navigation host that selects UI for every destination and provides necessary
@@ -110,6 +111,9 @@ internal fun <T, S> AnimatedNavHost(
  * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
  * for every unique [NavEntry] in the [controller's][controller] backstack.
  *
+ * Additionally, this version of AnimatedNavHost gives you the ability to define scoped
+ * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
+ *
  * This composable uses animated transitions to switch between destinations. You may set a custom
  * [AnimatedNavHostTransitionSpec] to specify the desired transitions.
  *
@@ -150,6 +154,9 @@ fun <T, S> ScopingAnimatedNavHost(
  * An animated navigation host that selects UI for every destination and provides necessary
  * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
  * for every unique [NavEntry] in the [backstack].
+ *
+ * Additionally, this version of AnimatedNavHost gives you the ability to define scoped
+ * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
  *
  * This composable uses animated transitions to switch between destinations. You may set a custom
  * [AnimatedNavHostTransitionSpec] to specify the desired transitions.
