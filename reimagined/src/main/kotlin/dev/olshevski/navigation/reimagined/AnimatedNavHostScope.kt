@@ -10,3 +10,14 @@ import androidx.compose.runtime.Stable
  */
 @Stable
 interface AnimatedNavHostScope<out T> : NavHostScope<T>, AnimatedVisibilityScope
+
+@Stable
+interface ScopingAnimatedNavHostScope<out T, S> : AnimatedNavHostScope<T>
+
+internal class ScopingAnimatedNavHostScopeImpl<out T, S>(
+    hostEntries: List<NavHostEntry<T>>,
+    scopedHostEntries: Map<S, ScopedNavHostEntry<S>>,
+    animatedVisibilityScope: AnimatedVisibilityScope
+) : ScopingNavHostScopeImpl<T, S>(hostEntries, scopedHostEntries),
+    ScopingAnimatedNavHostScope<T, S>,
+    AnimatedVisibilityScope by animatedVisibilityScope

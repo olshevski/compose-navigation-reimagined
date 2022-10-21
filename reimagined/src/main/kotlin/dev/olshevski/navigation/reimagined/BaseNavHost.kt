@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 
+@ExperimentalReimaginedApi
 @Composable
 fun <T, S> BaseNavHost(
     backstack: NavBackstack<T>,

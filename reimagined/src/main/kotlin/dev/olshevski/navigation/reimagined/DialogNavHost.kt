@@ -79,8 +79,37 @@ fun <T> DialogNavHost(
     backstack: NavBackstack<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable NavHostScope<T>.(T) -> Unit
-) = AnimatedNavHost(
+) = ScopingDialogNavHost(
     backstack = backstack,
+    scopeSpec = EmptyScopeSpec,
+    emptyBackstackPlaceholder = { emptyBackstackPlaceholder() },
+    contentSelector = { contentSelector(it) }
+)
+
+@ExperimentalAnimationApi
+@Composable
+fun <T, S> ScopingDialogNavHost(
+    controller: NavController<T>,
+    scopeSpec: NavScopeSpec<T, S>,
+    emptyBackstackPlaceholder: @Composable () -> Unit = {},
+    contentSelector: @Composable NavHostScope<T>.(T) -> Unit
+) = ScopingDialogNavHost(
+    backstack = controller.backstack,
+    scopeSpec = scopeSpec,
+    emptyBackstackPlaceholder = { emptyBackstackPlaceholder() },
+    contentSelector = { contentSelector(it) }
+)
+
+@ExperimentalAnimationApi
+@Composable
+fun <T, S> ScopingDialogNavHost(
+    backstack: NavBackstack<T>,
+    scopeSpec: NavScopeSpec<T, S>,
+    emptyBackstackPlaceholder: @Composable () -> Unit = {},
+    contentSelector: @Composable NavHostScope<T>.(T) -> Unit
+) = ScopingAnimatedNavHost(
+    backstack = backstack,
+    scopeSpec = scopeSpec,
     transitionSpec = NoneTransitionSpec,
     emptyBackstackPlaceholder = { emptyBackstackPlaceholder() },
     contentSelector = { contentSelector(it) }

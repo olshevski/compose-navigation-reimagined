@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.Dp
 import dev.olshevski.navigation.reimagined.BaseNavHost
 import dev.olshevski.navigation.reimagined.ComponentsProvider
 import dev.olshevski.navigation.reimagined.EmptyScopeSpec
+import dev.olshevski.navigation.reimagined.ExperimentalReimaginedApi
 import dev.olshevski.navigation.reimagined.NavBackstack
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.NavId
@@ -32,13 +33,6 @@ import dev.olshevski.navigation.reimagined.NavSnapshot
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.parcelize.Parcelize
-
-@ExperimentalMaterialApi
-@Parcelize
-private data class BottomSheetSavedState(
-    val id: NavId,
-    val value: BottomSheetValue
-) : Parcelable
 
 @ExperimentalMaterialApi
 @Composable
@@ -127,6 +121,7 @@ fun <T, S> ScopingBottomSheetNavHost(
  * longer be applied and the bottom sheet will not block interaction with the rest of the screen
  * when visible.
  */
+@OptIn(ExperimentalReimaginedApi::class)
 @ExperimentalMaterialApi
 @Composable
 fun <T, S> ScopingBottomSheetNavHost(
@@ -218,6 +213,16 @@ fun <T, S> ScopingBottomSheetNavHost(
             visible = isScrimVisible
         )
         if (currentSnapshot.items.isNotEmpty()) {
+
+            // Need to isolate BottomSheetLayout into a separate composable, so it doesn't
+            // capture currentSnapshot and sheetState as MutableState instances.
+            //
+            // The latter causes the underlying SubcomposeLayout to recompose independently of
+            // outer recomposition path, which causes logical issues and may leed to crashes.
+            //
+            // The SubcomposeLayout issue is tracked here:
+            // https://issuetracker.google.com/issues/254645321
+
             SnapshotBottomSheetLayout(
                 snapshot = currentSnapshot,
                 sheetState = sheetState!!,
@@ -306,5 +311,12 @@ fun <T, S> SnapshotBottomSheetLayout(
         )
     }
 }
+
+@ExperimentalMaterialApi
+@Parcelize
+private data class BottomSheetSavedState(
+    val id: NavId,
+    val value: BottomSheetValue
+) : Parcelable
 
 private val <T, S> NavSnapshot<T, S>.lastEntry get() = items.lastOrNull()?.hostEntry
