@@ -25,7 +25,7 @@ import androidx.lifecycle.ViewModelStoreOwner
  * If you don't need animated transitions use [NavHost] instead.
  *
  * @param controller a navigation controller that will provide its backstack to this
- * `AnimatedNavHost`. The last entry of the backstack is always the currently displayed entry.
+ * AnimatedNavHost. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but setting a different [NavController] will be handled correctly.
  *
@@ -37,7 +37,8 @@ import androidx.lifecycle.ViewModelStoreOwner
  * to set this. Note that the provided composable wouldn't get its own scoped components.
  *
  * @param contentSelector provides a composable that corresponds to the current last destination
- * in the backstack. In other words, here is where you select UI to show (e.g. a screen).
+ * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
+ * provides additional functionality of the AnimatedNavHost through the [AnimatedNavHostScope].
  */
 @ExperimentalAnimationApi
 @Composable
@@ -76,7 +77,8 @@ fun <T> AnimatedNavHost(
  * to set this. Note that the provided composable wouldn't get its own scoped components.
  *
  * @param contentSelector provides a composable that corresponds to the current last destination
- * in the backstack. In other words, here is where you select UI to show (e.g. a screen).
+ * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
+ * provides additional functionality of the AnimatedNavHost through the [AnimatedNavHostScope].
  */
 @ExperimentalAnimationApi
 @Composable
@@ -111,18 +113,35 @@ internal fun <T, S> AnimatedNavHost(
  * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
  * for every unique [NavEntry] in the [controller's][controller] backstack.
  *
- * Additionally, this version of AnimatedNavHost gives you the ability to define scoped
- * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
- *
  * This composable uses animated transitions to switch between destinations. You may set a custom
  * [NavTransitionSpec] to specify the desired transitions.
  *
  * If you don't need animated transitions use [NavHost] instead.
  *
+ * **Scoping:**
+ *
+ * This version of AnimatedNavHost gives you the ability to define scoped
+ * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
+ *
+ * To do so, you must return a desired set of scopes for each requested destination in
+ * [scopeSpec]. This information will then be used to associate different entries to specified
+ * scopes and keep each scoped ViewModelStoreOwner until any of its associated entries is present
+ * in the backstack. When none of the entries are present anymore, the scoped ViewModelStoreOwner
+ * and all of its ViewModels will be cleared.
+ *
+ * To access a scoped ViewModelStoreOwner, you may call
+ * [ScopingNavHostScope.getScopedViewModelStoreOwner] inside [contentSelector] with the same scope
+ * object you've returned in [scopeSpec]. Then you may pass this scoped ViewModelStoreOwner
+ * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
+ * easily accessible from different destinations.
+ *
  * @param controller a navigation controller that will provide its backstack to this
- * `AnimatedNavHost`. The last entry of the backstack is always the currently displayed entry.
+ * AnimatedNavHost. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but setting a different [NavController] will be handled correctly.
+ *
+ * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
+ * create and access shared ViewModels.
  *
  * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
@@ -132,7 +151,9 @@ internal fun <T, S> AnimatedNavHost(
  * to set this. Note that the provided composable wouldn't get its own scoped components.
  *
  * @param contentSelector provides a composable that corresponds to the current last destination
- * in the backstack. In other words, here is where you select UI to show (e.g. a screen).
+ * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
+ * provides additional functionality of the ScopingAnimatedNavHost through
+ * the [ScopingAnimatedNavHostScope].
  */
 @ExperimentalAnimationApi
 @Composable
@@ -155,18 +176,35 @@ fun <T, S> ScopingAnimatedNavHost(
  * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
  * for every unique [NavEntry] in the [backstack].
  *
- * Additionally, this version of AnimatedNavHost gives you the ability to define scoped
- * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
- *
  * This composable uses animated transitions to switch between destinations. You may set a custom
  * [NavTransitionSpec] to specify the desired transitions.
  *
  * If you don't need animated transitions use [NavHost] instead.
  *
+ * **Scoping:**
+ *
+ * This version of AnimatedNavHost gives you the ability to define scoped
+ * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
+ *
+ * To do so, you must return a desired set of scopes for each requested destination in
+ * [scopeSpec]. This information will then be used to associate different entries to specified
+ * scopes and keep each scoped ViewModelStoreOwner until any of its associated entries is present
+ * in the backstack. When none of the entries are present anymore, the scoped ViewModelStoreOwner
+ * and all of its ViewModels will be cleared.
+ *
+ * To access a scoped ViewModelStoreOwner, you may call
+ * [ScopingNavHostScope.getScopedViewModelStoreOwner] inside [contentSelector] with the same scope
+ * object you've returned in [scopeSpec]. Then you may pass this scoped ViewModelStoreOwner
+ * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
+ * easily accessible from different destinations.
+ *
  * @param backstack the backstack from a [NavController] that will be used to observe navigation
  * changes. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but using a different [NavController] and setting its backstack will be handled correctly.
+ *
+ * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
+ * create and access shared ViewModels.
  *
  * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
@@ -176,7 +214,9 @@ fun <T, S> ScopingAnimatedNavHost(
  * to set this. Note that the provided composable wouldn't get its own scoped components.
  *
  * @param contentSelector provides a composable that corresponds to the current last destination
- * in the backstack. In other words, here is where you select UI to show (e.g. a screen).
+ * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
+ * provides additional functionality of the ScopingAnimatedNavHost through
+ * the [ScopingAnimatedNavHostScope].
  */
 @ExperimentalAnimationApi
 @Composable
@@ -193,6 +233,7 @@ fun <T, S> ScopingAnimatedNavHost(
     contentSelector = contentSelector
 )
 
+@OptIn(ExperimentalReimaginedApi::class)
 @ExperimentalAnimationApi
 @Composable
 internal fun <T, S> ScopingAnimatedNavHost(
@@ -230,6 +271,7 @@ internal fun <T, S> ScopingAnimatedNavHost(
     return@BaseNavHost transition.currentState
 }
 
+@ExperimentalReimaginedApi
 @ExperimentalAnimationApi
 private fun <T, S> AnimatedContentScope<NavSnapshot<T, S>>.selectTransition(
     transitionSpec: NavTransitionSpec<T>,

@@ -13,6 +13,9 @@ import dev.olshevski.navigation.reimagined.currentHostEntry
 @Stable
 interface BottomSheetNavHostScope<out T> : NavHostScope<T> {
 
+    /**
+     * [BottomSheetState] of the current BottomSheet.
+     */
     val sheetState: BottomSheetState
 
 }

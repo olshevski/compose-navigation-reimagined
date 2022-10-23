@@ -4,9 +4,6 @@ import android.app.Application
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModelStore
 
-/**
- * @param scope User key of this entry.
- */
 @Stable
 class ScopedNavHostEntry<S> internal constructor(
     id: NavId,

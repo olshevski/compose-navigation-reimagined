@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,13 +28,55 @@ import dev.olshevski.navigation.reimagined.EmptyScopeSpec
 import dev.olshevski.navigation.reimagined.ExperimentalReimaginedApi
 import dev.olshevski.navigation.reimagined.NavBackstack
 import dev.olshevski.navigation.reimagined.NavController
+import dev.olshevski.navigation.reimagined.NavHost
 import dev.olshevski.navigation.reimagined.NavId
 import dev.olshevski.navigation.reimagined.NavScopeSpec
 import dev.olshevski.navigation.reimagined.NavSnapshot
+import dev.olshevski.navigation.reimagined.ScopingNavHost
+import dev.olshevski.navigation.reimagined.pop
+import dev.olshevski.navigation.reimagined.popAll
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.parcelize.Parcelize
 
+/**
+ * NavHost analogue of [ModalBottomSheetLayout] from Material package. Provides better visual
+ * transitions between different BottomSheets, as well as all other features of the regular
+ * [NavHost].
+ *
+ * @param controller a navigation controller that will provide its backstack to this
+ * BottomSheetNavHost. The last entry of the backstack is always the currently displayed entry.
+ * You should do all backstack modifications through the same instance of [NavController],
+ * but setting a different [NavController] will be handled correctly.
+ *
+ * @param onDismissRequest dismiss request caused by user interaction. Called either when the scrim
+ * is clicked or when the bottom sheet is hidden with swipe. You *must* handle it and remove
+ * the current destination from the backstack either with [pop], [popAll] or any other method
+ * that will actually remove the current entry from the backstack. Failing to do so may result in
+ * undefined UI state.
+ *
+ * @param sheetShape the shape of the bottom sheet
+ *
+ * @param sheetElevation the elevation of the bottom sheet
+ *
+ * @param sheetBackgroundColor the background color of the bottom sheet
+ *
+ * @param sheetContentColor the preferred content color provided by the bottom sheet to its
+ * children. Defaults to the matching content color for [sheetBackgroundColor], or if that is not
+ * a color from the theme, this will keep the same content color set above the bottom sheet.
+ *
+ * @param sheetPropertiesSpec specifies [BottomSheetProperties] for every BottomSheet destination
+ *
+ * @param scrimColor the color of the scrim that is applied to the rest of the screen when the
+ * bottom sheet is visible. If the color passed is [Color.Unspecified], then a scrim will no
+ * longer be applied and the bottom sheet will not block interaction with the rest of the screen
+ * when visible.
+ *
+ * @param contentSelector provides a composable that corresponds to the current last destination
+ * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
+ * provides additional functionality of the BottomSheetNavHost through
+ * the [BottomSheetNavHostScope].
+ */
 @ExperimentalMaterialApi
 @Composable
 fun <T> BottomSheetNavHost(
@@ -60,6 +103,44 @@ fun <T> BottomSheetNavHost(
     contentSelector = contentSelector
 )
 
+/**
+ * NavHost analogue of [ModalBottomSheetLayout] from Material package. Provides better visual
+ * transitions between different BottomSheets, as well as all other features of the regular
+ * [NavHost].
+ *
+ * @param backstack the backstack from a [NavController] that will be used to observe navigation
+ * changes. The last entry of the backstack is always the currently displayed entry.
+ * You should do all backstack modifications through the same instance of [NavController],
+ * but using a different [NavController] and setting its backstack will be handled correctly.
+ *
+ * @param onDismissRequest dismiss request caused by user interaction. Called either when the scrim
+ * is clicked or when the bottom sheet is hidden with swipe. You *must* handle it and remove
+ * the current destination from the backstack either with [pop], [popAll] or any other method
+ * that will actually remove the current entry from the backstack. Failing to do so may result in
+ * undefined UI state.
+ *
+ * @param sheetShape the shape of the bottom sheet
+ *
+ * @param sheetElevation the elevation of the bottom sheet
+ *
+ * @param sheetBackgroundColor the background color of the bottom sheet
+ *
+ * @param sheetContentColor the preferred content color provided by the bottom sheet to its
+ * children. Defaults to the matching content color for [sheetBackgroundColor], or if that is not
+ * a color from the theme, this will keep the same content color set above the bottom sheet.
+ *
+ * @param sheetPropertiesSpec specifies [BottomSheetProperties] for every BottomSheet destination
+ *
+ * @param scrimColor the color of the scrim that is applied to the rest of the screen when the
+ * bottom sheet is visible. If the color passed is [Color.Unspecified], then a scrim will no
+ * longer be applied and the bottom sheet will not block interaction with the rest of the screen
+ * when visible.
+ *
+ * @param contentSelector provides a composable that corresponds to the current last destination
+ * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
+ * provides additional functionality of the BottomSheetNavHost through
+ * the [BottomSheetNavHostScope].
+ */
 @ExperimentalMaterialApi
 @Composable
 fun <T> BottomSheetNavHost(
@@ -87,6 +168,47 @@ fun <T> BottomSheetNavHost(
     contentSelector = contentSelector
 )
 
+/**
+ * NavHost analogue of [ModalBottomSheetLayout] from Material package. Provides better visual
+ * transitions between different BottomSheets, as well as all other features of the regular
+ * [ScopingNavHost].
+ *
+ * @param controller a navigation controller that will provide its backstack to this
+ * BottomSheetNavHost. The last entry of the backstack is always the currently displayed entry.
+ * You should do all backstack modifications through the same instance of [NavController],
+ * but setting a different [NavController] will be handled correctly.
+ *
+ * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
+ * create and access shared ViewModels.
+ *
+ * @param onDismissRequest dismiss request caused by user interaction. Called either when the scrim
+ * is clicked or when the bottom sheet is hidden with swipe. You *must* handle it and remove
+ * the current destination from the backstack either with [pop], [popAll] or any other method
+ * that will actually remove the current entry from the backstack. Failing to do so may result in
+ * undefined UI state.
+ *
+ * @param sheetShape the shape of the bottom sheet
+ *
+ * @param sheetElevation the elevation of the bottom sheet
+ *
+ * @param sheetBackgroundColor the background color of the bottom sheet
+ *
+ * @param sheetContentColor the preferred content color provided by the bottom sheet to its
+ * children. Defaults to the matching content color for [sheetBackgroundColor], or if that is not
+ * a color from the theme, this will keep the same content color set above the bottom sheet.
+ *
+ * @param sheetPropertiesSpec specifies [BottomSheetProperties] for every BottomSheet destination
+ *
+ * @param scrimColor the color of the scrim that is applied to the rest of the screen when the
+ * bottom sheet is visible. If the color passed is [Color.Unspecified], then a scrim will no
+ * longer be applied and the bottom sheet will not block interaction with the rest of the screen
+ * when visible.
+ *
+ * @param contentSelector provides a composable that corresponds to the current last destination
+ * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
+ * provides additional functionality of the ScopingBottomSheetNavHost through
+ * the [ScopingBottomSheetNavHostScope].
+ */
 @ExperimentalMaterialApi
 @Composable
 fun <T, S> ScopingBottomSheetNavHost(
@@ -116,10 +238,45 @@ fun <T, S> ScopingBottomSheetNavHost(
 )
 
 /**
- * @param scrimColor The color of the scrim that is applied to the rest of the screen when the
+ * NavHost analogue of [ModalBottomSheetLayout] from Material package. Provides better visual
+ * transitions between different BottomSheets, as well as all other features of the regular
+ * [ScopingNavHost].
+ *
+ * @param backstack the backstack from a [NavController] that will be used to observe navigation
+ * changes. The last entry of the backstack is always the currently displayed entry.
+ * You should do all backstack modifications through the same instance of [NavController],
+ * but using a different [NavController] and setting its backstack will be handled correctly.
+ *
+ * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
+ * create and access shared ViewModels.
+ *
+ * @param onDismissRequest dismiss request caused by user interaction. Called either when the scrim
+ * is clicked or when the bottom sheet is hidden with swipe. You *must* handle it and remove
+ * the current destination from the backstack either with [pop], [popAll] or any other method
+ * that will actually remove the current entry from the backstack. Failing to do so may result in
+ * undefined UI state.
+ *
+ * @param sheetShape the shape of the bottom sheet
+ *
+ * @param sheetElevation the elevation of the bottom sheet
+ *
+ * @param sheetBackgroundColor the background color of the bottom sheet
+ *
+ * @param sheetContentColor the preferred content color provided by the bottom sheet to its
+ * children. Defaults to the matching content color for [sheetBackgroundColor], or if that is not
+ * a color from the theme, this will keep the same content color set above the bottom sheet.
+ *
+ * @param sheetPropertiesSpec specifies [BottomSheetProperties] for every BottomSheet destination
+ *
+ * @param scrimColor the color of the scrim that is applied to the rest of the screen when the
  * bottom sheet is visible. If the color passed is [Color.Unspecified], then a scrim will no
  * longer be applied and the bottom sheet will not block interaction with the rest of the screen
  * when visible.
+ *
+ * @param contentSelector provides a composable that corresponds to the current last destination
+ * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
+ * provides additional functionality of the ScopingBottomSheetNavHost through
+ * the [ScopingBottomSheetNavHostScope].
  */
 @OptIn(ExperimentalReimaginedApi::class)
 @ExperimentalMaterialApi
@@ -143,7 +300,6 @@ fun <T, S> ScopingBottomSheetNavHost(
     var currentSnapshot by remember { mutableStateOf(targetSnapshot) }
     val isTransitionRunningState = remember { mutableStateOf(false) }
     var isTransitionRunning by isTransitionRunningState
-
     var sheetState: BottomSheetState? by rememberSaveable(
         saver = Saver(
             save = { mutableState ->
@@ -276,6 +432,7 @@ fun <T, S> ScopingBottomSheetNavHost(
     currentSnapshot
 }
 
+@ExperimentalReimaginedApi
 @ExperimentalMaterialApi
 @Composable
 private fun <T, S> SnapshotBottomSheetLayout(
@@ -320,4 +477,5 @@ private data class BottomSheetSavedState(
     val value: BottomSheetValue
 ) : Parcelable
 
+@ExperimentalReimaginedApi
 private val <T, S> NavSnapshot<T, S>.lastEntry get() = items.lastOrNull()?.hostEntry

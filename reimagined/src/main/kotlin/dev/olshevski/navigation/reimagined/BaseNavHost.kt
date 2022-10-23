@@ -24,6 +24,7 @@ fun <T, S> BaseNavHost(
     transition = transition
 )
 
+@ExperimentalReimaginedApi
 @Composable
 internal fun <T, S> BaseNavHost(
     state: NavHostState<T, S>,

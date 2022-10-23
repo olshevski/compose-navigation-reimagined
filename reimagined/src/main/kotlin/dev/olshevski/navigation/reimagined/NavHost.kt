@@ -17,7 +17,7 @@ import androidx.lifecycle.ViewModelStoreOwner
  * If you need animated transitions use [AnimatedNavHost] instead. For smoother transitions
  * between dialogs use [DialogNavHost].
  *
- * @param controller a navigation controller that will provide its backstack to this `NavHost`.
+ * @param controller a navigation controller that will provide its backstack to this NavHost.
  * The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but setting a different [NavController] will be handled correctly.
@@ -27,7 +27,8 @@ import androidx.lifecycle.ViewModelStoreOwner
  * to set this. Note that the provided composable wouldn't get its own scoped components.
  *
  * @param contentSelector provides a composable that corresponds to the current last destination
- * in the backstack. In other words, here is where you select UI to show (e.g. a screen).
+ * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
+ * provides additional functionality of the NavHost through the [NavHostScope].
  */
 @Composable
 fun <T> NavHost(
@@ -61,7 +62,8 @@ fun <T> NavHost(
  * to set this. Note that the provided composable wouldn't get its own scoped components.
  *
  * @param contentSelector provides a composable that corresponds to the current last destination
- * in the backstack. In other words, here is where you select UI to show (e.g. a screen).
+ * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
+ * provides additional functionality of the NavHost through the [NavHostScope].
  */
 @Composable
 fun <T> NavHost(
@@ -90,26 +92,44 @@ internal fun <T, S> NavHost(
  * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
  * for every unique [NavEntry] in the [controller's][controller] backstack.
  *
- * Additionally, this version of NavHost gives you the ability to define scoped
- * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
- *
  * This composable doesn't provide animated transitions between destinations - it will simply
  * jump-cut to the next destination.
  *
  * If you need animated transitions use [AnimatedNavHost] instead. For smoother transitions
  * between dialogs use [DialogNavHost].
  *
- * @param controller a navigation controller that will provide its backstack to this `NavHost`.
+ * **Scoping:**
+ *
+ * This version of NavHost gives you the ability to define scoped
+ * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
+ *
+ * To do so, you must return a desired set of scopes for each requested destination in
+ * [scopeSpec]. This information will then be used to associate different entries to specified
+ * scopes and keep each scoped ViewModelStoreOwner until any of its associated entries is present
+ * in the backstack. When none of the entries are present anymore, the scoped ViewModelStoreOwner
+ * and all of its ViewModels will be cleared.
+ *
+ * To access a scoped ViewModelStoreOwner, you may call
+ * [ScopingNavHostScope.getScopedViewModelStoreOwner] inside [contentSelector] with the same scope
+ * object you've returned in [scopeSpec]. Then you may pass this scoped ViewModelStoreOwner
+ * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
+ * easily accessible from different destinations.
+ *
+ * @param controller a navigation controller that will provide its backstack to this NavHost.
  * The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but setting a different [NavController] will be handled correctly.
+ *
+ * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
+ * create and access shared ViewModels.
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
  * be displayed when the backstack is empty. In the majority of cases you don't need
  * to set this. Note that the provided composable wouldn't get its own scoped components.
  *
  * @param contentSelector provides a composable that corresponds to the current last destination
- * in the backstack. In other words, here is where you select UI to show (e.g. a screen).
+ * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
+ * provides additional functionality of the ScopingNavHost through the [ScopingNavHostScope].
  */
 @Composable
 fun <T, S> ScopingNavHost(
@@ -129,26 +149,44 @@ fun <T, S> ScopingNavHost(
  * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
  * for every unique [NavEntry] in the [backstack].
  *
- * Additionally, this version of NavHost gives you the ability to define scoped
- * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
- *
  * This composable doesn't provide animated transitions between destinations - it will simply
  * jump-cut to the next destination.
  *
  * If you need animated transitions use [AnimatedNavHost] instead. For smoother transitions
  * between dialogs use [DialogNavHost].
  *
+ * **Scoping:**
+ *
+ * This version of NavHost gives you the ability to define scoped
+ * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
+ *
+ * To do so, you must return a desired set of scopes for each requested destination in
+ * [scopeSpec]. This information will then be used to associate different entries to specified
+ * scopes and keep each scoped ViewModelStoreOwner until any of its associated entries is present
+ * in the backstack. When none of the entries are present anymore, the scoped ViewModelStoreOwner
+ * and all of its ViewModels will be cleared.
+ *
+ * To access a scoped ViewModelStoreOwner, you may call
+ * [ScopingNavHostScope.getScopedViewModelStoreOwner] inside [contentSelector] with the same scope
+ * object you've returned in [scopeSpec]. Then you may pass this scoped ViewModelStoreOwner
+ * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
+ * easily accessible from different destinations.
+ *
  * @param backstack the backstack from a [NavController] that will be used to observe navigation
  * changes. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but using a different [NavController] and setting its backstack will be handled correctly.
+ *
+ * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
+ * create and access shared ViewModels.
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
  * be displayed when the backstack is empty. In the majority of cases you don't need
  * to set this. Note that the provided composable wouldn't get its own scoped components.
  *
  * @param contentSelector provides a composable that corresponds to the current last destination
- * in the backstack. In other words, here is where you select UI to show (e.g. a screen).
+ * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
+ * provides additional functionality of the ScopingNavHost through the [ScopingNavHostScope].
  */
 @Composable
 fun <T, S> ScopingNavHost(
@@ -162,6 +200,7 @@ fun <T, S> ScopingNavHost(
     contentSelector = contentSelector
 )
 
+@OptIn(ExperimentalReimaginedApi::class)
 @Composable
 internal fun <T, S> ScopingNavHost(
     state: NavHostState<T, S>,

@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -96,18 +97,8 @@ enum class BottomSheetValue {
 }
 
 /**
- * State of the [BottomSheetLayout] composable.
- *
- * @param initialValue The initial value of the state. <b>Must not be set to
- * [BottomSheetValue.HalfExpanded] if [isSkipHalfExpanded] is set to true.</b>
- * @param animationSpec The default animation that will be used to animate to a new state.
- * @param isSkipHalfExpanded Whether the half expanded state, if the sheet is tall enough, should
- * be skipped. If true, the sheet will always expand to the [Expanded] state and move to the
- * [Hidden] state when hiding the sheet, either programmatically or by user interaction.
- * <b>Must not be set to true if the [initialValue] is [BottomSheetValue.HalfExpanded].</b>
- * If supplied with [BottomSheetValue.HalfExpanded] for the [initialValue], an
- * [IllegalArgumentException] will be thrown.
- * @param confirmStateChange Optional callback invoked to confirm or veto a pending state change.
+ * State of the internal [BottomSheetLayout] composable inside [BottomSheetNavHost]. This is
+ * direct analogue of [ModalBottomSheetState] from Material package.
  */
 @ExperimentalMaterialApi
 @Stable
@@ -219,26 +210,6 @@ class BottomSheetState internal constructor(
 
 }
 
-/**
- * <a href="https://material.io/components/sheets-bottom#modal-bottom-sheet" class="external" target="_blank">Material Design modal bottom sheet</a>.
- *
- * Modal bottom sheets present a set of choices while blocking interaction with the rest of the
- * screen. They are an alternative to inline menus and simple dialogs, providing
- * additional room for content, iconography, and actions.
- *
- * ![Modal bottom sheet image](https://developer.android.com/images/reference/androidx/compose/material/modal-bottom-sheet.png)
- *
- * A simple example of a modal bottom sheet looks like this:
- *
- * @param sheetContent The content of the bottom sheet.
- * @param sheetState The state of the bottom sheet.
- * @param sheetShape The shape of the bottom sheet.
- * @param sheetElevation The elevation of the bottom sheet.
- * @param sheetBackgroundColor The background color of the bottom sheet.
- * @param sheetContentColor The preferred content color provided by the bottom sheet to its
- * children. Defaults to the matching content color for [sheetBackgroundColor], or if that is not
- * a color from the theme, this will keep the same content color set above the bottom sheet.
- */
 @ExperimentalMaterialApi
 @Composable
 internal fun BottomSheetLayout(
@@ -400,9 +371,21 @@ internal object BottomSheetDefaults {
         )
 }
 
+/**
+ * Bottom sheet properties.
+ *
+ * @param animationSpec the default animation that will be used to animate to a new state
+ * @param isSkipHalfExpanded whether the half expanded state, if the sheet is tall enough, should
+ * be skipped. If true, the sheet will always expand to the [Expanded] state and move to the
+ * [Hidden] state when hiding the sheet, either programmatically or by user interaction.
+ * @param confirmStateChange optional callback invoked to confirm or veto a pending state change
+ */
 @ExperimentalMaterialApi
 class BottomSheetProperties(
     val animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
     val isSkipHalfExpanded: Boolean = false,
     val confirmStateChange: (BottomSheetValue) -> Boolean = { true }
 )
+
+@ExperimentalMaterialApi
+val DefaultBottomSheetProperties = BottomSheetProperties()
