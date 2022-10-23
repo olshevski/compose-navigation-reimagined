@@ -20,7 +20,7 @@ import androidx.lifecycle.ViewModelStoreOwner
  * for every unique [NavEntry] in the [controller's][controller] backstack.
  *
  * This composable uses animated transitions to switch between destinations. You may set a custom
- * [AnimatedNavHostTransitionSpec] to specify the desired transitions.
+ * [NavTransitionSpec] to specify the desired transitions.
  *
  * If you don't need animated transitions use [NavHost] instead.
  *
@@ -43,7 +43,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 @Composable
 fun <T> AnimatedNavHost(
     controller: NavController<T>,
-    transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
+    transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
 ) = AnimatedNavHost(
@@ -59,7 +59,7 @@ fun <T> AnimatedNavHost(
  * for every unique [NavEntry] in the [backstack].
  *
  * This composable uses animated transitions to switch between destinations. You may set a custom
- * [AnimatedNavHostTransitionSpec] to specify the desired transitions.
+ * [NavTransitionSpec] to specify the desired transitions.
  *
  * If you don't need animated transitions use [NavHost] instead.
  *
@@ -82,7 +82,7 @@ fun <T> AnimatedNavHost(
 @Composable
 fun <T> AnimatedNavHost(
     backstack: NavBackstack<T>,
-    transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
+    transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
 ) = AnimatedNavHost(
@@ -96,7 +96,7 @@ fun <T> AnimatedNavHost(
 @Composable
 internal fun <T, S> AnimatedNavHost(
     state: NavHostState<T, S>,
-    transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
+    transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(T) -> Unit
 ) = ScopingAnimatedNavHost(
@@ -115,7 +115,7 @@ internal fun <T, S> AnimatedNavHost(
  * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
  *
  * This composable uses animated transitions to switch between destinations. You may set a custom
- * [AnimatedNavHostTransitionSpec] to specify the desired transitions.
+ * [NavTransitionSpec] to specify the desired transitions.
  *
  * If you don't need animated transitions use [NavHost] instead.
  *
@@ -139,7 +139,7 @@ internal fun <T, S> AnimatedNavHost(
 fun <T, S> ScopingAnimatedNavHost(
     controller: NavController<T>,
     scopeSpec: NavScopeSpec<T, S>,
-    transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
+    transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(T) -> Unit
 ) = ScopingAnimatedNavHost(
@@ -159,7 +159,7 @@ fun <T, S> ScopingAnimatedNavHost(
  * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
  *
  * This composable uses animated transitions to switch between destinations. You may set a custom
- * [AnimatedNavHostTransitionSpec] to specify the desired transitions.
+ * [NavTransitionSpec] to specify the desired transitions.
  *
  * If you don't need animated transitions use [NavHost] instead.
  *
@@ -183,7 +183,7 @@ fun <T, S> ScopingAnimatedNavHost(
 fun <T, S> ScopingAnimatedNavHost(
     backstack: NavBackstack<T>,
     scopeSpec: NavScopeSpec<T, S>,
-    transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
+    transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(T) -> Unit
 ) = ScopingAnimatedNavHost(
@@ -197,7 +197,7 @@ fun <T, S> ScopingAnimatedNavHost(
 @Composable
 internal fun <T, S> ScopingAnimatedNavHost(
     state: NavHostState<T, S>,
-    transitionSpec: AnimatedNavHostTransitionSpec<T> = CrossfadeTransitionSpec,
+    transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(T) -> Unit
 ) = BaseNavHost(state) { targetSnapshot ->
@@ -232,7 +232,7 @@ internal fun <T, S> ScopingAnimatedNavHost(
 
 @ExperimentalAnimationApi
 private fun <T, S> AnimatedContentScope<NavSnapshot<T, S>>.selectTransition(
-    transitionSpec: AnimatedNavHostTransitionSpec<T>,
+    transitionSpec: NavTransitionSpec<T>,
     action: NavAction,
 ): ContentTransform {
     val initialStateLastEntry = initialState.items.lastOrNull()?.hostEntry
@@ -242,7 +242,7 @@ private fun <T, S> AnimatedContentScope<NavSnapshot<T, S>>.selectTransition(
     // For some reason AnimatedContent calls for transitionSpec even when created initially
     // which doesn't make much sense.
     return if (initialStateLastEntry?.id != targetStateLastEntry?.id) {
-        val scope = AnimatedNavHostTransitionScopeImpl(this)
+        val scope = NavTransitionScopeImpl(this)
         with(transitionSpec) {
             when {
                 initialStateLastEntry == null -> scope.fromEmptyBackstack(

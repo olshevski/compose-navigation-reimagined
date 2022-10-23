@@ -2,7 +2,7 @@ package dev.olshevski.navigation.reimagined
 
 fun interface NavScopeSpec<in T, out S> {
 
-    fun getDestinationScopes(destination: T): Set<S>
+    fun getScopes(destination: T): Set<S>
 
 }
 

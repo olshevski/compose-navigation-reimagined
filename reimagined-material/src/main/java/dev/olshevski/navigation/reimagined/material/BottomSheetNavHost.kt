@@ -44,7 +44,7 @@ fun <T> BottomSheetNavHost(
     sheetElevation: Dp = BottomSheetDefaults.Elevation,
     sheetBackgroundColor: Color = MaterialTheme.colors.surface,
     sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
-    sheetPropertiesSpec: (T) -> BottomSheetProperties = { DefaultBottomSheetProperties },
+    sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(T) -> Unit,
 ) = BottomSheetNavHost(
@@ -70,7 +70,7 @@ fun <T> BottomSheetNavHost(
     sheetElevation: Dp = BottomSheetDefaults.Elevation,
     sheetBackgroundColor: Color = MaterialTheme.colors.surface,
     sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
-    sheetPropertiesSpec: (T) -> BottomSheetProperties = { DefaultBottomSheetProperties },
+    sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(T) -> Unit,
 ) = ScopingBottomSheetNavHost(
@@ -98,7 +98,7 @@ fun <T, S> ScopingBottomSheetNavHost(
     sheetElevation: Dp = BottomSheetDefaults.Elevation,
     sheetBackgroundColor: Color = MaterialTheme.colors.surface,
     sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
-    sheetPropertiesSpec: (T) -> BottomSheetProperties = { DefaultBottomSheetProperties },
+    sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(T) -> Unit,
 ) = ScopingBottomSheetNavHost(
@@ -133,7 +133,7 @@ fun <T, S> ScopingBottomSheetNavHost(
     sheetElevation: Dp = BottomSheetDefaults.Elevation,
     sheetBackgroundColor: Color = MaterialTheme.colors.surface,
     sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
-    sheetPropertiesSpec: (T) -> BottomSheetProperties = { DefaultBottomSheetProperties },
+    sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(T) -> Unit,
 ) = BaseNavHost(
@@ -165,7 +165,7 @@ fun <T, S> ScopingBottomSheetNavHost(
                             hostEntryId = lastEntry.id,
                             initialValue = savedState.value,
                             isTransitionRunningState = isTransitionRunningState,
-                            sheetProperties = sheetPropertiesSpec(lastEntry.destination)
+                            sheetProperties = sheetPropertiesSpec.getBottomSheetProperties(lastEntry.destination)
                         )
                     )
                 } else {
@@ -176,7 +176,8 @@ fun <T, S> ScopingBottomSheetNavHost(
     ) {
         mutableStateOf(
             currentSnapshot.lastEntry?.let { lastEntry ->
-                val sheetProperties = sheetPropertiesSpec(lastEntry.destination)
+                val sheetProperties =
+                    sheetPropertiesSpec.getBottomSheetProperties(lastEntry.destination)
                 BottomSheetState(
                     hostEntryId = lastEntry.id,
                     initialValue = if (sheetProperties.isSkipHalfExpanded) {
@@ -247,7 +248,7 @@ fun <T, S> ScopingBottomSheetNavHost(
                     hostEntryId = lastEntry.id,
                     initialValue = BottomSheetValue.Hidden,
                     isTransitionRunningState = isTransitionRunningState,
-                    sheetProperties = sheetPropertiesSpec(lastEntry.destination)
+                    sheetProperties = sheetPropertiesSpec.getBottomSheetProperties(lastEntry.destination)
                 )
             }
 

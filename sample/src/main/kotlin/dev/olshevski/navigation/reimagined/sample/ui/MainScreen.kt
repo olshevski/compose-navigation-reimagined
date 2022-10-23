@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
-import dev.olshevski.navigation.reimagined.AnimatedNavHostTransitionSpec
+import dev.olshevski.navigation.reimagined.NavTransitionSpec
 import dev.olshevski.navigation.reimagined.NavBackHandler
 import dev.olshevski.navigation.reimagined.navController
 import dev.olshevski.navigation.reimagined.navigate
@@ -29,7 +29,7 @@ import dev.olshevski.navigation.reimagined.sample.ui.demo.ScopedViewModelsScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.ViewModelsScreen
 
 private val MainNavHostTransitionSpec =
-    AnimatedNavHostTransitionSpec<MainDestination> { _, from, _ ->
+    NavTransitionSpec<MainDestination> { _, from, _ ->
         if (from == MainDestination.Splash) {
             val outDuration = 100
             fadeIn(

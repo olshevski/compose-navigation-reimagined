@@ -120,7 +120,7 @@ internal class NavHostState<T, S>(
             .forEach { removeComponents(it) }
 
         val backstackEntryScopes =
-            backstack.entries.flatMap { scopeSpec.getDestinationScopes(it.destination) }
+            backstack.entries.flatMap { scopeSpec.getScopes(it.destination) }
                 .toHashSet()
         val (scopedRecordsToRestore, scopedRecordsToRemove) =
             savedState.scopedHostEntryRecords.partition { it.scope in backstackEntryScopes }
@@ -141,7 +141,7 @@ internal class NavHostState<T, S>(
                     hostEntry = hostEntriesMap.getOrPut(entry.id) {
                         newHostEntry(entry)
                     },
-                    scopedHostEntries = scopeSpec.getDestinationScopes(entry.destination)
+                    scopedHostEntries = scopeSpec.getScopes(entry.destination)
                         .associateWith { scope ->
                             scopedHostEntriesMap.getOrPut(scope) {
                                 newScopedHostEntry(id = NavId(), scope = scope)

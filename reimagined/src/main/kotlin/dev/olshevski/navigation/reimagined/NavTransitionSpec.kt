@@ -15,23 +15,22 @@ import androidx.compose.animation.with
  * The specification of all animated transition between destinations. Used in [AnimatedNavHost].
  */
 @ExperimentalAnimationApi
-fun interface AnimatedNavHostTransitionSpec<in T> {
+fun interface NavTransitionSpec<in T> {
 
     /**
      * Returns a [ContentTransform] that describes the desired transition between
      * destinations [to] and [from].
      *
-     * This method is called in [AnimatedNavHostTransitionScope] and provides convenient
-     * methods [AnimatedNavHostTransitionScope.slideOutOfContainer],
-     * [AnimatedNavHostTransitionScope.slideIntoContainer]
-     * and [AnimatedNavHostTransitionScope.using]. This is the same methods that you would be
+     * This method is called in [NavTransitionScope] and provides convenient
+     * methods [NavTransitionScope.slideOutOfContainer],
+     * [NavTransitionScope.slideIntoContainer]
+     * and [NavTransitionScope.using]. This is the same methods that you would be
      * using in [AnimatedContentScope] from [AnimatedContent] composable. In fact,
      * [AnimatedNavHost] uses `AnimatedContent` under the hood, so you may explore documentation
      * of `AnimatedContent` for better understanding of the API.
      *
      * If you want to provide a specific transition to and from an empty backstack state,
-     * override methods [toEmptyBackstack] and [fromEmptyBackstack] of
-     * [AnimatedNavHostTransitionSpec].
+     * override methods [toEmptyBackstack] and [fromEmptyBackstack] of [NavTransitionSpec].
      *
      * @param action a hint about the last change done through a [NavController]. May be used
      * to select an animation that better corresponds to the action. A simple example would be
@@ -45,7 +44,7 @@ fun interface AnimatedNavHostTransitionSpec<in T> {
      * @see AnimatedContent
      * @see AnimatedContentScope
      */
-    fun AnimatedNavHostTransitionScope.getContentTransform(
+    fun NavTransitionScope.getContentTransform(
         action: NavAction,
         from: T,
         to: T
@@ -58,7 +57,7 @@ fun interface AnimatedNavHostTransitionSpec<in T> {
      * Note: you may need set some non-zero width/height composable as
      * `emptyBackstackPlaceholder` in [AnimatedNavHost] in order for a transition to run correctly.
      */
-    fun AnimatedNavHostTransitionScope.toEmptyBackstack(
+    fun NavTransitionScope.toEmptyBackstack(
         action: NavAction,
         from: T
     ): ContentTransform = EnterTransition.None with ExitTransition.None
@@ -70,7 +69,7 @@ fun interface AnimatedNavHostTransitionSpec<in T> {
      * Note: you may need set some non-zero width/height composable as
      * `emptyBackstackPlaceholder` in [AnimatedNavHost] in order for a transition to run correctly.
      */
-    fun AnimatedNavHostTransitionScope.fromEmptyBackstack(
+    fun NavTransitionScope.fromEmptyBackstack(
         action: NavAction,
         to: T
     ): ContentTransform = EnterTransition.None with ExitTransition.None
@@ -78,24 +77,31 @@ fun interface AnimatedNavHostTransitionSpec<in T> {
 }
 
 @ExperimentalAnimationApi
-internal val CrossfadeTransitionSpec = object : AnimatedNavHostTransitionSpec<Any?> {
+internal val CrossfadeTransitionSpec = object : NavTransitionSpec<Any?> {
 
     private fun crossfade() = fadeIn(tween()) with fadeOut(tween())
 
-    override fun AnimatedNavHostTransitionScope.getContentTransform(
+    override fun NavTransitionScope.getContentTransform(
         action: NavAction,
         from: Any?,
         to: Any?
     ): ContentTransform = crossfade()
 
-    override fun AnimatedNavHostTransitionScope.toEmptyBackstack(
+    override fun NavTransitionScope.toEmptyBackstack(
         action: NavAction,
         from: Any?
     ): ContentTransform = crossfade()
 
-    override fun AnimatedNavHostTransitionScope.fromEmptyBackstack(
+    override fun NavTransitionScope.fromEmptyBackstack(
         action: NavAction,
         to: Any?
     ): ContentTransform = crossfade()
 
 }
+
+@Deprecated(
+    message = "Renamed to NavTransitionSpec for simplicity",
+    replaceWith = ReplaceWith("NavTransitionSpec<T>")
+)
+@OptIn(ExperimentalAnimationApi::class)
+typealias AnimatedNavHostTransitionSpec<T> = NavTransitionSpec<T>

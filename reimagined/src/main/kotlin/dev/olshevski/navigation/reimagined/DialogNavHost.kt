@@ -10,7 +10,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.ViewModelStoreOwner
 
 @ExperimentalAnimationApi
-private val NoneTransitionSpec = AnimatedNavHostTransitionSpec<Any?> { _, _, _ ->
+private val NoneTransitionSpec = NavTransitionSpec<Any?> { _, _, _ ->
     EnterTransition.None with ExitTransition.None
 }
 

@@ -406,6 +406,3 @@ class BottomSheetProperties(
     val isSkipHalfExpanded: Boolean = false,
     val confirmStateChange: (BottomSheetValue) -> Boolean = { true }
 )
-
-@ExperimentalMaterialApi
-val DefaultBottomSheetProperties = BottomSheetProperties()

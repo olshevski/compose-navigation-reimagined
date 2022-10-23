@@ -17,7 +17,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.ui.unit.IntOffset
 
 @ExperimentalAnimationApi
-interface AnimatedNavHostTransitionScope {
+interface NavTransitionScope {
 
     /**
      * This defines a horizontal/vertical exit transition to completely slide out of the
@@ -74,9 +74,9 @@ interface AnimatedNavHostTransitionScope {
 }
 
 @ExperimentalAnimationApi
-internal class AnimatedNavHostTransitionScopeImpl<S>(
+internal class NavTransitionScopeImpl<S>(
     private val animatedContentScope: AnimatedContentScope<S>
-) : AnimatedNavHostTransitionScope {
+) : NavTransitionScope {
 
     override fun slideOutOfContainer(
         towards: SlideDirection,
@@ -94,3 +94,10 @@ internal class AnimatedNavHostTransitionScopeImpl<S>(
         with(animatedContentScope) { using(sizeTransform) }
 
 }
+
+@Deprecated(
+    message = "Renamed to NavTransitionScope for simplicity",
+    replaceWith = ReplaceWith("NavTransitionScope")
+)
+@OptIn(ExperimentalAnimationApi::class)
+typealias AnimatedNavHostTransitionScope = NavTransitionScope

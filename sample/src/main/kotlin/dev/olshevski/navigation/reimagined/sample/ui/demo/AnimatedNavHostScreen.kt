@@ -7,9 +7,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
-import dev.olshevski.navigation.reimagined.AnimatedNavHostTransitionSpec
 import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.NavBackHandler
+import dev.olshevski.navigation.reimagined.NavTransitionSpec
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.sample.R
@@ -18,7 +18,7 @@ import dev.olshevski.navigation.reimagined.sample.ui.CenteredText
 import dev.olshevski.navigation.reimagined.sample.ui.ContentLayout
 import dev.olshevski.navigation.reimagined.sample.ui.ScreenLayout
 
-private val AnimatedNavHostTransitionSpec = AnimatedNavHostTransitionSpec<Int> { action, from, to ->
+private val SlideTransitionSpec = NavTransitionSpec<Int> { action, from, to ->
     val directionsCount = 4
     val direction = when (action) {
         NavAction.Pop -> when (from.mod(directionsCount)) {
@@ -48,7 +48,7 @@ fun AnimatedNavHostScreen() = ScreenLayout(
 
     AnimatedNavHost(
         controller = navController,
-        transitionSpec = AnimatedNavHostTransitionSpec
+        transitionSpec = SlideTransitionSpec
     ) { destination ->
         ContentLayout(
             title = stringResource(R.string.animated_nav_host__screen_title, destination)
