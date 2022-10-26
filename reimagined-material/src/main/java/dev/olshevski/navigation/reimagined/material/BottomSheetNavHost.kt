@@ -428,13 +428,14 @@ fun <T, S> ScopingBottomSheetNavHost(
     }
 
     LaunchedEffect(Unit) {
-        snapshotFlow { sheetState?.currentValue }
-            .filter { it == BottomSheetValue.Hidden }
-            .collect {
-                if (!isTransitionRunning) {
-                    onDismissRequest()
-                }
+        snapshotFlow {
+            !isTransitionRunning && sheetState?.targetValue == BottomSheetValue.Hidden
+                    && sheetState?.isAnimationRunning == true
+        }.collect {
+            if (it) {
+                onDismissRequest()
             }
+        }
     }
 
     currentSnapshot
