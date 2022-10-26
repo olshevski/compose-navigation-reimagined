@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -296,10 +297,14 @@ fun <T, S> ScopingBottomSheetNavHost(
 ) = BaseNavHost(
     backstack = backstack,
     scopeSpec = scopeSpec
-) { targetSnapshot ->
+) { snapshot ->
+    val targetSnapshot by rememberUpdatedState(snapshot)
     var currentSnapshot by remember { mutableStateOf(targetSnapshot) }
-    val isTransitionRunningState = remember { mutableStateOf(false) }
-    var isTransitionRunning by isTransitionRunningState
+    var isTransitionAnimating by remember { mutableStateOf(false) }
+    val isTransitionRunningState = remember {
+        derivedStateOf { currentSnapshot != targetSnapshot || isTransitionAnimating }
+    }
+    val isTransitionRunning by isTransitionRunningState
     var sheetState: BottomSheetState? by rememberSaveable(
         saver = Saver(
             save = { mutableState ->
@@ -348,14 +353,13 @@ fun <T, S> ScopingBottomSheetNavHost(
         )
     }
 
-    val isScrimVisible by remember(targetSnapshot) {
+    val isScrimVisible by remember {
         derivedStateOf {
-            val visibleBetweenTransitions =
-                isTransitionRunning && targetSnapshot.items.isNotEmpty()
-            val visibleForExpandedStates = sheetState?.targetValue.let {
-                it != null && it != BottomSheetValue.Hidden
+            if (isTransitionRunning) {
+                targetSnapshot.items.isNotEmpty()
+            } else {
+                currentSnapshot.items.isNotEmpty()
             }
-            visibleBetweenTransitions || visibleForExpandedStates
         }
     }
 
@@ -395,8 +399,12 @@ fun <T, S> ScopingBottomSheetNavHost(
 
     LaunchedEffect(targetSnapshot) {
         if (targetSnapshot.lastEntry != currentSnapshot.lastEntry) {
-            isTransitionRunning = true
-            sheetState?.hide()
+            isTransitionAnimating = true
+            sheetState?.let { sheetState ->
+                if (sheetState.currentValue != BottomSheetValue.Hidden) {
+                    sheetState.hide()
+                }
+            }
 
             currentSnapshot = targetSnapshot
             sheetState = currentSnapshot.lastEntry?.let { lastEntry ->
@@ -413,7 +421,7 @@ fun <T, S> ScopingBottomSheetNavHost(
                 snapshotFlow { sheetState.anchors }.filter { it.isNotEmpty() }.first()
                 sheetState.show()
             }
-            isTransitionRunning = false
+            isTransitionAnimating = false
         } else {
             currentSnapshot = targetSnapshot
         }
@@ -478,4 +486,5 @@ private data class BottomSheetSavedState(
 ) : Parcelable
 
 @ExperimentalReimaginedApi
-private val <T, S> NavSnapshot<T, S>.lastEntry get() = items.lastOrNull()?.hostEntry
+private val <T, S> NavSnapshot<T, S>.lastEntry
+    get() = items.lastOrNull()?.hostEntry
