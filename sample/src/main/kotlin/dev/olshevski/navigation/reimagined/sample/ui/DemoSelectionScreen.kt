@@ -34,9 +34,9 @@ fun DemoSelectionScreen(
         modifier = Modifier
             .width(IntrinsicSize.Min)
             .align(Alignment.CenterHorizontally)
-            .padding(vertical = 16.dp),
+            .padding(vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         listOf(
             R.string.demo_selection__pass_values_button to onPassValuesButtonClick,
@@ -60,7 +60,7 @@ fun DemoSelectionScreen(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     text = stringResource(it.first),
                     color = MaterialTheme.colors.onBackground,
-                    fontSize = 15.sp
+                    fontSize = 16.sp
                 )
             }
         }
