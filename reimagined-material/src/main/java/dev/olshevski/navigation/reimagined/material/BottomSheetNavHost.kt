@@ -292,11 +292,14 @@ fun <T, S> ScopingBottomSheetNavHost(
 ) { snapshot ->
     val targetSnapshot by rememberUpdatedState(snapshot)
     var currentSnapshot by remember { mutableStateOf(targetSnapshot) }
-    var isTransitionAnimating by remember { mutableStateOf(false) }
-    val isTransitionRunningState = remember {
-        derivedStateOf { currentSnapshot != targetSnapshot || isTransitionAnimating }
+
+    // isTransitionRunning marks the switch from targetSnapshot to currentSnapshot,
+    // while isTransitionAnimating is for the whole animation of the sheet change
+    val isTransitionRunning = remember {
+        derivedStateOf { currentSnapshot != targetSnapshot }
     }
-    val isTransitionRunning by isTransitionRunningState
+    var isTransitionAnimating by remember { mutableStateOf(false) }
+
     var sheetState: BottomSheetState? by rememberSaveable(
         saver = Saver(
             save = { mutableState ->
@@ -317,7 +320,7 @@ fun <T, S> ScopingBottomSheetNavHost(
                         BottomSheetState(
                             hostEntryId = lastEntry.id,
                             initialValue = savedState.value,
-                            isTransitionRunningState = isTransitionRunningState,
+                            isTransitionRunningState = isTransitionRunning,
                             sheetProperties = sheetPropertiesSpec.getBottomSheetProperties(lastEntry.destination)
                         )
                     )
@@ -338,7 +341,7 @@ fun <T, S> ScopingBottomSheetNavHost(
                     } else {
                         BottomSheetValue.HalfExpanded
                     },
-                    isTransitionRunningState = isTransitionRunningState,
+                    isTransitionRunningState = isTransitionRunning,
                     sheetProperties = sheetProperties
                 )
             }
@@ -347,7 +350,7 @@ fun <T, S> ScopingBottomSheetNavHost(
 
     val isScrimVisible by remember {
         derivedStateOf {
-            if (isTransitionRunning) {
+            if (isTransitionRunning.value) {
                 targetSnapshot.items.isNotEmpty()
             } else {
                 currentSnapshot.items.isNotEmpty()
@@ -391,29 +394,32 @@ fun <T, S> ScopingBottomSheetNavHost(
 
     LaunchedEffect(targetSnapshot) {
         if (targetSnapshot.lastEntry != currentSnapshot.lastEntry) {
-            isTransitionAnimating = true
-            sheetState?.let { sheetState ->
-                if (sheetState.currentValue != BottomSheetValue.Hidden) {
-                    sheetState.hide()
+            try {
+                isTransitionAnimating = true
+                sheetState?.let { sheetState ->
+                    if (sheetState.currentValue != BottomSheetValue.Hidden) {
+                        sheetState.hide()
+                    }
                 }
-            }
 
-            currentSnapshot = targetSnapshot
-            sheetState = currentSnapshot.lastEntry?.let { lastEntry ->
-                BottomSheetState(
-                    hostEntryId = lastEntry.id,
-                    initialValue = BottomSheetValue.Hidden,
-                    isTransitionRunningState = isTransitionRunningState,
-                    sheetProperties = sheetPropertiesSpec.getBottomSheetProperties(lastEntry.destination)
-                )
-            }
+                currentSnapshot = targetSnapshot
+                sheetState = currentSnapshot.lastEntry?.let { lastEntry ->
+                    BottomSheetState(
+                        hostEntryId = lastEntry.id,
+                        initialValue = BottomSheetValue.Hidden,
+                        isTransitionRunningState = isTransitionRunning,
+                        sheetProperties = sheetPropertiesSpec.getBottomSheetProperties(lastEntry.destination)
+                    )
+                }
 
-            sheetState?.let { sheetState ->
-                // wait until anchors are calculated
-                snapshotFlow { sheetState.anchors }.filter { it.isNotEmpty() }.first()
-                sheetState.show()
+                sheetState?.let { sheetState ->
+                    // wait until anchors are calculated
+                    snapshotFlow { sheetState.anchors }.filter { it.isNotEmpty() }.first()
+                    sheetState.show()
+                }
+            } finally {
+                isTransitionAnimating = false
             }
-            isTransitionAnimating = false
         } else {
             currentSnapshot = targetSnapshot
         }
@@ -421,7 +427,7 @@ fun <T, S> ScopingBottomSheetNavHost(
 
     LaunchedEffect(Unit) {
         snapshotFlow {
-            !isTransitionRunning && sheetState?.targetValue == BottomSheetValue.Hidden
+            !isTransitionAnimating && sheetState?.targetValue == BottomSheetValue.Hidden
                     && sheetState?.isAnimationRunning == true
         }.collect {
             if (it) {
