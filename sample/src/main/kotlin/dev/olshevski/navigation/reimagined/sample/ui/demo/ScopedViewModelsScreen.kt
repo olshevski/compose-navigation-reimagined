@@ -28,10 +28,10 @@ import dev.olshevski.navigation.reimagined.sample.ui.TestInputTag
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-private object Scope : Parcelable
+private data object Scope : Parcelable
 
 private val ScopeSpec = NavScopeSpec<ScopedViewModelsDestination, Scope> {
-    if (it is ScopedViewModelsDestination.Second || it is ScopedViewModelsDestination.Third) {
+    if (it == ScopedViewModelsDestination.Second || it == ScopedViewModelsDestination.Third) {
         setOf(Scope)
     } else {
         emptySet()
@@ -42,8 +42,7 @@ private val ScopeSpec = NavScopeSpec<ScopedViewModelsDestination, Scope> {
 fun ScopedViewModelsScreen() = ScreenLayout(
     title = stringResource(R.string.scoped_view_models__demo_screen_title)
 ) {
-    val navController =
-        rememberNavController<ScopedViewModelsDestination>(startDestination = ScopedViewModelsDestination.First)
+    val navController = rememberNavController(startDestination = ScopedViewModelsDestination.First)
 
     NavBackHandler(navController)
 

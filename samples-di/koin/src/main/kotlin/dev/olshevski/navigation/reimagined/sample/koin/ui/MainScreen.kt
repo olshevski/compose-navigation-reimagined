@@ -11,8 +11,8 @@ import dev.olshevski.navigation.reimagined.NavHost
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.sample.koin.R
-import org.koin.androidx.compose.getStateViewModel
 import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 internal const val DemoId = 123
@@ -83,6 +83,5 @@ private fun ThirdScreen(
 ) = ContentLayout(
     title = stringResource(R.string.third_screen_title, text)
 ) {
-    @Suppress("DEPRECATION")
-    val viewModel = getStateViewModel<ThirdViewModel> { parametersOf(text) }
+    val viewModel = koinViewModel<ThirdViewModel> { parametersOf(text) }
 }

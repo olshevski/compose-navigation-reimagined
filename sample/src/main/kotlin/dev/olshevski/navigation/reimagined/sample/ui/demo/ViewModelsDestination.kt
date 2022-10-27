@@ -6,10 +6,10 @@ import kotlinx.parcelize.Parcelize
 sealed class ViewModelsDestination : Parcelable {
 
     @Parcelize
-    object First : ViewModelsDestination()
+    data object First : ViewModelsDestination()
 
     @Parcelize
-    object Second : ViewModelsDestination()
+    data object Second : ViewModelsDestination()
 
     @Parcelize
     data class Third(val text: String) : ViewModelsDestination()

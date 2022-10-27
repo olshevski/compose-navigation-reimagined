@@ -20,17 +20,14 @@ class NavControllerParcelableTest {
 
     private val parcel = Parcel.obtain()
 
-    private val classLoader = this::class.java.classLoader
-
     @Test
     fun noItems() {
         val navController = navController(initialBackstack = emptyList<TestDestination>())
-        parcel.writeParcelable(navController, 0)
+        navController.writeToParcel(parcel, 0)
 
         parcel.setDataPosition(0)
 
-        val restoredController =
-            parcel.readParcelable<NavController<TestDestination>>(classLoader)!!
+        val restoredController = NavController.createFromParcel(parcel)
         assertThat(restoredController.backstack.entries.size).isEqualTo(0)
         assertThat(restoredController.backstack.action).isEqualTo(NavAction.Idle)
     }
@@ -38,12 +35,11 @@ class NavControllerParcelableTest {
     @Test
     fun singleItem() {
         val navController = navController(TestDestination.A)
-        parcel.writeParcelable(navController, 0)
+        navController.writeToParcel(parcel, 0)
 
         parcel.setDataPosition(0)
 
-        val restoredController =
-            parcel.readParcelable<NavController<TestDestination>>(classLoader)!!
+        val restoredController = NavController.createFromParcel(parcel)
         assertThat(restoredController.backstack.entries.size).isEqualTo(1)
         assertThat(restoredController.backstack.action).isEqualTo(NavAction.Idle)
     }
@@ -52,12 +48,11 @@ class NavControllerParcelableTest {
     fun nonDefaultAction() {
         val navController = navController(initialBackstack = emptyList<TestDestination>())
         navController.navigate(TestDestination.A)
-        parcel.writeParcelable(navController, 0)
+        navController.writeToParcel(parcel, 0)
 
         parcel.setDataPosition(0)
 
-        val restoredController =
-            parcel.readParcelable<NavController<TestDestination>>(classLoader)!!
+        val restoredController = NavController.createFromParcel(parcel)
         assertThat(restoredController.backstack.entries.size).isEqualTo(1)
         assertThat(restoredController.backstack.action).isEqualTo(NavAction.Navigate)
     }
@@ -76,11 +71,11 @@ class NavControllerParcelableTest {
             initialBackstack = backstackDestination
         )
 
-        parcel.writeParcelable(navController, 0)
+        navController.writeToParcel(parcel, 0)
 
         parcel.setDataPosition(0)
 
-        val restoredController = parcel.readParcelable<NavController<Any?>>(classLoader)!!
+        val restoredController = NavController.createFromParcel(parcel)
         assertThat(restoredController.backstack.entries.map { it.destination })
             .containsExactlyElementsIn(backstackDestination)
     }
@@ -104,11 +99,11 @@ class NavControllerParcelableTest {
             )
         )
 
-        parcel.writeParcelable(navController, 0)
+        navController.writeToParcel(parcel, 0)
 
         parcel.setDataPosition(0)
 
-        val restoredController = parcel.readParcelable<NavController<Any?>>(classLoader)!!
+        val restoredController = NavController.createFromParcel(parcel)
         restoredController.backstack.entries.let { entries ->
             assertThat(entries[1]).isSameInstanceAs(entries[5])
             assertThat(entries[2]).isSameInstanceAs(entries[3])

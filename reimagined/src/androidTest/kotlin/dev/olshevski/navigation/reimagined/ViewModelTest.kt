@@ -61,7 +61,10 @@ class ViewModelTest(
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
+
+            @Suppress("DEPRECATION")
             val hostParam = intent.getSerializableExtra(Extra.NavHostParam) as NavHostParam
+
             setContent {
                 screenController = rememberNavController(Screen.A)
                 screenState = rememberNavHostState(screenController.backstack, EmptyScopeSpec)

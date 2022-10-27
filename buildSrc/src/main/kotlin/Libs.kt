@@ -3,12 +3,12 @@ object Libs {
     object AndroidX {
 
         object Activity {
-            const val Compose = "androidx.activity:activity-compose:1.5.1"
+            const val Compose = "androidx.activity:activity-compose:1.6.1"
         }
 
         object Compose {
-            const val CompilerVersion = "1.3.1"
-            private const val Version = "1.2.1"
+            const val CompilerVersion = "1.3.2"
+            private const val Version = "1.3.0"
             const val Animation = "androidx.compose.animation:animation:$Version"
             const val Material = "androidx.compose.material:material:$Version"
             const val MaterialIconsExtended =
@@ -41,7 +41,7 @@ object Libs {
         const val Truth = "com.google.truth:truth:1.1.3"
 
         object Dagger {
-            const val Version = "2.43.2"
+            const val Version = "2.44"
             const val Api = "com.google.dagger:dagger:$Version"
             const val Compiler = "com.google.dagger:dagger-compiler:$Version"
             const val HiltAndroid = "com.google.dagger:hilt-android:$Version"
@@ -50,11 +50,11 @@ object Libs {
     }
 
     object JUnit {
-        const val Juniper = "org.junit.jupiter:junit-jupiter:5.9.0"
+        const val Juniper = "org.junit.jupiter:junit-jupiter:5.9.1"
     }
 
     object Koin {
-        const val Compose = "io.insert-koin:koin-androidx-compose:3.2.0"
+        const val Compose = "io.insert-koin:koin-androidx-compose:3.3.0"
     }
 
 }

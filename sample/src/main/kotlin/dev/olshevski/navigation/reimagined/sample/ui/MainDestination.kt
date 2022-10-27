@@ -5,35 +5,36 @@ import dev.olshevski.navigation.reimagined.sample.ui.demo.DeeplinksDestination
 import kotlinx.parcelize.Parcelize
 
 sealed class MainDestination : Parcelable {
-    @Parcelize
-    object Splash : MainDestination()
 
     @Parcelize
-    object DemoSelection : MainDestination()
+    data object Splash : MainDestination()
 
     @Parcelize
-    object PassValues : MainDestination()
+    data object DemoSelection : MainDestination()
 
     @Parcelize
-    object ReturnResults : MainDestination()
+    data object PassValues : MainDestination()
 
     @Parcelize
-    object AnimatedNavHost : MainDestination()
+    data object ReturnResults : MainDestination()
 
     @Parcelize
-    object DialogNavHost : MainDestination()
+    data object AnimatedNavHost : MainDestination()
 
     @Parcelize
-    object BottomSheetNavHost : MainDestination()
+    data object DialogNavHost : MainDestination()
 
     @Parcelize
-    object ViewModels : MainDestination()
+    data object BottomSheetNavHost : MainDestination()
 
     @Parcelize
-    object ScopedViewModels : MainDestination()
+    data object ViewModels : MainDestination()
 
     @Parcelize
-    object BottomNavigation : MainDestination()
+    data object ScopedViewModels : MainDestination()
+
+    @Parcelize
+    data object BottomNavigation : MainDestination()
 
     @Parcelize
     data class Deeplinks(

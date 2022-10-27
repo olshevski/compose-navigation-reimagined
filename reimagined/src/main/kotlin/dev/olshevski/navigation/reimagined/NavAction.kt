@@ -22,9 +22,7 @@ interface NavAction : Parcelable {
      */
     @Immutable
     @Parcelize
-    object Idle : NavAction {
-        override fun toString() = this::class.simpleName!!
-    }
+    data object Idle : NavAction
 
     /**
      * An action type that tells [NavController.navigate] or [NavController.moveToTop] was
@@ -32,9 +30,7 @@ interface NavAction : Parcelable {
      */
     @Immutable
     @Parcelize
-    object Navigate : NavAction {
-        override fun toString() = this::class.simpleName!!
-    }
+    data object Navigate : NavAction
 
     /**
      * An action type that tells [NavController.replaceLast], [NavController.replaceAll] or
@@ -42,9 +38,7 @@ interface NavAction : Parcelable {
      */
     @Immutable
     @Parcelize
-    object Replace : NavAction {
-        override fun toString() = this::class.simpleName!!
-    }
+    data object Replace : NavAction
 
     /**
      * An action type that tells [NavController.pop], [NavController.popAll] or
@@ -52,8 +46,6 @@ interface NavAction : Parcelable {
      */
     @Immutable
     @Parcelize
-    object Pop : NavAction {
-        override fun toString() = this::class.simpleName!!
-    }
+    data object Pop : NavAction
 
 }

@@ -173,7 +173,7 @@ class NavController<T> internal constructor(
             parcel.writeInt(entries.size)
             entries.forEach {
                 // write every id to preserve the order
-                parcel.writeParcelable(it.id, flags)
+                it.id.writeToParcel(parcel, flags)
                 if (it.id !in ids) {
                     ids.add(it.id)
                     // but write a destination only once, because there is no need to duplicate
@@ -197,7 +197,7 @@ class NavController<T> internal constructor(
             val entryMap = hashMapOf<NavId, NavEntry<Any?>>()
             return NavController(
                 initialEntries = List(parcel.readInt()) {
-                    val id = parcel.readParcelable<NavId>(classLoader)!!
+                    val id = NavId.createFromParcel(parcel)
                     entryMap.getOrPut(id) {
                         // Here we do the opposite to "writeToParcel" method and read
                         // the destination value only if its id appears for the first time.
@@ -209,7 +209,7 @@ class NavController<T> internal constructor(
                         )
                     }
                 },
-                initialAction = parcel.readParcelable(classLoader)!!
+                initialAction = @Suppress("DEPRECATION") parcel.readParcelable(classLoader)!!
             )
         }
 

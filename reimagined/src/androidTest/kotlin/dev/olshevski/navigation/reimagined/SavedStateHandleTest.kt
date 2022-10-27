@@ -83,9 +83,14 @@ class SavedStateHandleTest(
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
+
+            @Suppress("DEPRECATION")
             val hostParam = intent.getSerializableExtra(Extra.NavHostParam) as NavHostParam
+
+            @Suppress("DEPRECATION")
             val factoryParam =
                 intent.getSerializableExtra(Extra.FactoryParam) as ViewModelFactoryParam
+
             setContent {
                 screenController = rememberNavController(Screen.A)
                 screenState = rememberNavHostState(screenController.backstack, EmptyScopeSpec)

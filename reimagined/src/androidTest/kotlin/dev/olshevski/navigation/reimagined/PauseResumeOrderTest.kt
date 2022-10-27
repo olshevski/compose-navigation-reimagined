@@ -36,8 +36,8 @@ class PauseResumeOrderTest(private val param: NavHostParam) {
     private sealed class EventType {
         data class Lifecycle(val event: androidx.lifecycle.Lifecycle.Event) : EventType()
         sealed class DisposableEffect : EventType() {
-            object OnCreate : DisposableEffect()
-            object OnDispose : DisposableEffect()
+            data object OnCreate : DisposableEffect()
+            data object OnDispose : DisposableEffect()
         }
     }
 

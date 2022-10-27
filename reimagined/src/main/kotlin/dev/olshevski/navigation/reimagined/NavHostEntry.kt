@@ -51,6 +51,5 @@ fun <T> NavHostEntry<T>.ComponentsProvider(
     this.SaveableStateProvider(content)
 }
 
-@Suppress("unused")
 @Deprecated(message = "Renamed to NavHostEntry", replaceWith = ReplaceWith("NavHostEntry<T>"))
 typealias NavComponentEntry<T> = NavHostEntry<T>

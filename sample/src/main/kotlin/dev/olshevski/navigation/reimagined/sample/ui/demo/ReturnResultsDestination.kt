@@ -23,7 +23,7 @@ sealed class ReturnResultsDestination : Parcelable {
 
     @Immutable
     @Parcelize
-    object Second : ReturnResultsDestination()
+    data object Second : ReturnResultsDestination()
 
 }
 

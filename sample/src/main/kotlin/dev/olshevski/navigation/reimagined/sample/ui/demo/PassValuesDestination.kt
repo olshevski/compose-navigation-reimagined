@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 sealed class PassValuesDestination : Parcelable {
 
     @Parcelize
-    object A : PassValuesDestination()
+    data object A : PassValuesDestination()
 
     @Parcelize
     data class B(val id: Int) : PassValuesDestination()
