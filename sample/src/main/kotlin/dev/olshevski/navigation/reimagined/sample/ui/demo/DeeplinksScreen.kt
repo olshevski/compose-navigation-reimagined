@@ -33,12 +33,12 @@ fun DeeplinksScreen(
     NavHost(navController) { destination ->
         when (destination) {
             DeeplinksDestination.First -> FirstScreen(
-                toSecondScreenButtonClick = {
+                onOpenSecondScreenButtonClick = {
                     navController.navigate(DeeplinksDestination.Second)
                 }
             )
             DeeplinksDestination.Second -> SecondScreen(
-                toThirdScreenButtonClick = {
+                onOpenThirdScreenButtonClick = {
                     navController.navigate(DeeplinksDestination.Third("Hi"))
                 }
             )
@@ -50,7 +50,7 @@ fun DeeplinksScreen(
 
 @Composable
 private fun FirstScreen(
-    toSecondScreenButtonClick: () -> Unit
+    onOpenSecondScreenButtonClick: () -> Unit
 ) = ContentLayout(
     title = stringResource(R.string.deeplinks__first_screen_title)
 ) {
@@ -72,28 +72,28 @@ private fun FirstScreen(
     }
 
     CenteredText(
-        text = """Also, if the deeplinks don't work for some reason, please make sure
-            that "Open supported links" is enabled in the application settings and "olshevski.dev"
-            is a verified link.""".singleLine(),
+        text = """If the links are not opened in the app, please make sure that "Open supported
+            links" is enabled in the application settings and "olshevski.dev" is a verified link.
+            """.singleLine(),
     )
 
     Button(
-        onClick = { toSecondScreenButtonClick() }
+        onClick = { onOpenSecondScreenButtonClick() }
     ) {
-        Text(stringResource(R.string.deeplinks__to_second_screen_button))
+        Text(stringResource(R.string.deeplinks__open_second_screen_button))
     }
 }
 
 @Composable
 private fun SecondScreen(
-    toThirdScreenButtonClick: () -> Unit
+    onOpenThirdScreenButtonClick: () -> Unit
 ) = ContentLayout(
     title = stringResource(R.string.deeplinks__second_screen_title)
 ) {
     Button(
-        onClick = { toThirdScreenButtonClick() }
+        onClick = { onOpenThirdScreenButtonClick() }
     ) {
-        Text(stringResource(R.string.deeplinks__to_third_screen_button))
+        Text(stringResource(R.string.deeplinks__open_third_screen_button))
     }
 }
 

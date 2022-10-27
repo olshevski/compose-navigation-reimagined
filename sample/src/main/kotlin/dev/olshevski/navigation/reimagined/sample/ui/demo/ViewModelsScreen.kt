@@ -39,10 +39,10 @@ fun ViewModelsScreen() = ScreenLayout(
     NavHost(backstack = navigationViewModel.navBackstack) { destination ->
         when (destination) {
             ViewModelsDestination.First -> FirstScreen(
-                toSecondScreenButtonClick = navigationViewModel::toSecondScreenButtonClick
+                onOpenSecondScreenButtonClick = navigationViewModel::onOpenSecondScreenButtonClick
             )
             ViewModelsDestination.Second -> SecondScreen(
-                toThirdScreenButtonClick = navigationViewModel::toThirdScreenButtonClick
+                onOpenThirdScreenButtonClick = navigationViewModel::onOpenThirdScreenButtonClick
             )
             is ViewModelsDestination.Third -> ThirdScreen(destination.text)
         }
@@ -66,11 +66,11 @@ class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         navController.pop()
     }
 
-    fun toSecondScreenButtonClick() {
+    fun onOpenSecondScreenButtonClick() {
         navController.navigate(ViewModelsDestination.Second)
     }
 
-    fun toThirdScreenButtonClick(text: String) {
+    fun onOpenThirdScreenButtonClick(text: String) {
         navController.navigate(ViewModelsDestination.Third(text))
     }
 
@@ -78,7 +78,7 @@ class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
 @Composable
 private fun FirstScreen(
-    toSecondScreenButtonClick: () -> Unit,
+    onOpenSecondScreenButtonClick: () -> Unit,
 ) = ContentLayout(
     title = stringResource(R.string.view_models__first_screen_title)
 ) {
@@ -88,25 +88,25 @@ private fun FirstScreen(
     )
 
     CenteredText(
-        text = """1) the ability to hoist NavController to ViewModel,
-            effectively bringing all the navigation logic to that level;""".singleLine(),
+        text = """1) The ability to hoist NavController to ViewModel,
+            effectively bringing all the navigation logic to that level""".singleLine(),
     )
 
     CenteredText(
-        text = """2) the usage of scoped ViewModels:
-            every ViewModel within NavHost is scoped to its backstack entry and
-            gets cleared only when the entry is removed from backstack.""".singleLine(),
+        text = """2) The usage of scoped ViewModels.
+            Every ViewModel within NavHost is scoped to its backstack entry and
+            gets cleared only when the entry is removed from the backstack.""".singleLine(),
     )
 
-    Button(onClick = toSecondScreenButtonClick) {
-        Text(stringResource(R.string.view_models__to_second_screen_button))
+    Button(onClick = onOpenSecondScreenButtonClick) {
+        Text(stringResource(R.string.view_models__open_second_screen_button))
     }
 
 }
 
 @Composable
 private fun SecondScreen(
-    toThirdScreenButtonClick: (String) -> Unit,
+    onOpenThirdScreenButtonClick: (String) -> Unit,
 ) = ContentLayout(
     title = stringResource(R.string.view_models__second_screen_title)
 ) {
@@ -123,8 +123,8 @@ private fun SecondScreen(
         value = text,
         onValueChange = { secondViewModel.onTextChange(it) })
 
-    Button(onClick = { toThirdScreenButtonClick(text) }) {
-        Text(stringResource(R.string.view_models__to_third_screen_button))
+    Button(onClick = { onOpenThirdScreenButtonClick(text) }) {
+        Text(stringResource(R.string.view_models__open_third_screen_button))
     }
 }
 

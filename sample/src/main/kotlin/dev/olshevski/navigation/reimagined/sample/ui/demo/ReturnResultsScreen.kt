@@ -17,7 +17,6 @@ import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.sample.R
-import dev.olshevski.navigation.reimagined.sample.singleLine
 import dev.olshevski.navigation.reimagined.sample.ui.CenteredText
 import dev.olshevski.navigation.reimagined.sample.ui.ContentLayout
 import dev.olshevski.navigation.reimagined.sample.ui.ScreenLayout
@@ -40,7 +39,7 @@ fun ReturnResultsScreen() = ScreenLayout(
                 var resultFromSecond by destination.resultFromSecond
                 FirstScreen(
                     resultFromSecond = resultFromSecond,
-                    toSecondScreenButtonClick = {
+                    onOpenSecondScreenButtonClick = {
                         navController.navigate(ReturnResultsDestination.Second)
                     },
                     onClearResultClick = {
@@ -71,16 +70,16 @@ fun ReturnResultsScreen() = ScreenLayout(
 @Composable
 private fun FirstScreen(
     resultFromSecond: String?,
-    toSecondScreenButtonClick: () -> Unit,
+    onOpenSecondScreenButtonClick: () -> Unit,
     onClearResultClick: () -> Unit
 ) = ContentLayout(title = stringResource(R.string.return_results__first_screen_title)) {
 
     CenteredText(
-        text = "To check out how you can return values from destinations go to the next screen.",
+        text = "To check out how you can return values from destinations go to the next screen",
     )
 
-    Button(onClick = toSecondScreenButtonClick) {
-        Text(stringResource(R.string.return_results__to_second_screen_button))
+    Button(onClick = onOpenSecondScreenButtonClick) {
+        Text(stringResource(R.string.return_results__open_second_screen_button))
     }
 
     if (resultFromSecond != null) {
@@ -101,7 +100,7 @@ private fun SecondScreen(
 ) = ContentLayout(title = stringResource(R.string.return_results__second_screen_title)) {
 
     CenteredText(
-        text = "Here you can enter some text and pass it back to the previous screen.",
+        text = "Here you can enter some text and pass it back to the previous screen",
     )
 
     OutlinedTextField(
@@ -113,10 +112,4 @@ private fun SecondScreen(
     Button(onClick = returnToFirstScreenButtonClick) {
         Text(stringResource(R.string.return_results__return_result_to_first_screen_button))
     }
-
-    CenteredText(
-        text = """Note: use it carefully. Mutable state increases the complexity of the backstack 
-            logic. Sometimes it is more reasonable to have a hoisted/shared data holder.
-            """.singleLine(),
-    )
 }

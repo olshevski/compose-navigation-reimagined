@@ -1,7 +1,6 @@
 package dev.olshevski.navigation.reimagined.sample.ui.demo
 
-enum class BottomSheetDestination {
+enum class BottomSheetNavHostDestination {
     First,
     Second,
-    Third
 }

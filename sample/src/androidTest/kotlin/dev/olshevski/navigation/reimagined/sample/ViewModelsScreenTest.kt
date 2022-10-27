@@ -31,13 +31,13 @@ private class ViewModelsScreenScope(composeRule: MainActivityComposeRule) :
             .assertIsDisplayed()
     }
 
-    fun performToSecondScreenButtonClick() {
-        composeRule.onNodeWithText(getString(R.string.view_models__to_second_screen_button))
+    fun performOpenSecondScreenButtonClick() {
+        composeRule.onNodeWithText(getString(R.string.view_models__open_second_screen_button))
             .performClick()
     }
 
-    fun performToThirdScreenButtonClick() {
-        composeRule.onNodeWithText(getString(R.string.view_models__to_third_screen_button))
+    fun performOpenThirdScreenButtonClick() {
+        composeRule.onNodeWithText(getString(R.string.view_models__open_third_screen_button))
             .performClick()
     }
 
@@ -66,10 +66,10 @@ class ViewModelsScreenTest {
 
     private fun generalFlow(middleBlock: ViewModelsScreenScope.() -> Unit) =
         composeRule.viewModelsScreenScope {
-            performToSecondScreenButtonClick()
+            performOpenSecondScreenButtonClick()
             assertSecondScreenIsDisplayed()
             performTextInput()
-            performToThirdScreenButtonClick()
+            performOpenThirdScreenButtonClick()
             assertThirdScreenIsDisplayed()
             assertPassedTextIsDisplayed()
 
@@ -101,13 +101,13 @@ class ViewModelsScreenTest {
 
     @Test
     fun textInputIsClearedWhenEntryIsRemoved() = composeRule.viewModelsScreenScope {
-        performToSecondScreenButtonClick()
+        performOpenSecondScreenButtonClick()
         assertInputIsEmpty()
         performTextInput()
         assertInputHasText()
 
         pressBack()
-        performToSecondScreenButtonClick()
+        performOpenSecondScreenButtonClick()
         assertInputIsEmpty()
     }
 

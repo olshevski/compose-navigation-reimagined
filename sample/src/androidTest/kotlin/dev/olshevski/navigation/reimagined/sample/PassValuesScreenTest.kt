@@ -31,28 +31,28 @@ private open class PassValuesScreenScope(composeRule: MainActivityComposeRule) :
             .assertIsDisplayed()
     }
 
-    fun performToScreenBButtonClick() {
-        composeRule.onNodeWithText(getString(R.string.pass_values__to_screen_b_button))
+    fun performOpenScreenBButtonClick() {
+        composeRule.onNodeWithText(getString(R.string.pass_values__open_screen_b_button))
             .performClick()
     }
 
-    fun performToScreenBPlusOneButtonClick() {
-        composeRule.onNodeWithText(getString(R.string.pass_values__to_screen_b_plus_one_button))
+    fun performOpenScreenBPlusOneButtonClick() {
+        composeRule.onNodeWithText(getString(R.string.pass_values__open_screen_b_plus_one_button))
             .performClick()
     }
 
     fun performReturnBackToScreenAButtonClick() {
-        composeRule.onNodeWithText(getString(R.string.pass_values__return_back_to_screen_a_button))
+        composeRule.onNodeWithText(getString(R.string.pass_values__back_to_screen_a_button))
             .performClick()
     }
 
     fun assertReturnBackToScreenAButtonIsDisplayed() {
-        composeRule.onNodeWithText(getString(R.string.pass_values__return_back_to_screen_a_button))
+        composeRule.onNodeWithText(getString(R.string.pass_values__back_to_screen_a_button))
             .assertIsDisplayed()
     }
 
     fun assertReturnBackToScreenAButtonDoesNotExist() {
-        composeRule.onNodeWithText(getString(R.string.pass_values__return_back_to_screen_a_button))
+        composeRule.onNodeWithText(getString(R.string.pass_values__back_to_screen_a_button))
             .assertDoesNotExist()
     }
 
@@ -61,8 +61,8 @@ private open class PassValuesScreenScope(composeRule: MainActivityComposeRule) :
             .assertIsDisplayed()
     }
 
-    fun performToScreenCButtonClick() {
-        composeRule.onNodeWithText(getString(R.string.pass_values__to_screen_c_button))
+    fun performOpenScreenCButtonClick() {
+        composeRule.onNodeWithText(getString(R.string.pass_values__open_screen_c_button))
             .performClick()
     }
 
@@ -85,10 +85,10 @@ class PassValuesScreenTest {
 
     @Test
     fun screenB() = composeRule.passValuesScreenScope {
-        performToScreenBButtonClick()
+        performOpenScreenBButtonClick()
         assertScreenBIsDisplayed(0)
         assertReturnBackToScreenAButtonDoesNotExist()
-        performToScreenBPlusOneButtonClick()
+        performOpenScreenBPlusOneButtonClick()
         assertScreenBIsDisplayed(1)
         assertReturnBackToScreenAButtonIsDisplayed()
 
@@ -101,7 +101,7 @@ class PassValuesScreenTest {
     @Test
     fun screenC() = composeRule.passValuesScreenScope {
         performTextInput()
-        performToScreenCButtonClick()
+        performOpenScreenCButtonClick()
         assertScreenCIsDisplayed()
         assertTextIsPassed()
 
@@ -115,7 +115,7 @@ class PassValuesScreenTest {
     @Test
     fun screenC_recreateActivity() = composeRule.passValuesScreenScope {
         performTextInput()
-        performToScreenCButtonClick()
+        performOpenScreenCButtonClick()
         assertScreenCIsDisplayed()
         assertTextIsPassed()
 

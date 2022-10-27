@@ -31,13 +31,13 @@ fun MainScreen() = ScreenLayout(
     NavHost(navController) { destination ->
         when (destination) {
             MainDestination.First -> FirstScreen(
-                toSecondScreenButtonClick = {
+                onOpenSecondScreenButtonClick = {
                     navController.navigate(MainDestination.Second(DemoId))
                 }
             )
             is MainDestination.Second -> SecondScreen(
                 id = destination.id,
-                toThirdScreenButtonClick = {
+                onOpenThirdScreenButtonClick = {
                     navController.navigate(MainDestination.Third(DemoText))
                 }
             )
@@ -48,32 +48,32 @@ fun MainScreen() = ScreenLayout(
 
 @Composable
 private fun FirstScreen(
-    toSecondScreenButtonClick: () -> Unit
+    onOpenSecondScreenButtonClick: () -> Unit
 ) = ContentLayout(
     title = stringResource(R.string.first_screen_title)
 ) {
     val viewModel = getViewModel<FirstViewModel>()
 
     Button(
-        onClick = { toSecondScreenButtonClick() }
+        onClick = { onOpenSecondScreenButtonClick() }
     ) {
-        Text(stringResource(R.string.to_second_screen_button))
+        Text(stringResource(R.string.open_second_screen_button))
     }
 }
 
 @Composable
 private fun SecondScreen(
     id: Int,
-    toThirdScreenButtonClick: () -> Unit
+    onOpenThirdScreenButtonClick: () -> Unit
 ) = ContentLayout(
     title = stringResource(R.string.second_screen_title, id)
 ) {
     val viewModel = getViewModel<SecondViewModel> { parametersOf(id) }
 
     Button(
-        onClick = { toThirdScreenButtonClick() }
+        onClick = { onOpenThirdScreenButtonClick() }
     ) {
-        Text(stringResource(R.string.to_third_screen_button))
+        Text(stringResource(R.string.open_third_screen_button))
     }
 }
 

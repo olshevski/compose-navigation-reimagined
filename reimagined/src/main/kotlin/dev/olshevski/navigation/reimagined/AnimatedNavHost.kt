@@ -271,7 +271,6 @@ internal fun <T, S> ScopingAnimatedNavHost(
     return@BaseNavHost transition.currentState
 }
 
-@ExperimentalReimaginedApi
 @ExperimentalAnimationApi
 private fun <T, S> AnimatedContentScope<NavSnapshot<T, S>>.selectTransition(
     transitionSpec: NavTransitionSpec<T>,

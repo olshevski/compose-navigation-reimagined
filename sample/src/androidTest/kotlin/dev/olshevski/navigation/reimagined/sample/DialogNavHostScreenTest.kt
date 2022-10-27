@@ -36,13 +36,13 @@ private class DialogNavHostScreenScope(composeRule: MainActivityComposeRule) :
             .assertDoesNotExist()
     }
 
-    fun performToFirstDialogButtonClick() {
-        composeRule.onNodeWithText(getString(R.string.dialog_nav_host__to_first_dialog_button))
+    fun performOpenFirstDialogButtonClick() {
+        composeRule.onNodeWithText(getString(R.string.dialog_nav_host__open_first_dialog_button))
             .performClick()
     }
 
-    fun performToSecondDialogButtonClick() {
-        composeRule.onNodeWithText(getString(R.string.dialog_nav_host__to_second_dialog_button))
+    fun performOpenSecondDialogButtonClick() {
+        composeRule.onNodeWithText(getString(R.string.dialog_nav_host__open_second_dialog_button))
             .performClick()
     }
 
@@ -64,9 +64,9 @@ class DialogNavHostScreenTest {
 
     private fun generalFlow(middleBlock: DialogNavHostScreenScope.() -> Unit) =
         composeRule.dialogNavHostScreenScope {
-            performToFirstDialogButtonClick()
+            performOpenFirstDialogButtonClick()
             assertFirstDialogIsDisplayed()
-            performToSecondDialogButtonClick()
+            performOpenSecondDialogButtonClick()
             assertFirstDialogDoesNotExist()
             assertSecondDialogIsDisplayed()
 

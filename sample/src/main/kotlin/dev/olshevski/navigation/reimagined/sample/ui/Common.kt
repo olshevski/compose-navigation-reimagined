@@ -80,6 +80,28 @@ fun DialogLayout(
 }
 
 @Composable
+fun BottomSheetLayout(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = title,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.h6
+        )
+        content()
+    }
+}
+
+@Composable
 fun CenteredText(text: String) {
     Text(text, textAlign = TextAlign.Center)
 }

@@ -60,7 +60,7 @@ fun AnimatedNavHostScreen() = ScreenLayout(
             )
 
             Button(onClick = { navController.navigate(destination + 1) }) {
-                Text(stringResource(R.string.animated_nav_host__to_next_screen_button))
+                Text(stringResource(R.string.animated_nav_host__open_next_screen_button))
             }
         }
     }

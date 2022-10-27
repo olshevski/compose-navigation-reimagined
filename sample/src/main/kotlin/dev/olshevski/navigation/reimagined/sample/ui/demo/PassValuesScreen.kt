@@ -40,17 +40,17 @@ fun PassValuesScreen() = ScreenLayout(
                 ScreenA(
                     text = text,
                     onTextChange = { text = it },
-                    onToScreenBButtonClick = {
+                    onOpenScreenBButtonClick = {
                         navController.navigate(PassValuesDestination.B(0))
                     },
-                    onToScreenCButtonClick = {
+                    onOpenScreenCButtonClick = {
                         navController.navigate(PassValuesDestination.C(text))
                     }
                 )
             }
             is PassValuesDestination.B -> ScreenB(
                 id = destination.id,
-                onToScreenBPlusOneButtonClick = {
+                onOpenScreenBPlusOneButtonClick = {
                     navController.navigate(PassValuesDestination.B(destination.id + 1))
                 },
                 onReturnBackToScreenAButtonClick = {
@@ -66,27 +66,25 @@ fun PassValuesScreen() = ScreenLayout(
 private fun ScreenA(
     text: String,
     onTextChange: (String) -> Unit,
-    onToScreenBButtonClick: () -> Unit,
-    onToScreenCButtonClick: () -> Unit
+    onOpenScreenBButtonClick: () -> Unit,
+    onOpenScreenCButtonClick: () -> Unit
 ) = ContentLayout(
     title = stringResource(R.string.pass_values__screen_a_title)
 ) {
     CenteredText(
         text = """You can pass any serializable/parcelable data you want. Here you
-            can open a screen B with an integer parameter 'id' equal to 0.
-            """.singleLine(),
+            can open a screen B with an integer parameter 'id' equal to 0.""".singleLine(),
     )
 
     Button(
-        onClick = { onToScreenBButtonClick() }
+        onClick = { onOpenScreenBButtonClick() }
     ) {
-        Text(stringResource(R.string.pass_values__to_screen_b_button))
+        Text(stringResource(R.string.pass_values__open_screen_b_button))
     }
 
     CenteredText(
         text = """Alternatively, you can enter some text in the text field below and pass it to
-            screen C.
-            """.singleLine(),
+            screen C""".singleLine(),
     )
 
     OutlinedTextField(
@@ -95,9 +93,9 @@ private fun ScreenA(
         onValueChange = { onTextChange(it) })
 
     Button(
-        onClick = { onToScreenCButtonClick() }
+        onClick = { onOpenScreenCButtonClick() }
     ) {
-        Text(stringResource(R.string.pass_values__to_screen_c_button))
+        Text(stringResource(R.string.pass_values__open_screen_c_button))
     }
 
     CenteredText(
@@ -109,26 +107,26 @@ private fun ScreenA(
 @Composable
 private fun ScreenB(
     id: Int,
-    onToScreenBPlusOneButtonClick: () -> Unit,
+    onOpenScreenBPlusOneButtonClick: () -> Unit,
     onReturnBackToScreenAButtonClick: () -> Unit
 ) = ContentLayout(
     title = stringResource(R.string.pass_values__screen_b_title, id)
 ) {
     CenteredText(
-        text = "You can keep opening new screens B with an incrementing parameter id.",
+        text = "You can keep opening new screens B with an incrementing parameter id",
     )
 
     Button(
-        onClick = { onToScreenBPlusOneButtonClick() }
+        onClick = { onOpenScreenBPlusOneButtonClick() }
     ) {
-        Text(stringResource(R.string.pass_values__to_screen_b_plus_one_button))
+        Text(stringResource(R.string.pass_values__open_screen_b_plus_one_button))
     }
 
     if (id > 0) {
         Button(
             onClick = { onReturnBackToScreenAButtonClick() }
         ) {
-            Text(stringResource(R.string.pass_values__return_back_to_screen_a_button))
+            Text(stringResource(R.string.pass_values__back_to_screen_a_button))
         }
     }
 }

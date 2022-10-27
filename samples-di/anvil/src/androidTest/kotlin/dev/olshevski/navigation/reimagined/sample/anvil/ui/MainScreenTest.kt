@@ -20,10 +20,10 @@ class MainScreenTest {
     fun generalFlow() {
         composeRule.onNodeWithText(getString(R.string.main_screen_title)).assertIsDisplayed()
         composeRule.onNodeWithText(getString(R.string.first_screen_title)).assertIsDisplayed()
-        composeRule.onNodeWithText(getString(R.string.to_second_screen_button)).performClick()
+        composeRule.onNodeWithText(getString(R.string.open_second_screen_button)).performClick()
         composeRule.onNodeWithText(getString(R.string.second_screen_title, DemoId))
             .assertIsDisplayed()
-        composeRule.onNodeWithText(getString(R.string.to_third_screen_button)).performClick()
+        composeRule.onNodeWithText(getString(R.string.open_third_screen_button)).performClick()
         composeRule.onNodeWithText(getString(R.string.third_screen_title, DemoText))
             .assertIsDisplayed()
         composeRule.pressBack()

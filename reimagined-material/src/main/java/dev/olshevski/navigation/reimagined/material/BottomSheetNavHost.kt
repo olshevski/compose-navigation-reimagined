@@ -51,10 +51,8 @@ import kotlinx.parcelize.Parcelize
  * but setting a different [NavController] will be handled correctly.
  *
  * @param onDismissRequest dismiss request caused by user interaction. Called either when the scrim
- * is clicked or when the bottom sheet is hidden with swipe. You *must* handle it and remove
- * the current destination from the backstack either with [pop], [popAll] or any other method
- * that will actually remove the current entry from the backstack. Failing to do so may result in
- * undefined UI state.
+ * is clicked or when the bottom sheet is hidden with swipe. You should handle it and remove
+ * the current entry from the backstack either with [pop], [popAll] or some other method.
  *
  * @param sheetShape the shape of the bottom sheet
  *
@@ -115,10 +113,8 @@ fun <T> BottomSheetNavHost(
  * but using a different [NavController] and setting its backstack will be handled correctly.
  *
  * @param onDismissRequest dismiss request caused by user interaction. Called either when the scrim
- * is clicked or when the bottom sheet is hidden with swipe. You *must* handle it and remove
- * the current destination from the backstack either with [pop], [popAll] or any other method
- * that will actually remove the current entry from the backstack. Failing to do so may result in
- * undefined UI state.
+ * is clicked or when the bottom sheet is hidden with swipe. You should handle it and remove
+ * the current entry from the backstack either with [pop], [popAll] or some other method.
  *
  * @param sheetShape the shape of the bottom sheet
  *
@@ -183,10 +179,8 @@ fun <T> BottomSheetNavHost(
  * create and access shared ViewModels.
  *
  * @param onDismissRequest dismiss request caused by user interaction. Called either when the scrim
- * is clicked or when the bottom sheet is hidden with swipe. You *must* handle it and remove
- * the current destination from the backstack either with [pop], [popAll] or any other method
- * that will actually remove the current entry from the backstack. Failing to do so may result in
- * undefined UI state.
+ * is clicked or when the bottom sheet is hidden with swipe. You should handle it and remove
+ * the current entry from the backstack either with [pop], [popAll] or some other method.
  *
  * @param sheetShape the shape of the bottom sheet
  *
@@ -252,10 +246,8 @@ fun <T, S> ScopingBottomSheetNavHost(
  * create and access shared ViewModels.
  *
  * @param onDismissRequest dismiss request caused by user interaction. Called either when the scrim
- * is clicked or when the bottom sheet is hidden with swipe. You *must* handle it and remove
- * the current destination from the backstack either with [pop], [popAll] or any other method
- * that will actually remove the current entry from the backstack. Failing to do so may result in
- * undefined UI state.
+ * is clicked or when the bottom sheet is hidden with swipe. You should handle it and remove
+ * the current entry from the backstack either with [pop], [popAll] or some other method.
  *
  * @param sheetShape the shape of the bottom sheet
  *
@@ -441,7 +433,6 @@ fun <T, S> ScopingBottomSheetNavHost(
     currentSnapshot
 }
 
-@ExperimentalReimaginedApi
 @ExperimentalMaterialApi
 @Composable
 private fun <T, S> SnapshotBottomSheetLayout(
@@ -486,6 +477,4 @@ private data class BottomSheetSavedState(
     val value: BottomSheetValue
 ) : Parcelable
 
-@ExperimentalReimaginedApi
-private val <T, S> NavSnapshot<T, S>.lastEntry
-    get() = items.lastOrNull()?.hostEntry
+private val <T, S> NavSnapshot<T, S>.lastEntry get() = items.lastOrNull()?.hostEntry

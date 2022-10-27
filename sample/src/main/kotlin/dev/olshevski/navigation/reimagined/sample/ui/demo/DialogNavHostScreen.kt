@@ -28,7 +28,11 @@ fun DialogNavHostScreen() = ScreenLayout(
         Dialog(onDismissRequest = { navController.pop() }) {
             when (destination) {
                 DialogNavHostDestination.First -> FirstDialogLayout(
-                    toSecondDialogButtonClick = { navController.replaceLast(DialogNavHostDestination.Second) }
+                    onOpenSecondDialogButtonClick = {
+                        navController.replaceLast(
+                            DialogNavHostDestination.Second
+                        )
+                    }
                 )
                 DialogNavHostDestination.Second -> SecondDialogLayout()
             }
@@ -37,29 +41,29 @@ fun DialogNavHostScreen() = ScreenLayout(
 
     ContentLayout {
         CenteredText(
-            text = "You can also use a separate DialogNavHost for managing dialogs.",
+            text = "Use DialogNavHost to manage dialogs",
         )
 
         Button(onClick = { navController.navigate(DialogNavHostDestination.First) }) {
-            Text(stringResource(R.string.dialog_nav_host__to_first_dialog_button))
+            Text(stringResource(R.string.dialog_nav_host__open_first_dialog_button))
         }
     }
 }
 
 @Composable
 private fun FirstDialogLayout(
-    toSecondDialogButtonClick: () -> Unit
+    onOpenSecondDialogButtonClick: () -> Unit
+) = DialogLayout(
+    title = stringResource(R.string.dialog_nav_host__first_dialog_title)
 ) {
-    DialogLayout(title = stringResource(R.string.dialog_nav_host__first_dialog_title)) {
-        Button(onClick = toSecondDialogButtonClick) {
-            Text(stringResource(R.string.dialog_nav_host__to_second_dialog_button))
-        }
+    Button(onClick = onOpenSecondDialogButtonClick) {
+        Text(stringResource(R.string.dialog_nav_host__open_second_dialog_button))
     }
 }
 
 @Composable
-private fun SecondDialogLayout() {
-    DialogLayout(title = stringResource(R.string.dialog_nav_host__second_dialog_title)) {
-        Text("Hello!")
-    }
+private fun SecondDialogLayout() = DialogLayout(
+    title = stringResource(R.string.dialog_nav_host__second_dialog_title)
+) {
+    Text("Hello!")
 }

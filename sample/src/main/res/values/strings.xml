@@ -7,55 +7,49 @@
     <string name="demo_selection__return_results_button">Return results</string>
     <string name="demo_selection__animated_nav_host_button">AnimatedNavHost</string>
     <string name="demo_selection__dialog_nav_host_button">DialogNavHost</string>
+    <string name="demo_selection__bottom_sheet_nav_host_button">BottomSheetNavHost</string>
     <string name="demo_selection__view_models_button">ViewModels</string>
     <string name="demo_selection__scoped_view_models_button">Scoped ViewModels</string>
     <string name="demo_selection__bottom_navigation_button">BottomNavigation</string>
     <string name="demo_selection__deeplinks_button">Deeplinks</string>
-    <string name="demo_selection__bottom_sheet_button">BottomSheet</string>
 
     <string name="pass_values__demo_screen_title">Pass values demo</string>
     <string name="pass_values__screen_a_title">Screen A</string>
     <string name="pass_values__screen_b_title">Screen B id=%1$s</string>
     <string name="pass_values__screen_c_title">Screen C</string>
-    <string name="pass_values__to_screen_b_button">To screen B</string>
-    <string name="pass_values__to_screen_b_plus_one_button">To screen B +1</string>
-    <string name="pass_values__return_back_to_screen_a_button">Return back to screen A</string>
-    <string name="pass_values__to_screen_c_button">To screen C</string>
+    <string name="pass_values__open_screen_b_button">Open screen B</string>
+    <string name="pass_values__open_screen_b_plus_one_button">Open screen B+1</string>
+    <string name="pass_values__back_to_screen_a_button">Back to screen A</string>
+    <string name="pass_values__open_screen_c_button">Open screen C</string>
     <string name="pass_values__passed_text">Passed text: %1$s</string>
 
     <string name="return_results__demo_screen_title">Return results demo</string>
     <string name="return_results__first_screen_title">First screen</string>
     <string name="return_results__second_screen_title">Second screen</string>
-    <string name="return_results__to_second_screen_button">To Second screen</string>
+    <string name="return_results__open_second_screen_button">Open Second screen</string>
     <string name="return_results__return_result_to_first_screen_button">Return result to First screen</string>
     <string name="return_results__result_from_second_screen">Result from Second screen: %1$s</string>
     <string name="return_results__clear_result_button">Clear result</string>
 
     <string name="animated_nav_host__demo_screen_title">AnimatedNavHost demo</string>
     <string name="animated_nav_host__screen_title">Screen #%1$s</string>
-    <string name="animated_nav_host__to_next_screen_button">To next screen</string>
+    <string name="animated_nav_host__open_next_screen_button">Open next screen</string>
 
     <string name="dialog_nav_host__demo_screen_title">DialogNavHost demo</string>
     <string name="dialog_nav_host__first_dialog_title">First dialog</string>
     <string name="dialog_nav_host__second_dialog_title">Second dialog</string>
-    <string name="dialog_nav_host__to_first_dialog_button">To First dialog</string>
-    <string name="dialog_nav_host__to_second_dialog_button">To Second dialog</string>
+    <string name="dialog_nav_host__open_first_dialog_button">Open First dialog</string>
+    <string name="dialog_nav_host__open_second_dialog_button">Open Second dialog</string>
 
-    <string name="view_models__demo_screen_title">ViewModels demo</string>
-    <string name="view_models__first_screen_title">First screen</string>
-    <string name="view_models__second_screen_title">Second screen</string>
-    <string name="view_models__third_screen_title">Third screen</string>
-    <string name="view_models__to_second_screen_button">To Second screen</string>
-    <string name="view_models__to_third_screen_button">To Third screen</string>
-    <string name="view_models__text_from_previous_screen">Text from previous screen: %1$s</string>
-
-    <string name="scoped_view_models__demo_screen_title">Scoped ViewModels demo</string>
-    <string name="scoped_view_models__first_screen_title">First screen</string>
-    <string name="scoped_view_models__second_screen_title">Second screen</string>
-    <string name="scoped_view_models__third_screen_title">Third screen</string>
-    <string name="scoped_view_models__to_second_screen_button">To Second screen</string>
-    <string name="scoped_view_models__to_third_screen_button">To Third screen</string>
-    <string name="scoped_view_models__text_from_shared_view_model">Text from ScopedViewModel: %1$s</string>
+    <string name="bottom_sheet_nav_host__demo_screen_title">BottomSheetNavHost demo</string>
+    <string name="bottom_sheet_nav_host__first_sheet_title">First sheet</string>
+    <string name="bottom_sheet_nav_host__second_sheet_title">Second sheet</string>
+    <string name="bottom_sheet_nav_host__open_first_sheet_button">Open First sheet</string>
+    <string name="bottom_sheet_nav_host__open_second_sheet_button">Open Second sheet</string>
+    <string name="bottom_sheet_nav_host__expand_sheet_button">Expand</string>
+    <string name="bottom_sheet_nav_host__half_expand_sheet_button">Half expand</string>
+    <string name="bottom_sheet_nav_host__close_sheet_button">Close</string>
+    <string name="bottom_sheet_nav_host__close_all_sheets_button">Close all sheets</string>
 
     <string name="bottom_navigation__demo_screen_title">BottomNavigation demo</string>
     <string name="bottom_navigation__home_tab_title">Home</string>
@@ -65,13 +59,29 @@
     <string name="bottom_navigation__saved_state_screen_title">Saved state screen</string>
     <string name="bottom_navigation__nested_navigation_screen_a_title">Nested navigation screen A</string>
     <string name="bottom_navigation__nested_navigation_screen_b_title">Nested navigation screen B</string>
-    <string name="bottom_navigation__to_nested_navigation_screen_b_button">To screen B</string>
+    <string name="bottom_navigation__open_nested_navigation_screen_b_button">Open screen B</string>
+
+    <string name="view_models__demo_screen_title">ViewModels demo</string>
+    <string name="view_models__first_screen_title">First screen</string>
+    <string name="view_models__second_screen_title">Second screen</string>
+    <string name="view_models__third_screen_title">Third screen</string>
+    <string name="view_models__open_second_screen_button">Open Second screen</string>
+    <string name="view_models__open_third_screen_button">Open Third screen</string>
+    <string name="view_models__text_from_previous_screen">Text from the previous screen: %1$s</string>
+
+    <string name="scoped_view_models__demo_screen_title">Scoped ViewModels demo</string>
+    <string name="scoped_view_models__first_screen_title">First screen</string>
+    <string name="scoped_view_models__second_screen_title">Second screen</string>
+    <string name="scoped_view_models__third_screen_title">Third screen</string>
+    <string name="scoped_view_models__open_second_screen_button">Open Second screen</string>
+    <string name="scoped_view_models__open_third_screen_button">Open Third screen</string>
+    <string name="scoped_view_models__text_from_shared_view_model">Text from ScopedViewModel: %1$s</string>
 
     <string name="deeplinks__demo_screen_title">Deeplinks demo</string>
     <string name="deeplinks__first_screen_title">First screen</string>
     <string name="deeplinks__second_screen_title">Second screen</string>
     <string name="deeplinks__third_screen_title">Third screen id=%1$s</string>
-    <string name="deeplinks__to_second_screen_button">To Second screen</string>
-    <string name="deeplinks__to_third_screen_button">To Third screen</string>
+    <string name="deeplinks__open_second_screen_button">Open Second screen</string>
+    <string name="deeplinks__open_third_screen_button">Open Third screen</string>
 
 </resources>

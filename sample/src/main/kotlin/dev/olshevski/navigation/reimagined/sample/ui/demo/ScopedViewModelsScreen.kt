@@ -53,10 +53,10 @@ fun ScopedViewModelsScreen() = ScreenLayout(
     ) { destination ->
         when (destination) {
             ScopedViewModelsDestination.First -> FirstScreen(
-                toSecondScreenButtonClick = { navController.navigate(ScopedViewModelsDestination.Second) }
+                onOpenSecondScreenButtonClick = { navController.navigate(ScopedViewModelsDestination.Second) }
             )
             ScopedViewModelsDestination.Second -> SecondScreen(
-                toThirdScreenButtonClick = { navController.navigate(ScopedViewModelsDestination.Third) }
+                onOpenThirdScreenButtonClick = { navController.navigate(ScopedViewModelsDestination.Third) }
             )
             ScopedViewModelsDestination.Third -> ThirdScreen()
         }
@@ -65,30 +65,29 @@ fun ScopedViewModelsScreen() = ScreenLayout(
 
 @Composable
 private fun FirstScreen(
-    toSecondScreenButtonClick: () -> Unit,
+    onOpenSecondScreenButtonClick: () -> Unit,
 ) = ContentLayout(
     title = stringResource(R.string.scoped_view_models__first_screen_title)
 ) {
 
     CenteredText(
         text = """Scoped ViewModelStore may come in handy when you need to share
-            the same ViewModel instance between arbitrary destinations in the NavHost.
-            """.singleLine(),
+            the same ViewModel between arbitrary destinations in NavHost.""".singleLine(),
     )
 
     CenteredText(
-        text = """To create it, you need to associate the desired destination with a scope in
-             a scopeSpec block. Then you can call getScopedViewModelStoreOwner() with the specified
-             scope key from different destinations.""".singleLine(),
+        text = """To create it, you need to associate selected destinations with a scope in
+             a scopeSpec block. Then you can call getScopedViewModelStoreOwner() from different 
+             destinations with the specified scope.""".singleLine(),
     )
 
     CenteredText(
-        text = """Only when all entries from the same defined scoped are removed,
-            |the ViewModelStore and all its ViewModels will be cleared.""".singleLine(),
+        text = """Only when all entries from the same scope are removed,
+            the scoped ViewModelStore and all its ViewModels will be cleared.""".singleLine(),
     )
 
-    Button(onClick = toSecondScreenButtonClick) {
-        Text(stringResource(R.string.scoped_view_models__to_second_screen_button))
+    Button(onClick = onOpenSecondScreenButtonClick) {
+        Text(stringResource(R.string.scoped_view_models__open_second_screen_button))
     }
 
 }
@@ -104,7 +103,7 @@ class ScopedViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
 
 @Composable
 private fun ScopingNavHostScope<ScopedViewModelsDestination, Scope>.SecondScreen(
-    toThirdScreenButtonClick: () -> Unit,
+    onOpenThirdScreenButtonClick: () -> Unit,
 ) = ContentLayout(
     title = stringResource(R.string.scoped_view_models__second_screen_title)
 ) {
@@ -113,8 +112,8 @@ private fun ScopingNavHostScope<ScopedViewModelsDestination, Scope>.SecondScreen
     )
 
     CenteredText(
-        text = """In this demo the ViewModelStore is shared between the Second and the Third
-            screens. The shared ViewModelStore will be cleared only when returning to the First
+        text = """In this demo the ViewModelStore is shared between Second and Third
+            screens. This scoped ViewModelStore will be cleared only when returning to First
             screen.""".singleLine(),
     )
 
@@ -129,8 +128,8 @@ private fun ScopingNavHostScope<ScopedViewModelsDestination, Scope>.SecondScreen
         onValueChange = { scopedViewModel.onTextChange(it) }
     )
 
-    Button(onClick = toThirdScreenButtonClick) {
-        Text(stringResource(R.string.scoped_view_models__to_third_screen_button))
+    Button(onClick = onOpenThirdScreenButtonClick) {
+        Text(stringResource(R.string.scoped_view_models__open_third_screen_button))
     }
 }
 

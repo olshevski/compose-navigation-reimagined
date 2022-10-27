@@ -26,8 +26,8 @@ private class ReturnResultsScreenScope(composeRule: MainActivityComposeRule) :
             .assertIsDisplayed()
     }
 
-    fun performToSecondScreenButtonClick() {
-        composeRule.onNodeWithText(getString(R.string.return_results__to_second_screen_button))
+    fun performOpenSecondScreenButtonClick() {
+        composeRule.onNodeWithText(getString(R.string.return_results__open_second_screen_button))
             .performClick()
     }
 
@@ -73,7 +73,7 @@ class ReturnResultsScreenTest {
     @Test
     fun generalFlow() = composeRule.returnResultsScreenScope {
         assertReturnedResultDoesNotExist()
-        performToSecondScreenButtonClick()
+        performOpenSecondScreenButtonClick()
         assertSecondScreenIsDisplayed()
         performTextInput()
         performReturnResultToFirstScreenButtonClick()
@@ -85,7 +85,7 @@ class ReturnResultsScreenTest {
 
     @Test
     fun nothingReturnedWhenPressedBack() = composeRule.returnResultsScreenScope {
-        performToSecondScreenButtonClick()
+        performOpenSecondScreenButtonClick()
         assertInputIsEmpty()
         performTextInput()
         assertInputHasText()
@@ -96,13 +96,13 @@ class ReturnResultsScreenTest {
 
     @Test
     fun textInputIsClearedWhenEntryIsRemoved() = composeRule.returnResultsScreenScope {
-        performToSecondScreenButtonClick()
+        performOpenSecondScreenButtonClick()
         assertInputIsEmpty()
         performTextInput()
         assertInputHasText()
 
         pressBack()
-        performToSecondScreenButtonClick()
+        performOpenSecondScreenButtonClick()
         assertInputIsEmpty()
     }
 

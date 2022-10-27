@@ -11,15 +11,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
-import dev.olshevski.navigation.reimagined.NavTransitionSpec
 import dev.olshevski.navigation.reimagined.NavBackHandler
+import dev.olshevski.navigation.reimagined.NavTransitionSpec
 import dev.olshevski.navigation.reimagined.navController
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.replaceAll
 import dev.olshevski.navigation.reimagined.sample.MainActivity
 import dev.olshevski.navigation.reimagined.sample.ui.demo.AnimatedNavHostScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.BottomNavigationScreen
-import dev.olshevski.navigation.reimagined.sample.ui.demo.BottomSheetScreen
+import dev.olshevski.navigation.reimagined.sample.ui.demo.BottomSheetNavHostScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.DeeplinksDestination
 import dev.olshevski.navigation.reimagined.sample.ui.demo.DeeplinksScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.DialogNavHostScreen
@@ -87,31 +87,31 @@ fun MainScreen() {
                 onDialogNavHostButtonClick = {
                     navController.navigate(MainDestination.DialogNavHost)
                 },
+                onBottomSheetNavHostClick = {
+                    navController.navigate(MainDestination.BottomSheetNavHost)
+                },
+                onBottomNavigationButtonClick = {
+                    navController.navigate(MainDestination.BottomNavigation)
+                },
                 onViewModelsButtonClick = {
                     navController.navigate(MainDestination.ViewModels)
                 },
                 onScopedViewModelsButtonClick = {
                     navController.navigate(MainDestination.ScopedViewModels)
                 },
-                onBottomNavigationButtonClick = {
-                    navController.navigate(MainDestination.BottomNavigation)
-                },
                 onDeeplinksButtonClick = {
                     navController.navigate(MainDestination.Deeplinks())
-                },
-                onModalBottomSheetClick = {
-                    navController.navigate(MainDestination.BottomSheet)
                 }
             )
             MainDestination.PassValues -> PassValuesScreen()
             MainDestination.ReturnResults -> ReturnResultsScreen()
             MainDestination.AnimatedNavHost -> AnimatedNavHostScreen()
             MainDestination.DialogNavHost -> DialogNavHostScreen()
+            MainDestination.BottomSheetNavHost -> BottomSheetNavHostScreen()
+            MainDestination.BottomNavigation -> BottomNavigationScreen()
             MainDestination.ViewModels -> ViewModelsScreen()
             MainDestination.ScopedViewModels -> ScopedViewModelsScreen()
-            MainDestination.BottomNavigation -> BottomNavigationScreen()
             is MainDestination.Deeplinks -> DeeplinksScreen(destination.initialBackstack)
-            MainDestination.BottomSheet -> BottomSheetScreen()
         }
     }
 }

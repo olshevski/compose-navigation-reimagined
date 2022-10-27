@@ -21,8 +21,8 @@ private open class AnimatedNavHostScreenScope(composeRule: MainActivityComposeRu
             .assertIsDisplayed()
     }
 
-    fun performToNextScreenButtonClick() {
-        composeRule.onNodeWithText(getString(R.string.animated_nav_host__to_next_screen_button))
+    fun performOpenNextScreenButtonClick() {
+        composeRule.onNodeWithText(getString(R.string.animated_nav_host__open_next_screen_button))
             .performClick()
     }
 }
@@ -46,7 +46,7 @@ class AnimatedNavHostScreenTest {
         composeRule.animatedNavHostScreenScope {
             val count = 5
             repeat(count) {
-                performToNextScreenButtonClick()
+                performOpenNextScreenButtonClick()
                 assertScreenIsDisplayed(it + 1)
             }
 

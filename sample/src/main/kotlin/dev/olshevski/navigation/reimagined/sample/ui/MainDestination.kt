@@ -24,6 +24,9 @@ sealed class MainDestination : Parcelable {
     object DialogNavHost : MainDestination()
 
     @Parcelize
+    object BottomSheetNavHost : MainDestination()
+
+    @Parcelize
     object ViewModels : MainDestination()
 
     @Parcelize
@@ -37,6 +40,4 @@ sealed class MainDestination : Parcelable {
         val initialBackstack: List<DeeplinksDestination> = listOf(DeeplinksDestination.First)
     ) : MainDestination()
 
-    @Parcelize
-    object BottomSheet : MainDestination()
 }

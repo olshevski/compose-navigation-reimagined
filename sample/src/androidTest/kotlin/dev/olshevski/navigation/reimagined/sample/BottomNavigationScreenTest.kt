@@ -43,8 +43,8 @@ class BottomNavigationScreenScope(composeRule: MainActivityComposeRule) :
             .assertIsDisplayed()
     }
 
-    fun performToScreenBButtonClick() {
-        composeRule.onNodeWithText(getString(R.string.bottom_navigation__to_nested_navigation_screen_b_button))
+    fun performOpenScreenBButtonClick() {
+        composeRule.onNodeWithText(getString(R.string.bottom_navigation__open_nested_navigation_screen_b_button))
             .performClick()
     }
 
@@ -69,7 +69,7 @@ class BottomNavigationScreenTest {
         composeRule.bottomNavigationScreenScope {
             performTabClick(BottomNavigationDestination.SavedState)
             performTabClick(BottomNavigationDestination.NestedNavigation)
-            performToScreenBButtonClick()
+            performOpenScreenBButtonClick()
             performTabClick(BottomNavigationDestination.Home)
 
             middleBlock()
@@ -143,7 +143,7 @@ class BottomNavigationScreenTest {
     @Test
     fun nestedNavigationIsSavedWhenGoingBetweenTabs() = composeRule.bottomNavigationScreenScope {
         performTabClick(BottomNavigationDestination.NestedNavigation)
-        performToScreenBButtonClick()
+        performOpenScreenBButtonClick()
         assertNestedNavigationScreenBIsDisplayed()
 
         performTabClick(BottomNavigationDestination.Home)

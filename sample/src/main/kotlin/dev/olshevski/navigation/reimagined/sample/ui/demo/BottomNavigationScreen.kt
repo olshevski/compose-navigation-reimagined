@@ -116,7 +116,7 @@ private fun HomeScreen() = ContentLayout(
 ) {
     CenteredText(
         text = """This is a simple implementation of BottomNavigation with same backstack logic
-            as in the official Youtube app.""".singleLine(),
+            as in the YouTube app.""".singleLine(),
     )
 
     CenteredText(
@@ -165,14 +165,13 @@ private fun NestedNavigationScreen() {
                 CenteredText(
                     text = """Every screen may have a nested navigation with its own back handling.
                         The back handling of a nested navigation always takes precedence over
-                        the parent back handling.
-                        """.singleLine(),
+                        the parent back handling.""".singleLine(),
                 )
 
                 Button(
                     onClick = { navController.navigate(NestedDestination.B) }
                 ) {
-                    Text(stringResource(R.string.bottom_navigation__to_nested_navigation_screen_b_button))
+                    Text(stringResource(R.string.bottom_navigation__open_nested_navigation_screen_b_button))
                 }
             }
 
@@ -181,8 +180,7 @@ private fun NestedNavigationScreen() {
             ) {
                 CenteredText(
                     text = """Try pressing back button and switching between bottom navigation
-                        destinations.
-                    """.singleLine(),
+                        destinations""".singleLine(),
                 )
             }
         }

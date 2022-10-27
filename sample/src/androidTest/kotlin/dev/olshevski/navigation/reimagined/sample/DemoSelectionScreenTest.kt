@@ -35,6 +35,16 @@ open class DemoSelectionScreenScope(composeRule: MainActivityComposeRule) :
             .performClick()
     }
 
+    fun performBottomSheetNavHostButtonClick() {
+        composeRule.onNodeWithText(getString(R.string.demo_selection__bottom_sheet_nav_host_button))
+            .performClick()
+    }
+
+    fun performBottomNavigationButtonClick() {
+        composeRule.onNodeWithText(getString(R.string.demo_selection__bottom_navigation_button))
+            .performClick()
+    }
+
     fun performViewModelsButtonClick() {
         composeRule.onNodeWithText(getString(R.string.demo_selection__view_models_button))
             .performClick()
@@ -42,11 +52,6 @@ open class DemoSelectionScreenScope(composeRule: MainActivityComposeRule) :
 
     fun performScopedViewModelsButtonClick() {
         composeRule.onNodeWithText(getString(R.string.demo_selection__scoped_view_models_button))
-            .performClick()
-    }
-
-    fun performBottomNavigationButtonClick() {
-        composeRule.onNodeWithText(getString(R.string.demo_selection__bottom_navigation_button))
             .performClick()
     }
 

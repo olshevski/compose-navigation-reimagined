@@ -5,7 +5,7 @@
     <string name="first_screen_title">First screen</string>
     <string name="second_screen_title">Second screen id=%d</string>
     <string name="third_screen_title">Third screen text=%s</string>
-    <string name="to_second_screen_button">To Second screen</string>
-    <string name="to_third_screen_button">To Third screen</string>
+    <string name="open_second_screen_button">Open Second screen</string>
+    <string name="open_third_screen_button">Open Third screen</string>
 
 </resources>
