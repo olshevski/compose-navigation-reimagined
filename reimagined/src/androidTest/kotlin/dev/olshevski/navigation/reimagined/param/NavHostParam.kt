@@ -18,7 +18,7 @@ enum class NavHostParam {
 internal fun <T, S> ParamNavHost(
     param: NavHostParam,
     state: NavHostState<T, S>,
-    content: @Composable NavHostScope<T>.(T) -> Unit
+    content: @Composable NavHostScope<T>.(destination: T) -> Unit
 ) {
     when (param) {
         NavHostParam.NavHost -> NavHost(state) { content(it) }

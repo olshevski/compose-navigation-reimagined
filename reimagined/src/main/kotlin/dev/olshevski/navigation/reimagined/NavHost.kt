@@ -34,7 +34,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 fun <T> NavHost(
     controller: NavController<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable NavHostScope<T>.(T) -> Unit
+    contentSelector: @Composable NavHostScope<T>.(destination: T) -> Unit
 ) = NavHost(
     backstack = controller.backstack,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
@@ -69,7 +69,7 @@ fun <T> NavHost(
 fun <T> NavHost(
     backstack: NavBackstack<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable NavHostScope<T>.(T) -> Unit
+    contentSelector: @Composable NavHostScope<T>.(destination: T) -> Unit
 ) = NavHost(
     state = rememberNavHostState(backstack, EmptyScopeSpec),
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
@@ -80,7 +80,7 @@ fun <T> NavHost(
 internal fun <T, S> NavHost(
     state: NavHostState<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable ScopingNavHostScope<T, S>.(T) -> Unit
+    contentSelector: @Composable ScopingNavHostScope<T, S>.(destination: T) -> Unit
 ) = ScopingNavHost(
     state = state,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
@@ -136,7 +136,7 @@ fun <T, S> ScopingNavHost(
     controller: NavController<T>,
     scopeSpec: NavScopeSpec<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable ScopingNavHostScope<T, S>.(T) -> Unit
+    contentSelector: @Composable ScopingNavHostScope<T, S>.(destination: T) -> Unit
 ) = ScopingNavHost(
     backstack = controller.backstack,
     scopeSpec = scopeSpec,
@@ -193,7 +193,7 @@ fun <T, S> ScopingNavHost(
     backstack: NavBackstack<T>,
     scopeSpec: NavScopeSpec<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable ScopingNavHostScope<T, S>.(T) -> Unit
+    contentSelector: @Composable ScopingNavHostScope<T, S>.(destination: T) -> Unit
 ) = ScopingNavHost(
     state = rememberNavHostState(backstack, scopeSpec),
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,

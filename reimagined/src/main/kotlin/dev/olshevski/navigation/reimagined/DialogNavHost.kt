@@ -44,7 +44,7 @@ private val NoneTransitionSpec = NavTransitionSpec<Any?> { _, _, _ ->
 fun <T> DialogNavHost(
     controller: NavController<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable NavHostScope<T>.(T) -> Unit
+    contentSelector: @Composable NavHostScope<T>.(destination: T) -> Unit
 ) = DialogNavHost(
     backstack = controller.backstack,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
@@ -81,7 +81,7 @@ fun <T> DialogNavHost(
 fun <T> DialogNavHost(
     backstack: NavBackstack<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable NavHostScope<T>.(T) -> Unit
+    contentSelector: @Composable NavHostScope<T>.(destination: T) -> Unit
 ) = ScopingDialogNavHost(
     backstack = backstack,
     scopeSpec = EmptyScopeSpec,
@@ -140,7 +140,7 @@ fun <T, S> ScopingDialogNavHost(
     controller: NavController<T>,
     scopeSpec: NavScopeSpec<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable ScopingNavHostScope<T, S>.(T) -> Unit
+    contentSelector: @Composable ScopingNavHostScope<T, S>.(destination: T) -> Unit
 ) = ScopingDialogNavHost(
     backstack = controller.backstack,
     scopeSpec = scopeSpec,
@@ -199,7 +199,7 @@ fun <T, S> ScopingDialogNavHost(
     backstack: NavBackstack<T>,
     scopeSpec: NavScopeSpec<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable ScopingNavHostScope<T, S>.(T) -> Unit
+    contentSelector: @Composable ScopingNavHostScope<T, S>.(destination: T) -> Unit
 ) = ScopingAnimatedNavHost(
     backstack = backstack,
     scopeSpec = scopeSpec,

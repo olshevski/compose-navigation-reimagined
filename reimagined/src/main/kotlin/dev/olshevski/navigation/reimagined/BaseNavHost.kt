@@ -22,8 +22,8 @@ import androidx.compose.runtime.rememberUpdatedState
 fun <T, S> BaseNavHost(
     backstack: NavBackstack<T>,
     scopeSpec: NavScopeSpec<T, S>,
-    visibleItems: (NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },
-    transition: @Composable (NavSnapshot<T, S>) -> NavSnapshot<T, S>
+    visibleItems: (snapshot: NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },
+    transition: @Composable (snapshot: NavSnapshot<T, S>) -> NavSnapshot<T, S>
 ) = BaseNavHost(
     state = rememberNavHostState(backstack, scopeSpec),
     visibleItems = visibleItems,
@@ -34,8 +34,8 @@ fun <T, S> BaseNavHost(
 @Composable
 internal fun <T, S> BaseNavHost(
     state: NavHostState<T, S>,
-    visibleItems: (NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },
-    transition: @Composable (NavSnapshot<T, S>) -> NavSnapshot<T, S>
+    visibleItems: (snapshot: NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },
+    transition: @Composable (snapshot: NavSnapshot<T, S>) -> NavSnapshot<T, S>
 ): Unit = key(state.hostId) {
     DisposableEffect(state) {
         state.onCreate()
@@ -82,7 +82,7 @@ internal fun <T, S> BaseNavHost(
 @Composable
 private fun <T> enqueueSnapshotTransition(
     snapshot: T,
-    transition: @Composable (T) -> T
+    transition: @Composable (snapshot: T) -> T
 ): TransitionState<T> {
     // Queue of pending transitions. The first item in the queue is the currently running
     // transition.

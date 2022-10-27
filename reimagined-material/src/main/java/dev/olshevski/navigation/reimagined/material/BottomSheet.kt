@@ -108,7 +108,7 @@ class BottomSheetState internal constructor(
     isTransitionRunningState: State<Boolean>,
     animationSpec: AnimationSpec<Float>,
     internal val isSkipHalfExpanded: Boolean,
-    confirmStateChange: (BottomSheetValue) -> Boolean
+    confirmStateChange: (newValue: BottomSheetValue) -> Boolean
 ) : SwipeableState<BottomSheetValue>(
     initialValue = initialValue,
     animationSpec = animationSpec,
@@ -213,7 +213,7 @@ class BottomSheetState internal constructor(
 @ExperimentalMaterialApi
 @Composable
 internal fun BottomSheetLayout(
-    sheetContent: @Composable (ColumnScope.() -> Unit),
+    sheetContent: @Composable ColumnScope.() -> Unit,
     sheetState: BottomSheetState,
     sheetShape: Shape,
     sheetElevation: Dp,
@@ -384,7 +384,7 @@ internal object BottomSheetDefaults {
 class BottomSheetProperties(
     val animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
     val isSkipHalfExpanded: Boolean = false,
-    val confirmStateChange: (BottomSheetValue) -> Boolean = { true }
+    val confirmStateChange: (newValue: BottomSheetValue) -> Boolean = { true }
 )
 
 /**

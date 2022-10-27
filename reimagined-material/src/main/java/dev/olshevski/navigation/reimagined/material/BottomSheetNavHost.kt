@@ -89,7 +89,7 @@ fun <T> BottomSheetNavHost(
     sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
-    contentSelector: @Composable BottomSheetNavHostScope<T>.(T) -> Unit,
+    contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
 ) = BottomSheetNavHost(
     backstack = controller.backstack,
     onDismissRequest = onDismissRequest,
@@ -151,7 +151,7 @@ fun <T> BottomSheetNavHost(
     sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
-    contentSelector: @Composable BottomSheetNavHostScope<T>.(T) -> Unit,
+    contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
 ) = ScopingBottomSheetNavHost(
     backstack = backstack,
     scopeSpec = EmptyScopeSpec,
@@ -218,7 +218,7 @@ fun <T, S> ScopingBottomSheetNavHost(
     sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
-    contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(T) -> Unit,
+    contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
 ) = ScopingBottomSheetNavHost(
     backstack = controller.backstack,
     scopeSpec = scopeSpec,
@@ -286,7 +286,7 @@ fun <T, S> ScopingBottomSheetNavHost(
     sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
-    contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(T) -> Unit,
+    contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
 ) = BaseNavHost(
     backstack = backstack,
     scopeSpec = scopeSpec
@@ -450,7 +450,7 @@ private fun <T, S> SnapshotBottomSheetLayout(
     sheetBackgroundColor: Color,
     sheetContentColor: Color,
     onDismissRequest: () -> Unit,
-    contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(T) -> Unit,
+    contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
 ) {
     val lastSnapshotItem = snapshot.items.last()
     key(lastSnapshotItem.hostEntry.id) {

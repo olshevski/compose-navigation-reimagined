@@ -46,7 +46,7 @@ fun <T> AnimatedNavHost(
     controller: NavController<T>,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
-    contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
+    contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
 ) = AnimatedNavHost(
     backstack = controller.backstack,
     transitionSpec = transitionSpec,
@@ -86,7 +86,7 @@ fun <T> AnimatedNavHost(
     backstack: NavBackstack<T>,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
-    contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
+    contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
 ) = AnimatedNavHost(
     state = rememberNavHostState(backstack, EmptyScopeSpec),
     transitionSpec = transitionSpec,
@@ -100,7 +100,7 @@ internal fun <T, S> AnimatedNavHost(
     state: NavHostState<T, S>,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
-    contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(T) -> Unit
+    contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(destination: T) -> Unit
 ) = ScopingAnimatedNavHost(
     state = state,
     transitionSpec = transitionSpec,
@@ -162,7 +162,7 @@ fun <T, S> ScopingAnimatedNavHost(
     scopeSpec: NavScopeSpec<T, S>,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
-    contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(T) -> Unit
+    contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(destination: T) -> Unit
 ) = ScopingAnimatedNavHost(
     backstack = controller.backstack,
     scopeSpec = scopeSpec,
@@ -225,7 +225,7 @@ fun <T, S> ScopingAnimatedNavHost(
     scopeSpec: NavScopeSpec<T, S>,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
-    contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(T) -> Unit
+    contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(destination: T) -> Unit
 ) = ScopingAnimatedNavHost(
     state = rememberNavHostState(backstack, scopeSpec),
     transitionSpec = transitionSpec,
