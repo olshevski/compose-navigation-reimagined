@@ -124,7 +124,7 @@ fun <T> DialogNavHost(
  * but setting a different [NavController] will be handled correctly.
  *
  * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
- * create and access shared ViewModels.
+ * create and access scoped [ViewModelStoreOwners][ViewModelStoreOwner].
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
  * be displayed when the backstack is empty. In the majority of cases you don't need
@@ -183,7 +183,7 @@ fun <T, S> ScopingDialogNavHost(
  * but using a different [NavController] and setting its backstack will be handled correctly.
  *
  * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
- * create and access shared ViewModels.
+ * create and access scoped [ViewModelStoreOwners][ViewModelStoreOwner].
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
  * be displayed when the backstack is empty. In the majority of cases you don't need

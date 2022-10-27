@@ -141,7 +141,7 @@ internal fun <T, S> AnimatedNavHost(
  * but setting a different [NavController] will be handled correctly.
  *
  * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
- * create and access shared ViewModels.
+ * create and access scoped [ViewModelStoreOwners][ViewModelStoreOwner].
  *
  * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
@@ -204,7 +204,7 @@ fun <T, S> ScopingAnimatedNavHost(
  * but using a different [NavController] and setting its backstack will be handled correctly.
  *
  * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
- * create and access shared ViewModels.
+ * create and access scoped [ViewModelStoreOwners][ViewModelStoreOwner].
  *
  * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.

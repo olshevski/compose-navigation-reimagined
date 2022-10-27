@@ -387,5 +387,9 @@ class BottomSheetProperties(
     val confirmStateChange: (BottomSheetValue) -> Boolean = { true }
 )
 
+/**
+ * Default bottom sheet properties. May be used as a default value for those bottom sheets that
+ * do not require any customization.
+ */
 @ExperimentalMaterialApi
 val DefaultBottomSheetProperties = BottomSheetProperties()

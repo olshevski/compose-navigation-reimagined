@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.ViewModelStoreOwner
 import dev.olshevski.navigation.reimagined.BaseNavHost
 import dev.olshevski.navigation.reimagined.ComponentsProvider
 import dev.olshevski.navigation.reimagined.EmptyScopeSpec
@@ -176,7 +177,7 @@ fun <T> BottomSheetNavHost(
  * but setting a different [NavController] will be handled correctly.
  *
  * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
- * create and access shared ViewModels.
+ * create and access scoped [ViewModelStoreOwners][ViewModelStoreOwner].
  *
  * @param onDismissRequest dismiss request caused by user interaction. Called either when the scrim
  * is clicked or when the bottom sheet is hidden with swipe. You should handle it and remove
@@ -243,7 +244,7 @@ fun <T, S> ScopingBottomSheetNavHost(
  * but using a different [NavController] and setting its backstack will be handled correctly.
  *
  * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
- * create and access shared ViewModels.
+ * create and access scoped [ViewModelStoreOwners][ViewModelStoreOwner].
  *
  * @param onDismissRequest dismiss request caused by user interaction. Called either when the scrim
  * is clicked or when the bottom sheet is hidden with swipe. You should handle it and remove

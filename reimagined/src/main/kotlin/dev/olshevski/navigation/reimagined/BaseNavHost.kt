@@ -11,6 +11,12 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 
+/**
+ * Allows you to create new NavHosts with different custom layouts and transitions, reusing the
+ * whole internal state management intact.
+ *
+ * All library NavHosts use BaseNavHost internally, so you may explore the sources as an example.
+ */
 @ExperimentalReimaginedApi
 @Composable
 fun <T, S> BaseNavHost(
