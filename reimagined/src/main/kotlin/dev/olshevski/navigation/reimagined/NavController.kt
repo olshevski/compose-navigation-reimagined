@@ -125,7 +125,8 @@ class NavController<T> internal constructor(
      */
     @MainThread
     @Deprecated(
-        "use setNewBackstack instead",
+        message = "Use setNewBackstack instead",
+        level = DeprecationLevel.HIDDEN,
         replaceWith = ReplaceWith("setNewBackstack(entries, action)")
     )
     fun setNewBackstackEntries(entries: List<NavEntry<T>>, action: NavAction = NavAction.Navigate) =
@@ -151,13 +152,13 @@ class NavController<T> internal constructor(
      * You may also extend [NavAction] interface to create new actions appropriate for your use
      * case.
      */
-    @Suppress("DEPRECATION")
     @MainThread
     fun setNewBackstack(entries: List<NavEntry<T>>, action: NavAction = NavAction.Navigate) {
         _backstack = NavBackstack(
             entries = entries.toList(), // protection from outer modifications
             action = action
         )
+        @Suppress("DEPRECATION")
         onBackstackChange?.invoke(_backstack)
     }
 
