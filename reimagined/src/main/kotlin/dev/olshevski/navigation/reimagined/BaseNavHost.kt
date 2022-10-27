@@ -4,18 +4,58 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelStoreOwner
 
 /**
  * Allows you to create new NavHosts with different custom layouts and transitions, reusing the
- * whole internal state management intact.
+ * whole internal state and architecture components management intact.
  *
- * All library NavHosts use BaseNavHost internally, so you may explore the sources as an example.
+ * BaseNavHost gives you access to the whole backstack of entries through [NavSnapshot],
+ * so it is possible to layout and display several entries or even the whole backstack at the same
+ * time.
+ *
+ * BaseNavHost uses [NavSnapshots][NavSnapshot] as anchor points of navigation. The transition
+ * between two NavSnapshots is defined with [transition]. BaseNavHost passes you the snapshot
+ * changes as an input parameter of `transition`. You may choose to switch to the passed target
+ * snapshot immediately as in [NavHost] or with some animation as in [AnimatedNavHost].
+ * The returned snapshot is what notifies BaseNavHost of when the current transition to
+ * the requested snapshot ends: simply return the previous snapshot until you finish transitioning
+ * to the new target snapshot.  When you are done, return the target snapshot.
+ *
+ * This is similar to how [updateTransition] treats its `targetState` and `currentState`:
+ * `currentState` is set to `targetState` only when  transition ends. You may think of the input
+ * parameter of [transition] as `targetState` and the returned value as `currentState`.
+ *
+ * BaseNavHost does the internal queueing. It would not send you the next target snapshot unless
+ * you finish the transition and return the target snapshot back as a result of [transition].
+ * Only then the next target snapshot will be passed into `transition`.
+ *
+ * All library's default NavHosts use BaseNavHost internally, so you may explore their sources as
+ * examples.
+ *
+ * **Note:** this is still early public version of the API. It may get some minor changes depending
+ * on use cases.
+ *
+ * @param backstack the backstack from a [NavController] that will be used to observe navigation
+ * changes
+ *
+ * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
+ * create and access scoped [ViewModelStoreOwners][ViewModelStoreOwner]. You may set it to
+ * [EmptyScopeSpec] if you don't want your custom NavHost to support scoping.
+ *
+ * @param visibleItems controls the lifecycle states of [NavHostEntries][NavHostEntry].
+ * By default, only the last entry is considered active and promoted to
+ * [RESUMED][Lifecycle.State.RESUMED] state. With this lambda expression you can have several
+ * entries receive `RESUMED` state. It is also possible to control lifecycle states of entries
+ * dynamically. BaseNavHost will subscribe to all [State] object changes read inside [visibleItems].
  */
 @ExperimentalReimaginedApi
 @Composable
@@ -106,7 +146,6 @@ private fun <T> enqueueSnapshotTransition(
             }
         }
     }
-
     return TransitionState(targetSnapshot = targetSnapshot, currentSnapshot = currentSnapshot)
 }
 
