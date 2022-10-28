@@ -33,7 +33,6 @@ android {
 
     kotlinOptions {
         freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
-        languageVersion = "1.8"
     }
 
     buildFeatures {

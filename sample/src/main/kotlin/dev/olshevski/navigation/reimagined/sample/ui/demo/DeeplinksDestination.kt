@@ -6,10 +6,10 @@ import kotlinx.parcelize.Parcelize
 sealed class DeeplinksDestination : Parcelable {
 
     @Parcelize
-    data object First : DeeplinksDestination()
+    object First : DeeplinksDestination()
 
     @Parcelize
-    data object Second : DeeplinksDestination()
+    object Second : DeeplinksDestination()
 
     @Parcelize
     data class Third(val id: String) : DeeplinksDestination()

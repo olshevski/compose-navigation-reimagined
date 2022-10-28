@@ -7,34 +7,34 @@ import kotlinx.parcelize.Parcelize
 sealed class MainDestination : Parcelable {
 
     @Parcelize
-    data object Splash : MainDestination()
+    object Splash : MainDestination()
 
     @Parcelize
-    data object DemoSelection : MainDestination()
+    object DemoSelection : MainDestination()
 
     @Parcelize
-    data object PassValues : MainDestination()
+    object PassValues : MainDestination()
 
     @Parcelize
-    data object ReturnResults : MainDestination()
+    object ReturnResults : MainDestination()
 
     @Parcelize
-    data object AnimatedNavHost : MainDestination()
+    object AnimatedNavHost : MainDestination()
 
     @Parcelize
-    data object DialogNavHost : MainDestination()
+    object DialogNavHost : MainDestination()
 
     @Parcelize
-    data object BottomSheetNavHost : MainDestination()
+    object BottomSheetNavHost : MainDestination()
 
     @Parcelize
-    data object ViewModels : MainDestination()
+    object ViewModels : MainDestination()
 
     @Parcelize
-    data object ScopedViewModels : MainDestination()
+    object ScopedViewModels : MainDestination()
 
     @Parcelize
-    data object BottomNavigation : MainDestination()
+    object BottomNavigation : MainDestination()
 
     @Parcelize
     data class Deeplinks(

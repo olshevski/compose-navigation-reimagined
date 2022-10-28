@@ -28,7 +28,7 @@ import dev.olshevski.navigation.reimagined.sample.ui.TestInputTag
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-private data object Scope : Parcelable
+private object Scope : Parcelable
 
 private val ScopeSpec = NavScopeSpec<ScopedViewModelsDestination, Scope> {
     if (it == ScopedViewModelsDestination.Second || it == ScopedViewModelsDestination.Third) {
