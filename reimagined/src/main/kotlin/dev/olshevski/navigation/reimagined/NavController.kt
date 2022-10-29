@@ -19,7 +19,7 @@ import androidx.lifecycle.SavedStateHandle
  *
  * The order of the items in the list is interpreted as going from the bottom of the backstack
  * to the top. It means that the last item of the list will become the currently displayed item
- * in [NavHost]. The first item of the list will be the last item that can be popped of
+ * in [NavHost]. The first item of the list will be the last item that can be popped off
  * the backstack.
  *
  * The [initialBackstack] list may be empty.
@@ -49,7 +49,7 @@ fun <T> rememberNavController(startDestination: T) =
  *
  * The order of the items in the list is interpreted as going from the bottom of the backstack
  * to the top. It means that the last item of the list will become the currently displayed item
- * in [NavHost]. The first item of the list will be the last item that can be popped of
+ * in [NavHost]. The first item of the list will be the last item that can be popped off
  * the backstack.
  *
  * The [initialBackstack] list may be empty.
@@ -77,10 +77,10 @@ fun <T> navController(startDestination: T) =
  * The type specified in the type parameter must comply with the next requirements:
  *
  * 1) It must be possible to write the instances of the type into [Parcel]. Which means
- * it should be either [Parcelable], or [Serializable], or of any natively supported data type
+ * it should be [Parcelable], [Serializable], or of any natively supported data type
  * (e.g. primitive or string).
  *
- * 2) It must be [Stable] or [Immutable].
+ * 2) It must be [Stable], [Immutable], or string/primitive.
  */
 @Stable
 class NavController<T> internal constructor(

@@ -71,7 +71,8 @@ internal fun <T, S> rememberNavHostState(
 }
 
 /**
- * Stores and manages all components (lifecycles, saved states, view models).
+ * Stores and manages saved state and all Android architecture components (Lifecycle,
+ * ViewModelStore, SavedStateRegistry) for every entry.
  */
 @Stable
 internal class NavHostState<T, S>(

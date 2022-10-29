@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModelStoreOwner
  * whole internal state and architecture components management intact.
  *
  * BaseNavHost gives you access to the whole backstack of entries through [NavSnapshot],
- * so it is possible to layout and display several entries or even the whole backstack at the same
+ * so it is possible to lay out and display several entries or even the whole backstack at the same
  * time.
  *
  * BaseNavHost uses [NavSnapshots][NavSnapshot] as anchor points of navigation. The transition
@@ -41,8 +41,8 @@ import androidx.lifecycle.ViewModelStoreOwner
  * All library's default NavHosts use BaseNavHost internally, so you may explore their sources as
  * examples.
  *
- * **Note:** this is still early public version of the API. It may get some minor changes depending
- * on use cases.
+ * **Note:** this is still an early public version of the API. It may get some minor changes
+ * in the future.
  *
  * @param backstack the backstack from a [NavController] that will be used to observe navigation
  * changes
@@ -53,7 +53,7 @@ import androidx.lifecycle.ViewModelStoreOwner
  *
  * @param visibleItems controls the lifecycle states of [NavHostEntries][NavHostEntry].
  * By default, only the last entry is considered active and promoted to
- * [RESUMED][Lifecycle.State.RESUMED] state. With this lambda expression you can have several
+ * [RESUMED][Lifecycle.State.RESUMED] state. With this function parameter, you can have several
  * entries receive `RESUMED` state. It is also possible to control lifecycle states of entries
  * dynamically. BaseNavHost will subscribe to all [State] object changes read inside [visibleItems].
  */

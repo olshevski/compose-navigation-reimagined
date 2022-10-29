@@ -1,6 +1,6 @@
 # ViewModels
 
-Every unique NavEntry in NavHost provides its own ViewModelStore. Every such ViewModelStores is guaranteed to exist for as long as the associated NavEntry is present in the backstack.
+Every unique NavEntry in NavHost provides its own ViewModelStore. Every such ViewModelStore is guaranteed to exist for as long as the associated NavEntry is present in the backstack.
 
 As soon as NavEntry is removed from the backstack, its ViewModelStore with all ViewModels is cleared.
 
@@ -16,7 +16,7 @@ fun SomeScreen() {
 
 ## Accessing ViewModels of backstack entries
 
-Since version 1.2.0 it is possible to access ViewModelStoreOwner for any entry that is currently present on the backstack. It is done through the `NavHostScope` that is available inside NavHost/AnimatedNavHost:
+It is possible to access ViewModelStoreOwner of any entry that is currently present on the backstack. It is done through the `NavHostScope` receiver of `contentSelector` function parameter of NavHost:
 
 ```kotlin
 @Composable

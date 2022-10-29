@@ -15,9 +15,10 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModelStoreOwner
 
 /**
- * An animated navigation host that selects UI for every destination and provides necessary
- * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
- * for every unique [NavEntry] in the [controller's][controller] backstack.
+ * An animated navigation host that selects UI for every destination and provides saved state and
+ * Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry) through
+ * [CompositionLocalProvider] for every unique [NavEntry] in the [controller's][controller]
+ * backstack.
  *
  * This composable uses animated transitions to switch between destinations. You may set a custom
  * [NavTransitionSpec] to specify the desired transitions.
@@ -55,9 +56,9 @@ fun <T> AnimatedNavHost(
 )
 
 /**
- * An animated navigation host that selects UI for every destination and provides necessary
- * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
- * for every unique [NavEntry] in the [backstack].
+ * An animated navigation host that selects UI for every destination and provides saved state and
+ * Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry) through
+ * [CompositionLocalProvider] for every unique [NavEntry] in the [backstack].
  *
  * This composable uses animated transitions to switch between destinations. You may set a custom
  * [NavTransitionSpec] to specify the desired transitions.
@@ -109,9 +110,10 @@ internal fun <T, S> AnimatedNavHost(
 )
 
 /**
- * An animated navigation host that selects UI for every destination and provides necessary
- * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
- * for every unique [NavEntry] in the [controller's][controller] backstack.
+ * An animated navigation host that selects UI for every destination and provides saved state and
+ * Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry) through
+ * [CompositionLocalProvider] for every unique [NavEntry] in the [controller's][controller]
+ * backstack.
  *
  * This composable uses animated transitions to switch between destinations. You may set a custom
  * [NavTransitionSpec] to specify the desired transitions.
@@ -172,9 +174,9 @@ fun <T, S> ScopingAnimatedNavHost(
 )
 
 /**
- * An animated navigation host that selects UI for every destination and provides necessary
- * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
- * for every unique [NavEntry] in the [backstack].
+ * An animated navigation host that selects UI for every destination and provides saved state and
+ * Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry) through
+ * [CompositionLocalProvider] for every unique [NavEntry] in the [backstack].
  *
  * This composable uses animated transitions to switch between destinations. You may set a custom
  * [NavTransitionSpec] to specify the desired transitions.

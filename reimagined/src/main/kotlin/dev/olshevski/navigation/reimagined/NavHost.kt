@@ -7,9 +7,10 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModelStoreOwner
 
 /**
- * A basic navigation host that selects UI for every destination and provides necessary
- * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
- * for every unique [NavEntry] in the [controller's][controller] backstack.
+ * A basic navigation host that selects UI for every destination and provides saved state and
+ * Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry) through
+ * [CompositionLocalProvider] for every unique [NavEntry] in the [controller's][controller]
+ * backstack.
  *
  * This composable doesn't provide animated transitions between destinations - it will simply
  * jump-cut to the next destination.
@@ -42,9 +43,9 @@ fun <T> NavHost(
 )
 
 /**
- * A basic navigation host that selects UI for every destination and provides necessary
- * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
- * for every unique [NavEntry] in the [backstack].
+ * A basic navigation host that selects UI for every destination and provides saved state and
+ * Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry) through
+ * [CompositionLocalProvider] for every unique [NavEntry] in the [backstack].
  *
  * This composable doesn't provide animated transitions between destinations - it will simply
  * jump-cut to the next destination.
@@ -88,9 +89,10 @@ internal fun <T, S> NavHost(
 )
 
 /**
- * A basic navigation host that selects UI for every destination and provides necessary
- * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
- * for every unique [NavEntry] in the [controller's][controller] backstack.
+ * A basic navigation host that selects UI for every destination and provides saved state and
+ * Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry) through
+ * [CompositionLocalProvider] for every unique [NavEntry] in the [controller's][controller]
+ * backstack.
  *
  * This composable doesn't provide animated transitions between destinations - it will simply
  * jump-cut to the next destination.
@@ -145,9 +147,9 @@ fun <T, S> ScopingNavHost(
 )
 
 /**
- * A basic navigation host that selects UI for every destination and provides necessary
- * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
- * for every unique [NavEntry] in the [backstack].
+ * A basic navigation host that selects UI for every destination and provides saved state and
+ * Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry) through
+ * [CompositionLocalProvider] for every unique [NavEntry] in the [backstack].
  *
  * This composable doesn't provide animated transitions between destinations - it will simply
  * jump-cut to the next destination.

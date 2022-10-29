@@ -6,13 +6,13 @@
 
 A small and simple, yet fully fledged and customizable navigation library for [Jetpack Compose](https://developer.android.com/jetpack/compose):
 
-- Full **type-safety**
-- State restoration
+- **Type-safe** and **model-driven**
+- Built-in state restoration
 - Nested navigation with independent backstacks
-- Easy integration with [BottomNavigation](https://developer.android.com/reference/kotlin/androidx/compose/material/package-summary#BottomNavigation(androidx.compose.ui.Modifier,androidx.compose.ui.graphics.Color,androidx.compose.ui.graphics.Color,androidx.compose.ui.unit.Dp,kotlin.Function1)) and [TabRow](https://developer.android.com/reference/kotlin/androidx/compose/material/package-summary#TabRow(kotlin.Int,androidx.compose.ui.Modifier,androidx.compose.ui.graphics.Color,androidx.compose.ui.graphics.Color,kotlin.Function1,kotlin.Function0,kotlin.Function0))
-- Own lifecycle, saved state and view models for every backstack entry
+- Own Lifecycle, ViewModelStore and SavedStateRegistry for every backstack entry
 - Animated transitions
-- Navigation logic may be easily moved to the ViewModel layer
+- Dialog and bottom sheet navigation
+- Ability to define scopes for easy sharing of ViewModels
 - No builders, no obligatory superclasses for your composables
 
 ## Quick start
@@ -20,7 +20,7 @@ A small and simple, yet fully fledged and customizable navigation library for [J
 Add a single dependency to your project:
 
 ```kotlin
-implementation("dev.olshevski.navigation:reimagined:1.2.0")
+implementation("dev.olshevski.navigation:reimagined:1.3.0")
 ```
 
 Define a set of screens. It is convenient to use a sealed class for this:
@@ -53,12 +53,12 @@ fun NavHostScreen() {
 
     NavHost(navController) { screen ->
         when (screen) {
-            Screen.First -> Column {
+            is Screen.First -> Column {
                 Text("First screen")
                 Button(onClick = {
                     navController.navigate(Screen.Second(id = 42))
                 }) {
-                    Text("To Second screen")
+                    Text("Open Second screen")
                 }
             }
 
@@ -67,7 +67,7 @@ fun NavHostScreen() {
                 Button(onClick = {
                     navController.navigate(Screen.Third(text = "Hello"))
                 }) {
-                    Text("To Third screen")
+                    Text("Open Third screen")
                 }
             }
 

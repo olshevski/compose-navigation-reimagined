@@ -13,6 +13,9 @@ theme:
   favicon: assets/images/favicon.png
   icon:
     repo: fontawesome/brands/github
+  features:
+    - navigation.instant
+    - navigation.expand
 
 extra:
   social:
@@ -38,13 +41,20 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.highlight
   - pymdownx.superfences
+  - toc:
+      permalink: true
 
 nav:
-  - "Overview": index.md
-  - "NavController": nav-controller.md
-  - "NavHost": nav-host.md
-  - "Animations": animations.md
-  - "Dialogs": dialogs.md
-  - "Back handling": back-handling.md
-  - "Return results": return-results.md
-  - "ViewModels": view-models.md
+  - index.md
+  - nav-controller.md
+  - "NavHost":
+    - "Basics": nav-host.md
+    - animations.md
+    - dialogs.md
+    - bottom-sheets.md
+  - back-handling.md
+  - nested-navigation.md
+  - "ViewModels":
+    - "Entry-scoped": view-models.md
+    - "Shared": shared-view-models.md
+  - return-results.md

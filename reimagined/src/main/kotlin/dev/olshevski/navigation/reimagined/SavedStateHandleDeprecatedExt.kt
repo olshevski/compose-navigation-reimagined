@@ -26,7 +26,7 @@ private fun <T> SavedStateHandle.navControllerInternal(
  *
  * The order of the items in the list is interpreted as going from the bottom of the backstack
  * to the top. It means that the last item of the list will become the currently displayed item
- * in [NavHost]. The first item of the list will be the last item that can be popped of
+ * in [NavHost]. The first item of the list will be the last item that can be popped off
  * the backstack.
  *
  * The [initialBackstack] list may be empty.
@@ -49,7 +49,7 @@ fun <T> SavedStateHandle.navController(
  *
  * The order of the items in the list is interpreted as going from the bottom of the backstack
  * to the top. It means that the last item of the list will become the currently displayed item
- * in [NavHost]. The first item of the list will be the last item that can be popped of
+ * in [NavHost]. The first item of the list will be the last item that can be popped off
  * the backstack.
  *
  * The [initialBackstack] list may be empty.

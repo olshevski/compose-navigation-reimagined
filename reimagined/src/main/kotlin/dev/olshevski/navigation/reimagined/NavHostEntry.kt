@@ -13,8 +13,9 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.savedstate.SavedStateRegistry
 
 /**
- * Wraps around [NavEntry] and serves as an owner of its associated components ([Lifecycle],
- * [SavedStateRegistry], [ViewModelStore]).
+ * Holds `id` and `destination` from the associated [NavEntry]. Also manages the saved state and
+ * serves as an owner of Android architecture components ([Lifecycle], [SavedStateRegistry],
+ * [ViewModelStore]).
  *
  * @param destination A destination you passed into [navigate], [replaceLast] or other extension
  * method. If you used [NavController.setNewBackstack] directly this is the destination you

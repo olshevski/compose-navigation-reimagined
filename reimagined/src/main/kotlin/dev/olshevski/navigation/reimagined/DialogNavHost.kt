@@ -17,11 +17,12 @@ private val NoneTransitionSpec = NavTransitionSpec<Any?> { _, _, _ ->
 /**
  * A navigation host specifically suited for showing dialogs. It is based on [AnimatedNavHost] and
  * provides smoother transition between dialogs rather than simple [NavHost] - there will be
- * no visible flickering of dialogs' scrim/fade.
+ * no visible scrim flickering.
  *
- * Same as other NavHosts it also selects UI for every destination and provides necessary
- * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
- * for every unique [NavEntry] in the [controller's][controller] backstack.
+ * Same as other NavHosts it also selects UI for every destination and provides saved state and
+ * Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry) through
+ * [CompositionLocalProvider] for every unique [NavEntry] in the [controller's][controller]
+ * backstack.
  *
  * Note that DialogNavHost doesn't wrap your composables into a [Dialog]. You need to use
  * either `Dialog` or `AlertDialog` composable inside a [contentSelector] yourself.
@@ -54,11 +55,11 @@ fun <T> DialogNavHost(
 /**
  * A navigation host specifically suited for showing dialogs. It is based on [AnimatedNavHost] and
  * provides smoother transition between dialogs rather than simple [NavHost] - there will be
- * no visible flickering of dialogs' scrim/fade.
+ * no visible scrim flickering.
  *
- * Same as other NavHosts it also selects UI for every destination and provides necessary
- * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
- * for every unique [NavEntry] in the [backstack].
+ * Same as other NavHosts it also selects UI for every destination and provides saved state and
+ * Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry) through
+ * [CompositionLocalProvider] for every unique [NavEntry] in the [backstack].
  *
  * Note that DialogNavHost doesn't wrap your composables into a [Dialog]. You need to use
  * either `Dialog` or `AlertDialog` composable inside a [contentSelector] yourself.
@@ -92,11 +93,12 @@ fun <T> DialogNavHost(
 /**
  * A navigation host specifically suited for showing dialogs. It is based on [AnimatedNavHost] and
  * provides smoother transition between dialogs rather than simple [NavHost] - there will be
- * no visible flickering of dialogs' scrim/fade.
+ * no visible scrim flickering.
  *
- * Same as other NavHosts it also selects UI for every destination and provides necessary
- * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
- * for every unique [NavEntry] in the [controller's][controller] backstack.
+ * Same as other NavHosts it also selects UI for every destination and provides saved state and
+ * Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry) through
+ * [CompositionLocalProvider] for every unique [NavEntry] in the [controller's][controller]
+ * backstack.
  *
  * Note that DialogNavHost doesn't wrap your composables into a [Dialog]. You need to use
  * either `Dialog` or `AlertDialog` composable inside a [contentSelector] yourself.
@@ -151,11 +153,11 @@ fun <T, S> ScopingDialogNavHost(
 /**
  * A navigation host specifically suited for showing dialogs. It is based on [AnimatedNavHost] and
  * provides smoother transition between dialogs rather than simple [NavHost] - there will be
- * no visible flickering of dialogs' scrim/fade.
+ * no visible scrim flickering.
  *
- * Same as other NavHosts it also selects UI for every destination and provides necessary
- * components (lifecycles, saved states, view models) through [CompositionLocalProvider]
- * for every unique [NavEntry] in the [backstack].
+ * Same as other NavHosts it also selects UI for every destination and provides saved state and
+ * Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry) through
+ * [CompositionLocalProvider] for every unique [NavEntry] in the [backstack].
  *
  * Note that DialogNavHost doesn't wrap your composables into a [Dialog]. You need to use
  * either `Dialog` or `AlertDialog` composable inside a [contentSelector] yourself.
