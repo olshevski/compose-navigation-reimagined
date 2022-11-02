@@ -6,7 +6,7 @@
 
 A small and simple, yet fully fledged and customizable navigation library for [Jetpack Compose](https://developer.android.com/jetpack/compose):
 
-- **Type-safe** and **model-driven**
+- Full **type-safety**
 - Built-in state restoration
 - Nested navigation with independent backstacks
 - Own Lifecycle, ViewModelStore and SavedStateRegistry for every backstack entry
