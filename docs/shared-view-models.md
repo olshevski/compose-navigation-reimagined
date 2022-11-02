@@ -17,15 +17,19 @@ Every such scoping NavHost gives you the ability to assign scopes to some destin
 In the next image, ViewModelStoreOwner for **Scope X** will exist only when any of destinations **B** or **C** is in the backstack (their position doesn't matter). Both **B** and **C** can access the same ViewModelStoreOwner instance. Destination **A** cannot access it.
 
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/5606565/199308024-d4e3d00f-957a-41df-9f0f-bee60f88e354.svg" />
+    <img src="https://user-images.githubusercontent.com/5606565/199459154-80017d8c-f5d4-4e74-b3a1-9dca6c84f53a.svg" />
 </p>
 
 When both **B** and **C** are popped off the backstack and there is only **A** left, ViewModelStoreOwner of **Scope X** will be cleared and removed.
 
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/5606565/199460324-6d4bfe70-631c-4080-b6bd-39837a06cc02.svg" />
+</p>
+
 Note that if you replace **B** and **C** with a new destination **D** that is also marked with **Scope X**, ViewModelStoreOwner will not be recreated, but left as is.
 
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/5606565/199308037-df45a689-cfeb-48d3-ab97-3fadb6214e7f.svg" />
+    <img src="https://user-images.githubusercontent.com/5606565/199459161-ee9a01e1-215c-487e-b454-f82fa7f6967f.svg" />
 </p>
 
 In order to user ScopingNavHost you need to implement NavScopeSpec and pass it as a `scopeSpec` parameter. NavScopeSpec requests a set of scopes for each destination that is on the backstack:

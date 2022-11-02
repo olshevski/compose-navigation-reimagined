@@ -1,4 +1,4 @@
-# ViewModels
+# Entry-scoped ViewModels
 
 Every unique NavEntry in NavHost provides its own ViewModelStore. Every such ViewModelStore is guaranteed to exist for as long as the associated NavEntry is present in the backstack.
 
