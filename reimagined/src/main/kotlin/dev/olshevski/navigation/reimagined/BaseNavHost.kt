@@ -65,27 +65,35 @@ fun <T, S> BaseNavHost(
     visibleItems: (snapshot: NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },
     transition: @Composable (snapshot: NavSnapshot<T, S>) -> NavSnapshot<T, S>
 ) = BaseNavHost(
-    state = rememberNavHostState(backstack, scopeSpec),
+    state = rememberScopingNavHostState(backstack, scopeSpec),
     visibleItems = visibleItems,
     transition = transition
 )
 
 @ExperimentalReimaginedApi
 @Composable
-internal fun <T, S> BaseNavHost(
-    state: NavHostState<T, S>,
+fun <T, S> BaseNavHost(
+    state: ScopingNavHostState<T, S>,
     visibleItems: (snapshot: NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },
     transition: @Composable (snapshot: NavSnapshot<T, S>) -> NavSnapshot<T, S>
-): Unit = key(state.hostId) {
-    DisposableEffect(state) {
-        state.onCreate()
+) {
+    state as NavHostStateImpl
+    RequireNoStateChange(state) { "Dynamic state change is not supported" }
+
+    val latestSnapshot by remember { derivedStateOf { state.createSnapshot() } }
+
+    DisposableEffect(Unit) {
         onDispose {
-            state.onDispose()
-            state.removeOutdatedEntries(state.snapshot)
+            state.removeOutdatedHostEntries(latestSnapshot)
         }
     }
 
-    val (targetSnapshot, currentSnapshot) = enqueueSnapshotTransition(state.snapshot, transition)
+    val (targetSnapshot, currentSnapshot) = key(state.hostId) {
+        enqueueSnapshotTransition(
+            latestSnapshot,
+            transition
+        )
+    }
 
     val targetVisibleItems by remember(targetSnapshot) {
         derivedStateOf { visibleItems(targetSnapshot) }
@@ -95,21 +103,27 @@ internal fun <T, S> BaseNavHost(
     }
 
     val updatedTargetVisibleItems by rememberUpdatedState(targetVisibleItems)
-    DisposableEffect(state, targetVisibleItems) {
+    DisposableEffect(targetVisibleItems) {
         onDispose {
             state.onTransitionStart(updatedTargetVisibleItems)
         }
     }
 
-    DisposableEffect(state, currentVisibleItems) {
+    DisposableEffect(currentVisibleItems) {
         state.onTransitionFinish(currentVisibleItems)
         onDispose {}
     }
 
-    DisposableEffect(state, currentSnapshot) {
-        state.removeOutdatedEntries(currentSnapshot)
+    DisposableEffect(currentSnapshot) {
+        state.removeOutdatedHostEntries(currentSnapshot)
         onDispose {}
     }
+}
+
+@Composable
+private fun RequireNoStateChange(state: Any, lazyMessage: () -> Any) {
+    val rememberedState = remember { state }
+    require(state == rememberedState, lazyMessage)
 }
 
 /**

@@ -76,10 +76,10 @@ class SavedStateHandleTest(
         }
 
         lateinit var screenController: NavController<Screen>
-        internal lateinit var screenState: NavHostState<Screen, Nothing>
+        internal lateinit var screenState: NavHostStateImpl<Screen, *>
 
         lateinit var subScreenController: NavController<SubScreen>
-        internal lateinit var subScreenState: NavHostState<SubScreen, Nothing>
+        internal lateinit var subScreenState: NavHostStateImpl<SubScreen, *>
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -93,7 +93,10 @@ class SavedStateHandleTest(
 
             setContent {
                 screenController = rememberNavController(Screen.A)
-                screenState = rememberNavHostState(screenController.backstack, EmptyScopeSpec)
+                screenState = rememberNavHostStateImpl(
+                    backstack = screenController.backstack,
+                    scopeSpec = EmptyScopeSpec
+                )
                 ParamNavHost(hostParam, screenState) { screen ->
                     paramViewModel(
                         factoryParam = factoryParam,
@@ -113,7 +116,10 @@ class SavedStateHandleTest(
         @Composable
         private fun SubScreenHost(hostParam: NavHostParam, factoryParam: ViewModelFactoryParam) {
             subScreenController = rememberNavController(SubScreen.X)
-            subScreenState = rememberNavHostState(subScreenController.backstack, EmptyScopeSpec)
+            subScreenState = rememberNavHostStateImpl(
+                backstack = subScreenController.backstack,
+                scopeSpec = EmptyScopeSpec
+            )
             ParamNavHost(hostParam, subScreenState) {
                 paramViewModel(
                     factoryParam = factoryParam,
@@ -127,8 +133,9 @@ class SavedStateHandleTest(
     }
 
     private fun recreateActivity_firstEntry() {
-        val viewModel1 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
+        val viewModel1 = getExistingViewModel<TestViewModel>(
+            composeRule.activity.screenState.findHostEntry(Screen.A)
+        )
         viewModel1.state = Value.Value2
 
         composeRule.recreateActivity()
@@ -149,8 +156,9 @@ class SavedStateHandleTest(
     }
 
     private fun recreateActivity_firstNestedEntry() {
-        val viewModel1 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[0])
+        val viewModel1 = getExistingViewModel<TestViewModel>(
+            composeRule.activity.subScreenState.findHostEntry(SubScreen.X)
+        )
         viewModel1.state = Value.Value2
 
         composeRule.recreateActivity()
@@ -176,13 +184,15 @@ class SavedStateHandleTest(
     }
 
     private fun recreateActivityAndClearViewModels_firstEntry() {
-        val viewModel1 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
+        val viewModel1 = getExistingViewModel<TestViewModel>(
+            composeRule.activity.screenState.findHostEntry(Screen.A)
+        )
         viewModel1.state = Value.Value2
 
         composeRule.recreateActivityAndClearViewModels()
-        val viewModel2 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
+        val viewModel2 = getExistingViewModel<TestViewModel>(
+            composeRule.activity.screenState.findHostEntry(Screen.A)
+        )
         assertThat(viewModel2.state).isEqualTo(Value.Value2)
     }
 
@@ -200,13 +210,15 @@ class SavedStateHandleTest(
     }
 
     private fun recreateActivityAndClearViewModels_firstNestedEntry() {
-        val viewModel1 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[0])
+        val viewModel1 = getExistingViewModel<TestViewModel>(
+            composeRule.activity.subScreenState.findHostEntry(SubScreen.X)
+        )
         viewModel1.state = Value.Value2
 
         composeRule.recreateActivityAndClearViewModels()
-        val viewModel2 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[0])
+        val viewModel2 = getExistingViewModel<TestViewModel>(
+            composeRule.activity.subScreenState.findHostEntry(SubScreen.X)
+        )
         assertThat(viewModel2.state).isEqualTo(Value.Value2)
     }
 
@@ -229,16 +241,18 @@ class SavedStateHandleTest(
     }
 
     private fun savedStateHandleIsReconnected_firstEntry() {
-        val viewModel1 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
+        val viewModel1 = getExistingViewModel<TestViewModel>(
+            composeRule.activity.screenState.findHostEntry(Screen.A)
+        )
         assertThat(viewModel1.state).isEqualTo(Value.Value1)
 
         composeRule.recreateActivity()
         viewModel1.state = Value.Value2
 
         composeRule.recreateActivityAndClearViewModels()
-        val viewModel2 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
+        val viewModel2 = getExistingViewModel<TestViewModel>(
+            composeRule.activity.screenState.findHostEntry(Screen.A)
+        )
         assertThat(viewModel2.state).isEqualTo(Value.Value2)
     }
 
@@ -256,16 +270,18 @@ class SavedStateHandleTest(
     }
 
     private fun savedStateHandleIsReconnected_firstNestedEntry() {
-        val viewModel1 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[0])
+        val viewModel1 = getExistingViewModel<TestViewModel>(
+            composeRule.activity.subScreenState.findHostEntry(SubScreen.X)
+        )
         assertThat(viewModel1.state).isEqualTo(Value.Value1)
 
         composeRule.recreateActivity()
         viewModel1.state = Value.Value2
 
         composeRule.recreateActivityAndClearViewModels()
-        val viewModel2 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.subScreenState.hostEntries[0])
+        val viewModel2 = getExistingViewModel<TestViewModel>(
+            composeRule.activity.subScreenState.findHostEntry(SubScreen.X)
+        )
         assertThat(viewModel2.state).isEqualTo(Value.Value2)
     }
 

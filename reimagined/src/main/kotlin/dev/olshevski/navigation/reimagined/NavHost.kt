@@ -71,19 +71,20 @@ fun <T> NavHost(
     backstack: NavBackstack<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable NavHostScope<T>.(destination: T) -> Unit
-) = NavHost(
-    state = rememberNavHostState(backstack, EmptyScopeSpec),
+) = @OptIn(ExperimentalReimaginedApi::class) NavHost(
+    state = rememberNavHostState(backstack),
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
 )
 
+@ExperimentalReimaginedApi
 @Composable
-internal fun <T, S> NavHost(
-    state: NavHostState<T, S>,
+fun <T> NavHost(
+    state: NavHostState<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
-    contentSelector: @Composable ScopingNavHostScope<T, S>.(destination: T) -> Unit
-) = ScopingNavHost(
-    state = state,
+    contentSelector: @Composable NavHostScope<T>.(destination: T) -> Unit
+) = @Suppress("UNCHECKED_CAST") ScopingNavHost(
+    state = state as ScopingNavHostState<T, Nothing>,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
 )
@@ -196,16 +197,16 @@ fun <T, S> ScopingNavHost(
     scopeSpec: NavScopeSpec<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable ScopingNavHostScope<T, S>.(destination: T) -> Unit
-) = ScopingNavHost(
-    state = rememberNavHostState(backstack, scopeSpec),
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingNavHost(
+    state = rememberScopingNavHostState(backstack, scopeSpec),
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
 )
 
-@OptIn(ExperimentalReimaginedApi::class)
+@ExperimentalReimaginedApi
 @Composable
-internal fun <T, S> ScopingNavHost(
-    state: NavHostState<T, S>,
+fun <T, S> ScopingNavHost(
+    state: ScopingNavHostState<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable ScopingNavHostScope<T, S>.(T) -> Unit
 ) = BaseNavHost(state) { snapshot ->

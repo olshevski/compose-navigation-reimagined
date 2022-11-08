@@ -57,7 +57,7 @@ class ViewModelTest(
         }
 
         lateinit var screenController: NavController<Screen>
-        internal lateinit var screenState: NavHostState<Screen, Nothing>
+        internal lateinit var screenState: NavHostStateImpl<Screen, *>
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -67,7 +67,10 @@ class ViewModelTest(
 
             setContent {
                 screenController = rememberNavController(Screen.A)
-                screenState = rememberNavHostState(screenController.backstack, EmptyScopeSpec)
+                screenState = rememberNavHostStateImpl(
+                    backstack = screenController.backstack,
+                    scopeSpec = EmptyScopeSpec
+                )
                 ParamNavHost(hostParam, screenState) { _ ->
                     hostEntries.forEach {
                         viewModel(
@@ -82,26 +85,30 @@ class ViewModelTest(
     }
 
     private fun viewModelIsRecreated_firstEntry() {
-        val viewModel1 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
+        val viewModel1 = getExistingViewModel<TestViewModel>(
+            composeRule.activity.screenState.findHostEntry(Screen.A)
+        )
 
         composeRule.recreateActivityAndClearViewModels()
         assertThat(viewModel1.cleared).isTrue()
 
-        val viewModel2 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
+        val viewModel2 = getExistingViewModel<TestViewModel>(
+            composeRule.activity.screenState.findHostEntry(Screen.A)
+        )
         assertThat(viewModel1).isNotSameInstanceAs(viewModel2)
     }
 
     private fun viewModelIsRestored_firstEntry() {
-        val viewModel1 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
+        val viewModel1 = getExistingViewModel<TestViewModel>(
+            composeRule.activity.screenState.findHostEntry(Screen.A)
+        )
 
         composeRule.recreateActivity()
         assertThat(viewModel1.cleared).isFalse()
 
-        val viewModel2 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
+        val viewModel2 = getExistingViewModel<TestViewModel>(
+            composeRule.activity.screenState.findHostEntry(Screen.A)
+        )
         assertThat(viewModel1).isSameInstanceAs(viewModel2)
     }
 
@@ -136,10 +143,12 @@ class ViewModelTest(
         composeRule.activity.screenController.navigate(Screen.B)
         composeRule.waitForIdle()
 
-        val viewModel1 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
-        val viewModel2 =
-            getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[1])
+        val viewModel1 = getExistingViewModel<TestViewModel>(
+            composeRule.activity.screenState.findHostEntry(Screen.A)
+        )
+        val viewModel2 = getExistingViewModel<TestViewModel>(
+            composeRule.activity.screenState.findHostEntry(Screen.B)
+        )
         assertThat(viewModel1).isNotSameInstanceAs(viewModel2)
     }
 
@@ -148,8 +157,9 @@ class ViewModelTest(
         composeRule.activity.screenController.navigate(Screen.B)
         composeRule.waitForIdle()
 
-        val viewModel =
-            getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[1])
+        val viewModel = getExistingViewModel<TestViewModel>(
+            composeRule.activity.screenState.findHostEntry(Screen.B)
+        )
 
         composeRule.activity.screenController.pop()
         composeRule.waitForIdle()
@@ -162,8 +172,9 @@ class ViewModelTest(
         composeRule.activity.screenController.navigate(Screen.B)
         composeRule.waitForIdle()
 
-        val viewModel =
-            getExistingViewModel<TestViewModel>(composeRule.activity.screenState.hostEntries[0])
+        val viewModel = getExistingViewModel<TestViewModel>(
+            composeRule.activity.screenState.findHostEntry(Screen.A)
+        )
 
         composeRule.activity.screenController.setNewBackstack(
             entries = composeRule.activity.screenController.backstack.entries.drop(1)

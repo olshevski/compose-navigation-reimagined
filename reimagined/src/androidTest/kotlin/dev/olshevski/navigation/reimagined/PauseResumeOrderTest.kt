@@ -2,15 +2,12 @@ package dev.olshevski.navigation.reimagined
 
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
 import com.google.common.truth.Truth.assertThat
 import dev.olshevski.navigation.reimagined.param.NavHostParam
 import dev.olshevski.navigation.reimagined.param.ParamNavHost
-import dev.olshevski.navigation.testutils.ImmediateLaunchedEffect
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -47,22 +44,15 @@ class PauseResumeOrderTest(private val param: NavHostParam) {
     @Before
     fun before() {
         composeRule.setContent {
-            val state = rememberNavHostState(navController.backstack, EmptyScopeSpec)
-
-            ImmediateLaunchedEffect(state) {
-                val observedEntries = mutableSetOf<LifecycleOwner>()
-                snapshotFlow { state.hostEntries }.collect { hostEntries ->
-                    hostEntries.forEach {
-                        if (!observedEntries.contains(it)) {
-                            it.lifecycle.addObserver(LifecycleEventObserver { _, event ->
-                                lifecycleChanges.add(it.destination to EventType.Lifecycle(event))
-                            })
-                            observedEntries.add(it)
-                        }
-                    }
+            val state = rememberNavHostStateImpl(
+                backstack = navController.backstack,
+                scopeSpec = EmptyScopeSpec,
+                onHostEntryCreated = {
+                    it.lifecycle.addObserver(LifecycleEventObserver { _, event ->
+                        lifecycleChanges.add(it.destination to EventType.Lifecycle(event))
+                    })
                 }
-            }
-
+            )
             ParamNavHost(param, state) { screen ->
                 DisposableEffect(Unit) {
                     lifecycleChanges.add(screen to EventType.DisposableEffect.OnCreate)
