@@ -55,6 +55,8 @@ import kotlinx.parcelize.Parcelize
  * is clicked or when the bottom sheet is hidden with swipe. You should handle it and remove
  * the current entry from the backstack either with [pop], [popAll] or some other method.
  *
+ * @param sheetLayoutModifier [Modifier] applied to the [BottomSheetLayout]
+ *
  * @param sheetShape the shape of the bottom sheet
  *
  * @param sheetElevation the elevation of the bottom sheet
@@ -83,6 +85,7 @@ fun <T> BottomSheetNavHost(
     controller: NavController<T>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    sheetLayoutModifier: Modifier = Modifier,
     sheetShape: Shape = BottomSheetDefaults.shape,
     sheetElevation: Dp = BottomSheetDefaults.Elevation,
     sheetBackgroundColor: Color = MaterialTheme.colors.surface,
@@ -94,6 +97,7 @@ fun <T> BottomSheetNavHost(
     backstack = controller.backstack,
     onDismissRequest = onDismissRequest,
     modifier = modifier,
+    sheetLayoutModifier = sheetLayoutModifier,
     sheetShape = sheetShape,
     sheetElevation = sheetElevation,
     sheetBackgroundColor = sheetBackgroundColor,
@@ -145,6 +149,7 @@ fun <T> BottomSheetNavHost(
     backstack: NavBackstack<T>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    sheetLayoutModifier: Modifier = Modifier,
     sheetShape: Shape = BottomSheetDefaults.shape,
     sheetElevation: Dp = BottomSheetDefaults.Elevation,
     sheetBackgroundColor: Color = MaterialTheme.colors.surface,
@@ -157,6 +162,7 @@ fun <T> BottomSheetNavHost(
     scopeSpec = EmptyScopeSpec,
     onDismissRequest = onDismissRequest,
     modifier = modifier,
+    sheetLayoutModifier = sheetLayoutModifier,
     sheetShape = sheetShape,
     sheetElevation = sheetElevation,
     sheetBackgroundColor = sheetBackgroundColor,
@@ -212,6 +218,7 @@ fun <T, S> ScopingBottomSheetNavHost(
     scopeSpec: NavScopeSpec<T, S>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    sheetLayoutModifier: Modifier = Modifier,
     sheetShape: Shape = BottomSheetDefaults.shape,
     sheetElevation: Dp = BottomSheetDefaults.Elevation,
     sheetBackgroundColor: Color = MaterialTheme.colors.surface,
@@ -224,6 +231,7 @@ fun <T, S> ScopingBottomSheetNavHost(
     scopeSpec = scopeSpec,
     onDismissRequest = onDismissRequest,
     modifier = modifier,
+    sheetLayoutModifier = sheetLayoutModifier,
     sheetShape = sheetShape,
     sheetElevation = sheetElevation,
     sheetBackgroundColor = sheetBackgroundColor,
@@ -280,6 +288,7 @@ fun <T, S> ScopingBottomSheetNavHost(
     scopeSpec: NavScopeSpec<T, S>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    sheetLayoutModifier: Modifier = Modifier,
     sheetShape: Shape = BottomSheetDefaults.shape,
     sheetElevation: Dp = BottomSheetDefaults.Elevation,
     sheetBackgroundColor: Color = MaterialTheme.colors.surface,
@@ -381,6 +390,7 @@ fun <T, S> ScopingBottomSheetNavHost(
             // https://issuetracker.google.com/issues/254645321
 
             SnapshotBottomSheetLayout(
+                modifier = sheetLayoutModifier,
                 snapshot = currentSnapshot,
                 sheetState = sheetState!!,
                 sheetShape = sheetShape,
@@ -443,6 +453,7 @@ fun <T, S> ScopingBottomSheetNavHost(
 @ExperimentalMaterialApi
 @Composable
 private fun <T, S> SnapshotBottomSheetLayout(
+    modifier: Modifier,
     snapshot: NavSnapshot<T, S>,
     sheetState: BottomSheetState,
     sheetShape: Shape,
@@ -455,6 +466,7 @@ private fun <T, S> SnapshotBottomSheetLayout(
     val lastSnapshotItem = snapshot.items.last()
     key(lastSnapshotItem.hostEntry.id) {
         BottomSheetLayout(
+            modifier = modifier,
             sheetState = sheetState,
             sheetShape = sheetShape,
             sheetElevation = sheetElevation,
