@@ -213,6 +213,7 @@ class BottomSheetState internal constructor(
 @ExperimentalMaterialApi
 @Composable
 internal fun BottomSheetLayout(
+    modifier: Modifier,
     sheetContent: @Composable ColumnScope.() -> Unit,
     sheetState: BottomSheetState,
     sheetShape: Shape,
@@ -222,7 +223,7 @@ internal fun BottomSheetLayout(
     onDismissRequest: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    BoxWithConstraints(Modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier.fillMaxSize()) {
         val fullHeight = constraints.maxHeight.toFloat()
         val sheetHeightState = remember { mutableStateOf<Float?>(null) }
         Surface(
