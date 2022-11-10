@@ -55,7 +55,10 @@ import kotlinx.parcelize.Parcelize
  * is clicked or when the bottom sheet is hidden with swipe. You should handle it and remove
  * the current entry from the backstack either with [pop], [popAll] or some other method.
  *
- * @param sheetLayoutModifier [Modifier] applied to the [BottomSheetLayout]
+ * @param modifier the modifier of the whole layout (the scrim and the bottom sheet)
+ *
+ * @param sheetLayoutModifier the modifier applied to the inner bottom sheet layout only. May be
+ * used to handle window insets.
  *
  * @param sheetShape the shape of the bottom sheet
  *
@@ -120,6 +123,11 @@ fun <T> BottomSheetNavHost(
  * @param onDismissRequest dismiss request caused by user interaction. Called either when the scrim
  * is clicked or when the bottom sheet is hidden with swipe. You should handle it and remove
  * the current entry from the backstack either with [pop], [popAll] or some other method.
+ *
+ * @param modifier the modifier of the whole layout (the scrim and the bottom sheet)
+ *
+ * @param sheetLayoutModifier the modifier applied to the inner bottom sheet layout only. May be
+ * used to handle window insets.
  *
  * @param sheetShape the shape of the bottom sheet
  *
@@ -189,6 +197,11 @@ fun <T> BottomSheetNavHost(
  * is clicked or when the bottom sheet is hidden with swipe. You should handle it and remove
  * the current entry from the backstack either with [pop], [popAll] or some other method.
  *
+ * @param modifier the modifier of the whole layout (the scrim and the bottom sheet)
+ *
+ * @param sheetLayoutModifier the modifier applied to the inner bottom sheet layout only. May be
+ * used to handle window insets.
+ *
  * @param sheetShape the shape of the bottom sheet
  *
  * @param sheetElevation the elevation of the bottom sheet
@@ -257,6 +270,11 @@ fun <T, S> ScopingBottomSheetNavHost(
  * @param onDismissRequest dismiss request caused by user interaction. Called either when the scrim
  * is clicked or when the bottom sheet is hidden with swipe. You should handle it and remove
  * the current entry from the backstack either with [pop], [popAll] or some other method.
+ *
+ * @param modifier the modifier of the whole layout (the scrim and the bottom sheet)
+ *
+ * @param sheetLayoutModifier the modifier applied to the inner bottom sheet layout only. May be
+ * used to handle window insets.
  *
  * @param sheetShape the shape of the bottom sheet
  *
