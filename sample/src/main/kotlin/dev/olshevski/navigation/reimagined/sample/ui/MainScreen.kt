@@ -27,6 +27,7 @@ import dev.olshevski.navigation.reimagined.sample.ui.demo.PassValuesScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.ReturnResultsScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.ScopedViewModelsScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.ViewModelsScreen
+import dev.olshevski.navigation.reimagined.sample.ui.experimental.BetterDialogTransitionsScreen
 
 private val MainNavHostTransitionSpec =
     NavTransitionSpec<MainDestination> { _, from, _ ->
@@ -71,37 +72,13 @@ fun MainScreen() {
         transitionSpec = MainNavHostTransitionSpec
     ) { destination ->
         when (destination) {
-            MainDestination.Splash -> SplashScreen(onFinishedShowing = {
-                navController.replaceAll(MainDestination.DemoSelection)
-            })
-            MainDestination.DemoSelection -> DemoSelectionScreen(
-                onPassValuesButtonClick = {
-                    navController.navigate(MainDestination.PassValues)
-                },
-                onReturnResultsButtonClick = {
-                    navController.navigate(MainDestination.ReturnResults)
-                },
-                onAnimatedNavHostButtonClick = {
-                    navController.navigate(MainDestination.AnimatedNavHost)
-                },
-                onDialogNavHostButtonClick = {
-                    navController.navigate(MainDestination.DialogNavHost)
-                },
-                onBottomSheetNavHostClick = {
-                    navController.navigate(MainDestination.BottomSheetNavHost)
-                },
-                onBottomNavigationButtonClick = {
-                    navController.navigate(MainDestination.BottomNavigation)
-                },
-                onViewModelsButtonClick = {
-                    navController.navigate(MainDestination.ViewModels)
-                },
-                onScopedViewModelsButtonClick = {
-                    navController.navigate(MainDestination.ScopedViewModels)
-                },
-                onDeeplinksButtonClick = {
-                    navController.navigate(MainDestination.Deeplinks())
+            MainDestination.Splash -> SplashScreen(
+                onFinishedShowing = {
+                    navController.replaceAll(MainDestination.DemoSelection)
                 }
+            )
+            MainDestination.DemoSelection -> DemoSelectionScreen(
+                onDemoSelected = navController::navigate
             )
             MainDestination.PassValues -> PassValuesScreen()
             MainDestination.ReturnResults -> ReturnResultsScreen()
@@ -112,6 +89,7 @@ fun MainScreen() {
             MainDestination.ViewModels -> ViewModelsScreen()
             MainDestination.ScopedViewModels -> ScopedViewModelsScreen()
             is MainDestination.Deeplinks -> DeeplinksScreen(destination.initialBackstack)
+            MainDestination.BetterDialogTransitions -> BetterDialogTransitionsScreen()
         }
     }
 }

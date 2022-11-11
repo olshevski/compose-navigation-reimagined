@@ -19,8 +19,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ScreenLayout(title: String, content: @Composable ColumnScope.() -> Unit = {}) {
-    Column(Modifier.fillMaxSize()) {
+fun ScreenLayout(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit = {}
+) {
+    Column(modifier.fillMaxSize()) {
         Text(
             text = title,
             modifier = Modifier
@@ -34,10 +38,14 @@ fun ScreenLayout(title: String, content: @Composable ColumnScope.() -> Unit = {}
 }
 
 @Composable
-fun ContentLayout(title: String? = null, content: @Composable ColumnScope.() -> Unit = {}) {
+fun ContentLayout(
+    modifier: Modifier = Modifier,
+    title: String? = null,
+    content: @Composable ColumnScope.() -> Unit = {}
+) {
     val scrollState = rememberScrollState()
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
             .padding(horizontal = 32.dp, vertical = 16.dp),
@@ -58,10 +66,11 @@ fun ContentLayout(title: String? = null, content: @Composable ColumnScope.() -> 
 @Composable
 fun DialogLayout(
     title: String,
+    modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Column(
             Modifier.padding(32.dp),
