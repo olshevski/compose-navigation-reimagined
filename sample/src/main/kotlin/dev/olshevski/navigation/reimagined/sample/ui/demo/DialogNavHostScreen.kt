@@ -9,7 +9,6 @@ import dev.olshevski.navigation.reimagined.DialogNavHost
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.rememberNavController
-import dev.olshevski.navigation.reimagined.replaceLast
 import dev.olshevski.navigation.reimagined.sample.R
 import dev.olshevski.navigation.reimagined.sample.ui.CenteredText
 import dev.olshevski.navigation.reimagined.sample.ui.ContentLayout
@@ -29,7 +28,7 @@ fun DialogNavHostScreen() = ScreenLayout(
             when (destination) {
                 DialogNavHostDestination.First -> FirstDialogLayout(
                     onOpenSecondDialogButtonClick = {
-                        navController.replaceLast(
+                        navController.navigate(
                             DialogNavHostDestination.Second
                         )
                     }

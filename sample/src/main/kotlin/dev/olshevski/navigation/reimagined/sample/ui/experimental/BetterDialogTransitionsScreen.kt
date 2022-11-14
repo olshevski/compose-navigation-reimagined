@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.Button
@@ -26,19 +27,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
+import dev.olshevski.navigation.reimagined.AnimatedNavHostScope
 import dev.olshevski.navigation.reimagined.NavAction
-import dev.olshevski.navigation.reimagined.NavController
+import dev.olshevski.navigation.reimagined.NavBackstack
 import dev.olshevski.navigation.reimagined.NavTransitionSpec
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.rememberNavHostState
+import dev.olshevski.navigation.reimagined.sample.ui.CenteredText
 import dev.olshevski.navigation.reimagined.sample.ui.ContentLayout
 import dev.olshevski.navigation.reimagined.sample.ui.DialogLayout
 import dev.olshevski.navigation.reimagined.sample.ui.ScreenLayout
 
 private enum class DialogDestination {
-    First, Second
+    First, Second, Third
 }
 
 private val DialogTransitionSpec = NavTransitionSpec<DialogDestination> { action, _, _ ->
@@ -55,7 +58,6 @@ private val DialogTransitionSpec = NavTransitionSpec<DialogDestination> { action
             animationSpec = animationSpec,
             targetScale = 0.5f
         )
-
     } else {
         fadeIn(
             animationSpec = animationSpec
@@ -77,18 +79,29 @@ fun BetterDialogTransitionsScreen() = ScreenLayout(title = "Better dialog transi
         initialBackstack = emptyList()
     )
 
-    AnimatedDialogNavHost(navController, transitionSpec = DialogTransitionSpec) { destination ->
+    AnimatedDialogNavHost(
+        backstack = navController.backstack,
+        transitionSpec = DialogTransitionSpec,
+        onDismissRequest = { navController.pop() }
+    ) { destination ->
         when (destination) {
             DialogDestination.First -> FirstDialogLayout(
                 onOpenSecondDialogButtonClick = {
                     navController.navigate(DialogDestination.Second)
                 }
             )
-            DialogDestination.Second -> SecondDialogLayout()
+            DialogDestination.Second -> SecondDialogLayout(
+                onOpenThirdDialogButtonClick = {
+                    navController.navigate(DialogDestination.Third)
+                }
+            )
+            DialogDestination.Third -> ThirdDialogLayout()
         }
     }
 
     ContentLayout {
+        CenteredText(text = "This demo shows how to add animated transitions to dialogs.")
+
         Button(onClick = { navController.navigate(DialogDestination.First) }) {
             Text("Open First dialog")
         }
@@ -98,45 +111,64 @@ fun BetterDialogTransitionsScreen() = ScreenLayout(title = "Better dialog transi
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun <T> AnimatedDialogNavHost(
-    controller: NavController<T>,
+    backstack: NavBackstack<T>,
     @Suppress("SameParameterValue") transitionSpec: NavTransitionSpec<T>,
-    contentSelector: @Composable (T) -> Unit
+    onDismissRequest: () -> Unit,
+    contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
 ) {
-    val navHostState = rememberNavHostState(controller.backstack)
-    val onDismissRequest: () -> Unit = { controller.pop() }
-    val showDialog by rememberUpdatedState(controller.backstack.entries.isNotEmpty())
+    // As we are going to conditionally remove AnimatedNavHost from composition, we need to hoist
+    // NavHostState, so all the saved state and ViewModels don't leak.
+    val navHostState = rememberNavHostState(backstack)
+    val showDialog by rememberUpdatedState(backstack.entries.isNotEmpty())
 
     if (showDialog) {
         DisposableEffect(Unit) {
             onDispose {
+                // Note that the value in the condition must be a State or a State-delegated
+                // property (e.g. here it is backed up by rememberUpdatedState). Otherwise, only
+                // the initially captured value would be used and the condition would never
+                // actually be true.
                 @Suppress("KotlinConstantConditions")
                 if (!showDialog) {
+                    // This cleans up all the saved state and ViewModels when the Dialog is
+                    // conditionally removed from composition. During higher level navigation,
+                    // configuration changes and other activity recreation cases, the saved state
+                    // and ViewModels will be left intact.
                     navHostState.clear()
                 }
             }
         }
+
+        // Everything is shown within the same Dialog, so it is not possible to use AlertDialog
+        // here, unless you copy the internal AlertDialogContent from the androidx.compose.material
+        // package and use it inside this Dialog.
         Dialog(
             onDismissRequest = onDismissRequest,
+            // Here we set usePlatformDefaultWidth = false, so we are not limited to the area of
+            // the dialog layout and could animate on the whole screen.
             properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {
+            // The downside of usePlatformDefaultWidth = false is that we need to handle outside
+            // clicks ourselves.
             Box(
-                modifier = Modifier.fillMaxSize(),
-                propagateMinConstraints = true
-            ) {
-                Box(
-                    modifier = Modifier.clickable(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable(
                         onClick = onDismissRequest,
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
                     )
-                )
+            )
 
-                AnimatedNavHost(navHostState, transitionSpec) { destination ->
+            AnimatedNavHost(navHostState, transitionSpec) { destination ->
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
                     Box(
                         modifier = Modifier
                             .padding(32.dp)
-                            .widthIn(max = 320.dp),
-                        contentAlignment = Alignment.Center
+                            .widthIn(max = 320.dp)
                     ) {
                         contentSelector(destination)
                     }
@@ -150,15 +182,28 @@ private fun <T> AnimatedDialogNavHost(
 private fun FirstDialogLayout(
     onOpenSecondDialogButtonClick: () -> Unit
 ) = DialogLayout(
+    modifier = Modifier.height(300.dp),
     title = "First dialog"
 ) {
+
     Button(onClick = onOpenSecondDialogButtonClick) {
         Text("Open Second dialog")
     }
 }
 
 @Composable
-private fun SecondDialogLayout() = DialogLayout(
+private fun SecondDialogLayout(
+    onOpenThirdDialogButtonClick: () -> Unit
+) = DialogLayout(
+    title = "Second dialog"
+) {
+    Button(onClick = onOpenThirdDialogButtonClick) {
+        Text("Open Third dialog")
+    }
+}
+
+@Composable
+private fun ThirdDialogLayout() = DialogLayout(
     title = "Second dialog"
 ) {
     Text("Hello!")
