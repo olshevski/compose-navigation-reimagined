@@ -27,6 +27,10 @@ import dev.olshevski.navigation.reimagined.sample.ui.ScreenLayout
 import dev.olshevski.navigation.reimagined.sample.ui.TestInputTag
 import kotlinx.parcelize.Parcelize
 
+private enum class ScopedViewModelsDestination {
+    First, Second, Third
+}
+
 @Parcelize
 private object Scope : Parcelable
 

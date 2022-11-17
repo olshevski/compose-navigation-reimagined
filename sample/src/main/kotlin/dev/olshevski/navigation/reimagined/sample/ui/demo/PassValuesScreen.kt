@@ -1,5 +1,6 @@
 package dev.olshevski.navigation.reimagined.sample.ui.demo
 
+import android.os.Parcelable
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -22,6 +23,20 @@ import dev.olshevski.navigation.reimagined.sample.ui.CenteredText
 import dev.olshevski.navigation.reimagined.sample.ui.ContentLayout
 import dev.olshevski.navigation.reimagined.sample.ui.ScreenLayout
 import dev.olshevski.navigation.reimagined.sample.ui.TestInputTag
+import kotlinx.parcelize.Parcelize
+
+private sealed class PassValuesDestination : Parcelable {
+
+    @Parcelize
+    object A : PassValuesDestination()
+
+    @Parcelize
+    data class B(val id: Int) : PassValuesDestination()
+
+    @Parcelize
+    data class C(val text: String) : PassValuesDestination()
+
+}
 
 @Composable
 fun PassValuesScreen() = ScreenLayout(

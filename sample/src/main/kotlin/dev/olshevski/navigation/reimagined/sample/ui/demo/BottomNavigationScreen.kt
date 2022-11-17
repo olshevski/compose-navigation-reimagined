@@ -9,6 +9,10 @@ import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccountTree
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,12 +37,33 @@ import dev.olshevski.navigation.reimagined.sample.ui.ContentLayout
 import dev.olshevski.navigation.reimagined.sample.ui.ScreenLayout
 import dev.olshevski.navigation.reimagined.sample.ui.TestInputTag
 
+enum class BottomDestination {
+    // the first item is treated as the start destination for simplicity
+    Home,
+    SavedState,
+    NestedNavigation,
+}
+
+val BottomDestination.title
+    get() = when (this) {
+        BottomDestination.Home -> R.string.bottom_navigation__home_tab_title
+        BottomDestination.SavedState -> R.string.bottom_navigation__saved_state_tab_title
+        BottomDestination.NestedNavigation -> R.string.bottom_navigation__nested_navigation_tab_title
+    }
+
+private val BottomDestination.icon
+    get() = when (this) {
+        BottomDestination.Home -> Icons.Outlined.Home
+        BottomDestination.SavedState -> Icons.Outlined.Save
+        BottomDestination.NestedNavigation -> Icons.Outlined.AccountTree
+    }
+
 @Composable
 fun BottomNavigationScreen() = ScreenLayout(
     title = stringResource(R.string.bottom_navigation__demo_screen_title)
 ) {
     val navController = rememberNavController(
-        startDestination = BottomNavigationDestination.values()[0],
+        startDestination = BottomDestination.values()[0],
     )
 
     // custom back handler implementation
@@ -50,23 +75,23 @@ fun BottomNavigationScreen() = ScreenLayout(
                 controller = navController
             ) { destination ->
                 when (destination) {
-                    BottomNavigationDestination.Home -> HomeScreen()
-                    BottomNavigationDestination.SavedState -> SavedStateScreen()
-                    BottomNavigationDestination.NestedNavigation -> NestedNavigationScreen()
+                    BottomDestination.Home -> HomeScreen()
+                    BottomDestination.SavedState -> SavedStateScreen()
+                    BottomDestination.NestedNavigation -> NestedNavigationScreen()
                 }
             }
         }
 
         val lastDestination = navController.backstack.entries.last().destination
         BottomNavigation {
-            BottomNavigationDestination.values().forEach { destination ->
-                val tabTitle = stringResource(destination.tabTitleId)
+            BottomDestination.values().forEach { destination ->
+                val title = stringResource(destination.title)
                 BottomNavigationItem(
-                    label = { Text(tabTitle) },
+                    label = { Text(title) },
                     icon = {
                         Icon(
-                            imageVector = destination.tabIcon,
-                            contentDescription = tabTitle
+                            imageVector = destination.icon,
+                            contentDescription = title
                         )
                     },
                     selected = destination == lastDestination,
@@ -86,11 +111,11 @@ fun BottomNavigationScreen() = ScreenLayout(
 
 @Composable
 private fun BottomNavigationBackHandler(
-    navController: NavController<BottomNavigationDestination>
+    navController: NavController<BottomDestination>
 ) {
     BackHandler(enabled = navController.backstack.entries.size > 1) {
         val lastEntry = navController.backstack.entries.last()
-        if (lastEntry.destination == BottomNavigationDestination.values()[0]) {
+        if (lastEntry.destination == BottomDestination.values()[0]) {
             // The start destination should always be the last to pop. We move it to the start
             // to preserve its saved state and view models.
             navController.moveLastEntryToStart()
@@ -100,7 +125,7 @@ private fun BottomNavigationBackHandler(
     }
 }
 
-private fun NavController<BottomNavigationDestination>.moveLastEntryToStart() {
+private fun NavController<BottomDestination>.moveLastEntryToStart() {
     setNewBackstack(
         entries = backstack.entries.toMutableList().also {
             val entry = it.removeLast()
@@ -149,7 +174,7 @@ private fun SavedStateScreen() = ContentLayout(
 
 }
 
-enum class NestedDestination { A, B }
+private enum class NestedDestination { A, B }
 
 @Composable
 private fun NestedNavigationScreen() {
