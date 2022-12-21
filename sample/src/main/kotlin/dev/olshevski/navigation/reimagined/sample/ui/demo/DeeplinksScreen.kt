@@ -1,5 +1,6 @@
 package dev.olshevski.navigation.reimagined.sample.ui.demo
 
+import android.os.Parcelable
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -19,6 +20,20 @@ import dev.olshevski.navigation.reimagined.sample.singleLine
 import dev.olshevski.navigation.reimagined.sample.ui.CenteredText
 import dev.olshevski.navigation.reimagined.sample.ui.ContentLayout
 import dev.olshevski.navigation.reimagined.sample.ui.ScreenLayout
+import kotlinx.parcelize.Parcelize
+
+sealed class DeeplinksDestination : Parcelable {
+
+    @Parcelize
+    object First : DeeplinksDestination()
+
+    @Parcelize
+    object Second : DeeplinksDestination()
+
+    @Parcelize
+    data class Third(val id: String) : DeeplinksDestination()
+
+}
 
 @Composable
 fun DeeplinksScreen(

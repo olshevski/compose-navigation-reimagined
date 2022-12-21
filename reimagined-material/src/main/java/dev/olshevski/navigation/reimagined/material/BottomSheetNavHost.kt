@@ -298,7 +298,6 @@ fun <T, S> ScopingBottomSheetNavHost(
  * provides additional functionality of the ScopingBottomSheetNavHost through
  * the [ScopingBottomSheetNavHostScope].
  */
-@OptIn(ExperimentalReimaginedApi::class)
 @ExperimentalMaterialApi
 @Composable
 fun <T, S> ScopingBottomSheetNavHost(
@@ -314,7 +313,7 @@ fun <T, S> ScopingBottomSheetNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
-) = BaseNavHost(
+) = @OptIn(ExperimentalReimaginedApi::class) BaseNavHost(
     backstack = backstack,
     scopeSpec = scopeSpec
 ) { snapshot ->

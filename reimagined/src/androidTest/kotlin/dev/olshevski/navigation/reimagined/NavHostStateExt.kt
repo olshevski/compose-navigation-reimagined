@@ -1,3 +1,4 @@
 package dev.olshevski.navigation.reimagined
 
-internal val <T, S> NavHostState<T, S>.hostEntries get() = snapshot.items.map { it.hostEntry }
+internal fun <T, S> NavHostStateImpl<T, S>.findHostEntry(destination: T) =
+    hostEntriesMap.values.find { it.destination == destination }!!

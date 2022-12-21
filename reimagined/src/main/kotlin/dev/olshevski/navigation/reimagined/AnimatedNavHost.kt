@@ -88,22 +88,23 @@ fun <T> AnimatedNavHost(
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
-) = AnimatedNavHost(
-    state = rememberNavHostState(backstack, EmptyScopeSpec),
+) = @OptIn(ExperimentalReimaginedApi::class) AnimatedNavHost(
+    state = rememberNavHostState(backstack),
     transitionSpec = transitionSpec,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
 )
 
+@ExperimentalReimaginedApi
 @ExperimentalAnimationApi
 @Composable
-internal fun <T, S> AnimatedNavHost(
-    state: NavHostState<T, S>,
+fun <T> AnimatedNavHost(
+    state: NavHostState<T>,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
-    contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(destination: T) -> Unit
-) = ScopingAnimatedNavHost(
-    state = state,
+    contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
+) = @Suppress("UNCHECKED_CAST") ScopingAnimatedNavHost(
+    state = state as ScopingNavHostState<T, Nothing>,
     transitionSpec = transitionSpec,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
@@ -228,18 +229,18 @@ fun <T, S> ScopingAnimatedNavHost(
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(destination: T) -> Unit
-) = ScopingAnimatedNavHost(
-    state = rememberNavHostState(backstack, scopeSpec),
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
+    state = rememberScopingNavHostState(backstack, scopeSpec),
     transitionSpec = transitionSpec,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
 )
 
-@OptIn(ExperimentalReimaginedApi::class)
+@ExperimentalReimaginedApi
 @ExperimentalAnimationApi
 @Composable
-internal fun <T, S> ScopingAnimatedNavHost(
-    state: NavHostState<T, S>,
+fun <T, S> ScopingAnimatedNavHost(
+    state: ScopingNavHostState<T, S>,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(T) -> Unit

@@ -3,8 +3,8 @@ package dev.olshevski.navigation.reimagined.sample
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import dev.olshevski.navigation.reimagined.sample.ui.demo.BottomNavigationDestination
-import dev.olshevski.navigation.reimagined.sample.ui.demo.tabTitleId
+import dev.olshevski.navigation.reimagined.sample.ui.demo.BottomDestination
+import dev.olshevski.navigation.reimagined.sample.ui.demo.title
 import dev.olshevski.navigation.testutils.getString
 import org.junit.Before
 import org.junit.Rule
@@ -18,8 +18,8 @@ class BottomNavigationScreenScope(composeRule: MainActivityComposeRule) :
             .assertIsDisplayed()
     }
 
-    fun performTabClick(bottomNavigationDestination: BottomNavigationDestination) {
-        composeRule.onNodeWithText(getString(bottomNavigationDestination.tabTitleId))
+    fun performTabClick(BottomDestination: BottomDestination) {
+        composeRule.onNodeWithText(getString(BottomDestination.title))
             .performClick()
     }
 
@@ -67,10 +67,10 @@ class BottomNavigationScreenTest {
 
     private fun generalFlow(middleBlock: BottomNavigationScreenScope.() -> Unit) =
         composeRule.bottomNavigationScreenScope {
-            performTabClick(BottomNavigationDestination.SavedState)
-            performTabClick(BottomNavigationDestination.NestedNavigation)
+            performTabClick(BottomDestination.SavedState)
+            performTabClick(BottomDestination.NestedNavigation)
             performOpenScreenBButtonClick()
-            performTabClick(BottomNavigationDestination.Home)
+            performTabClick(BottomDestination.Home)
 
             middleBlock()
             assertHomeScreenIsDisplayed()
@@ -102,11 +102,11 @@ class BottomNavigationScreenTest {
 
     @Test
     fun nonRepeatingEntries() = composeRule.bottomNavigationScreenScope {
-        performTabClick(BottomNavigationDestination.SavedState)
-        performTabClick(BottomNavigationDestination.NestedNavigation)
-        performTabClick(BottomNavigationDestination.Home)
-        performTabClick(BottomNavigationDestination.SavedState)
-        performTabClick(BottomNavigationDestination.NestedNavigation)
+        performTabClick(BottomDestination.SavedState)
+        performTabClick(BottomDestination.NestedNavigation)
+        performTabClick(BottomDestination.Home)
+        performTabClick(BottomDestination.SavedState)
+        performTabClick(BottomDestination.NestedNavigation)
 
         pressBack()
         assertSavedStateScreenIsDisplayed()
@@ -118,36 +118,36 @@ class BottomNavigationScreenTest {
 
     @Test
     fun textInputIsClearedWhenEntryIsRemoved() = composeRule.bottomNavigationScreenScope {
-        performTabClick(BottomNavigationDestination.SavedState)
+        performTabClick(BottomDestination.SavedState)
         assertInputIsEmpty()
         performTextInput()
         assertInputHasText()
 
         pressBack()
-        performTabClick(BottomNavigationDestination.SavedState)
+        performTabClick(BottomDestination.SavedState)
         assertInputIsEmpty()
     }
 
     @Test
     fun textInputIsSavedWhenGoingBetweenTabs() = composeRule.bottomNavigationScreenScope {
-        performTabClick(BottomNavigationDestination.SavedState)
+        performTabClick(BottomDestination.SavedState)
         assertInputIsEmpty()
         performTextInput()
         assertInputHasText()
 
-        performTabClick(BottomNavigationDestination.Home)
-        performTabClick(BottomNavigationDestination.SavedState)
+        performTabClick(BottomDestination.Home)
+        performTabClick(BottomDestination.SavedState)
         assertInputHasText()
     }
 
     @Test
     fun nestedNavigationIsSavedWhenGoingBetweenTabs() = composeRule.bottomNavigationScreenScope {
-        performTabClick(BottomNavigationDestination.NestedNavigation)
+        performTabClick(BottomDestination.NestedNavigation)
         performOpenScreenBButtonClick()
         assertNestedNavigationScreenBIsDisplayed()
 
-        performTabClick(BottomNavigationDestination.Home)
-        performTabClick(BottomNavigationDestination.NestedNavigation)
+        performTabClick(BottomDestination.Home)
+        performTabClick(BottomDestination.NestedNavigation)
         assertNestedNavigationScreenBIsDisplayed()
     }
 

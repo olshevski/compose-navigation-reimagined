@@ -1,9 +1,13 @@
 package dev.olshevski.navigation.reimagined.sample.ui.demo
 
+import android.os.Parcelable
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -21,6 +25,31 @@ import dev.olshevski.navigation.reimagined.sample.ui.CenteredText
 import dev.olshevski.navigation.reimagined.sample.ui.ContentLayout
 import dev.olshevski.navigation.reimagined.sample.ui.ScreenLayout
 import dev.olshevski.navigation.reimagined.sample.ui.TestInputTag
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
+
+private interface AcceptsResultFromSecond {
+    val resultFromSecond: MutableState<String?>
+}
+
+private sealed class ReturnResultsDestination : Parcelable {
+
+    /*
+    * 1) The type may be @Stable, not only @Immutable. This guarantee is backed up by MutableState
+    *    here.
+    * 2) MutableState is Parcelable, it just doesn't expose this interface, so we are fine.
+    */
+    @Stable
+    @Parcelize
+    data class First(
+        override val resultFromSecond: @RawValue MutableState<String?> = mutableStateOf(null)
+    ) : ReturnResultsDestination(), AcceptsResultFromSecond
+
+    @Immutable
+    @Parcelize
+    object Second : ReturnResultsDestination()
+
+}
 
 @Composable
 fun ReturnResultsScreen() = ScreenLayout(

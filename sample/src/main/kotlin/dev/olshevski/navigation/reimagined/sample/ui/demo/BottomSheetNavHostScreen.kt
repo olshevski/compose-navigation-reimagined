@@ -24,9 +24,14 @@ import dev.olshevski.navigation.reimagined.sample.ui.ContentLayout
 import dev.olshevski.navigation.reimagined.sample.ui.ScreenLayout
 import kotlinx.coroutines.launch
 
+private enum class BottomSheetDestination {
+    First,
+    Second,
+}
+
 @Composable
 fun BottomSheetNavHostScreen() = Box {
-    val navController = rememberNavController<BottomSheetNavHostDestination>(
+    val navController = rememberNavController<BottomSheetDestination>(
         initialBackstack = emptyList()
     )
 
@@ -44,7 +49,7 @@ fun BottomSheetNavHostScreen() = Box {
 
             Button(
                 onClick = {
-                    navController.navigate(BottomSheetNavHostDestination.First)
+                    navController.navigate(BottomSheetDestination.First)
                 }
             ) {
                 Text(stringResource(R.string.bottom_sheet_nav_host__open_first_sheet_button))
@@ -57,12 +62,12 @@ fun BottomSheetNavHostScreen() = Box {
         onDismissRequest = { navController.pop() }
     ) { destination ->
         when (destination) {
-            BottomSheetNavHostDestination.First -> FirstBottomSheet(
+            BottomSheetDestination.First -> FirstBottomSheet(
                 onOpenSecondSheetClick = {
-                    navController.navigate(BottomSheetNavHostDestination.Second)
+                    navController.navigate(BottomSheetDestination.Second)
                 }
             )
-            BottomSheetNavHostDestination.Second -> SecondBottomSheet(
+            BottomSheetDestination.Second -> SecondBottomSheet(
                 onCloseClick = {
                     navController.pop()
                 },
@@ -92,7 +97,7 @@ private fun FirstBottomSheet(
 }
 
 @Composable
-private fun BottomSheetNavHostScope<BottomSheetNavHostDestination>.SecondBottomSheet(
+private fun BottomSheetNavHostScope<BottomSheetDestination>.SecondBottomSheet(
     onCloseClick: () -> Unit,
     onCloseAllClick: () -> Unit
 ) = BottomSheetLayout(

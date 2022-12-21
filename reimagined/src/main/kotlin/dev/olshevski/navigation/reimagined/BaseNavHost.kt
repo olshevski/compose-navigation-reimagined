@@ -65,50 +65,54 @@ fun <T, S> BaseNavHost(
     visibleItems: (snapshot: NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },
     transition: @Composable (snapshot: NavSnapshot<T, S>) -> NavSnapshot<T, S>
 ) = BaseNavHost(
-    state = rememberNavHostState(backstack, scopeSpec),
+    state = rememberScopingNavHostState(backstack, scopeSpec),
     visibleItems = visibleItems,
     transition = transition
 )
 
 @ExperimentalReimaginedApi
 @Composable
-internal fun <T, S> BaseNavHost(
-    state: NavHostState<T, S>,
+fun <T, S> BaseNavHost(
+    state: ScopingNavHostState<T, S>,
     visibleItems: (snapshot: NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },
     transition: @Composable (snapshot: NavSnapshot<T, S>) -> NavSnapshot<T, S>
-): Unit = key(state.hostId) {
-    DisposableEffect(state) {
-        state.onCreate()
-        onDispose {
-            state.onDispose()
-            state.removeOutdatedEntries(state.snapshot)
+) {
+    state as NavHostStateImpl
+    key(state.hostId) {
+        val latestSnapshot by remember { derivedStateOf { state.createSnapshot() } }
+
+        DisposableEffect(Unit) {
+            onDispose {
+                state.removeOutdatedHostEntries(latestSnapshot)
+            }
         }
-    }
 
-    val (targetSnapshot, currentSnapshot) = enqueueSnapshotTransition(state.snapshot, transition)
+        val (targetSnapshot, currentSnapshot) =
+            enqueueSnapshotTransition(latestSnapshot, transition)
 
-    val targetVisibleItems by remember(targetSnapshot) {
-        derivedStateOf { visibleItems(targetSnapshot) }
-    }
-    val currentVisibleItems by remember(currentSnapshot) {
-        derivedStateOf { visibleItems(currentSnapshot) }
-    }
-
-    val updatedTargetVisibleItems by rememberUpdatedState(targetVisibleItems)
-    DisposableEffect(state, targetVisibleItems) {
-        onDispose {
-            state.onTransitionStart(updatedTargetVisibleItems)
+        val targetVisibleItems by remember(targetSnapshot) {
+            derivedStateOf { visibleItems(targetSnapshot) }
         }
-    }
+        val currentVisibleItems by remember(currentSnapshot) {
+            derivedStateOf { visibleItems(currentSnapshot) }
+        }
 
-    DisposableEffect(state, currentVisibleItems) {
-        state.onTransitionFinish(currentVisibleItems)
-        onDispose {}
-    }
+        val updatedTargetVisibleItems by rememberUpdatedState(targetVisibleItems)
+        DisposableEffect(targetVisibleItems) {
+            onDispose {
+                state.onTransitionStart(updatedTargetVisibleItems)
+            }
+        }
 
-    DisposableEffect(state, currentSnapshot) {
-        state.removeOutdatedEntries(currentSnapshot)
-        onDispose {}
+        DisposableEffect(currentVisibleItems) {
+            state.onTransitionFinish(currentVisibleItems)
+            onDispose {}
+        }
+
+        DisposableEffect(currentSnapshot) {
+            state.removeOutdatedHostEntries(currentSnapshot)
+            onDispose {}
+        }
     }
 }
 

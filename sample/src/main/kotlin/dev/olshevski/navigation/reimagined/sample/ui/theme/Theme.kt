@@ -6,6 +6,9 @@ import androidx.compose.material.Typography
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 private val DarkColorPalette = darkColors(
     primary = PurpleLighter
@@ -15,7 +18,13 @@ private val LightColorPalette = lightColors(
     primary = PurpleDarker
 )
 
-private val Typography = Typography()
+private val Typography = Typography(
+    subtitle1 = TextStyle(
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
+        letterSpacing = 0.15.sp
+    )
+)
 
 @Composable
 fun NavigationReimaginedTheme(

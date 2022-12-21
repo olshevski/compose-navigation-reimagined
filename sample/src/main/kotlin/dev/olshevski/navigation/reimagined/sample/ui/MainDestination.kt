@@ -41,4 +41,6 @@ sealed class MainDestination : Parcelable {
         val initialBackstack: List<DeeplinksDestination> = listOf(DeeplinksDestination.First)
     ) : MainDestination()
 
+    @Parcelize
+    object BetterDialogTransitions : MainDestination()
 }

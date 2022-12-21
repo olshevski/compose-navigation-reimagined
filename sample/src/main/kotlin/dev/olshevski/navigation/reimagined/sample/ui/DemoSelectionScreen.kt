@@ -1,67 +1,53 @@
 package dev.olshevski.navigation.reimagined.sample.ui
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dev.olshevski.navigation.reimagined.sample.R
 
 @Composable
 fun DemoSelectionScreen(
-    onPassValuesButtonClick: () -> Unit,
-    onReturnResultsButtonClick: () -> Unit,
-    onAnimatedNavHostButtonClick: () -> Unit,
-    onDialogNavHostButtonClick: () -> Unit,
-    onBottomSheetNavHostClick: () -> Unit,
-    onBottomNavigationButtonClick: () -> Unit,
-    onViewModelsButtonClick: () -> Unit,
-    onScopedViewModelsButtonClick: () -> Unit,
-    onDeeplinksButtonClick: () -> Unit
+    onDemoSelected: (MainDestination) -> Unit
 ) = ScreenLayout(stringResource(R.string.demo_selection__screen_title)) {
-    Column(
-        modifier = Modifier
-            .width(IntrinsicSize.Min)
-            .align(Alignment.CenterHorizontally)
-            .padding(vertical = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
     ) {
-        listOf(
-            R.string.demo_selection__pass_values_button to onPassValuesButtonClick,
-            R.string.demo_selection__return_results_button to onReturnResultsButtonClick,
-            R.string.demo_selection__animated_nav_host_button to onAnimatedNavHostButtonClick,
-            R.string.demo_selection__dialog_nav_host_button to onDialogNavHostButtonClick,
-            R.string.demo_selection__bottom_sheet_nav_host_button to onBottomSheetNavHostClick,
-            R.string.demo_selection__bottom_navigation_button to onBottomNavigationButtonClick,
-            R.string.demo_selection__view_models_button to onViewModelsButtonClick,
-            R.string.demo_selection__scoped_view_models_button to onScopedViewModelsButtonClick,
-            R.string.demo_selection__deeplinks_button to onDeeplinksButtonClick
-        ).forEach {
-            OutlinedButton(
+        items(
+            listOf(
+                R.string.demo_selection__pass_values_button to MainDestination.PassValues,
+                R.string.demo_selection__return_results_button to MainDestination.ReturnResults,
+                R.string.demo_selection__animated_nav_host_button to MainDestination.AnimatedNavHost,
+                R.string.demo_selection__dialog_nav_host_button to MainDestination.DialogNavHost,
+                R.string.demo_selection__bottom_sheet_nav_host_button to MainDestination.BottomSheetNavHost,
+                R.string.demo_selection__bottom_navigation_button to MainDestination.BottomNavigation,
+                R.string.demo_selection__view_models_button to MainDestination.ViewModels,
+                R.string.demo_selection__scoped_view_models_button to MainDestination.ScopedViewModels,
+                R.string.demo_selection__deeplinks_button to MainDestination.Deeplinks(),
+                R.string.demo_selection__better_dialog_transitions to MainDestination.BetterDialogTransitions
+            )
+        ) {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .width(IntrinsicSize.Max)
-                    .height(48.dp),
-                onClick = { it.second() }
+                    .clickable { onDemoSelected(it.second) },
             ) {
                 Text(
-                    modifier = Modifier.padding(horizontal = 8.dp),
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
                     text = stringResource(it.first),
-                    color = MaterialTheme.colors.onBackground,
-                    fontSize = 16.sp
+                    style = MaterialTheme.typography.subtitle1,
                 )
+                Divider()
             }
         }
     }

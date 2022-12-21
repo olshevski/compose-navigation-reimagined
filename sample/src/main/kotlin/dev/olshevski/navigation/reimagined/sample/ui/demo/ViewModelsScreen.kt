@@ -1,5 +1,6 @@
 package dev.olshevski.navigation.reimagined.sample.ui.demo
 
+import android.os.Parcelable
 import androidx.activity.compose.BackHandler
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
@@ -25,6 +26,20 @@ import dev.olshevski.navigation.reimagined.sample.ui.CenteredText
 import dev.olshevski.navigation.reimagined.sample.ui.ContentLayout
 import dev.olshevski.navigation.reimagined.sample.ui.ScreenLayout
 import dev.olshevski.navigation.reimagined.sample.ui.TestInputTag
+import kotlinx.parcelize.Parcelize
+
+sealed class ViewModelsDestination : Parcelable {
+
+    @Parcelize
+    object First : ViewModelsDestination()
+
+    @Parcelize
+    object Second : ViewModelsDestination()
+
+    @Parcelize
+    data class Third(val text: String) : ViewModelsDestination()
+
+}
 
 @Composable
 fun ViewModelsScreen() = ScreenLayout(
@@ -32,11 +47,11 @@ fun ViewModelsScreen() = ScreenLayout(
 ) {
     val navigationViewModel = viewModel<NavigationViewModel>()
 
-    BackHandler(navigationViewModel.backHandlerEnabled) {
+    BackHandler(navigationViewModel.isBackHandlerEnabled) {
         navigationViewModel.onBackPress()
     }
 
-    NavHost(backstack = navigationViewModel.navBackstack) { destination ->
+    NavHost(backstack = navigationViewModel.backstack) { destination ->
         when (destination) {
             ViewModelsDestination.First -> FirstScreen(
                 onOpenSecondScreenButtonClick = navigationViewModel::onOpenSecondScreenButtonClick
@@ -57,10 +72,10 @@ class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         )
     }
 
-    // You may either make navController public or just its navBackstack. The latter is convenient
+    // You may either make navController public or just its backstack. The latter is convenient
     // when you don't want to expose navigation methods in the UI layer.
-    val navBackstack get() = navController.backstack
-    val backHandlerEnabled get() = navController.backstack.entries.size > 1
+    val backstack get() = navController.backstack
+    val isBackHandlerEnabled get() = navController.backstack.entries.size > 1
 
     fun onBackPress() {
         navController.pop()

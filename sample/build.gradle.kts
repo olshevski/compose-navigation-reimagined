@@ -13,7 +13,8 @@ android {
         freeCompilerArgs = freeCompilerArgs + listOf(
             "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
             "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
-            "-opt-in=androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi"
+            "-opt-in=androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi",
+            "-opt-in=dev.olshevski.navigation.reimagined.ExperimentalReimaginedApi"
         )
     }
 }
