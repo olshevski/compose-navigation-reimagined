@@ -16,10 +16,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -30,11 +27,11 @@ import dev.olshevski.navigation.reimagined.AnimatedNavHost
 import dev.olshevski.navigation.reimagined.AnimatedNavHostScope
 import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.NavBackstack
+import dev.olshevski.navigation.reimagined.NavHostVisibility
 import dev.olshevski.navigation.reimagined.NavTransitionSpec
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.rememberNavController
-import dev.olshevski.navigation.reimagined.rememberNavHostState
 import dev.olshevski.navigation.reimagined.sample.ui.CenteredText
 import dev.olshevski.navigation.reimagined.sample.ui.ContentLayout
 import dev.olshevski.navigation.reimagined.sample.ui.DialogLayout
@@ -116,29 +113,8 @@ private fun <T> AnimatedDialogNavHost(
     onDismissRequest: () -> Unit,
     contentSelector: @Composable AnimatedNavHostScope<T>.(T) -> Unit
 ) {
-    // As we are going to conditionally remove AnimatedNavHost from composition, we need to hoist
-    // NavHostState, so all the saved state and ViewModels don't leak.
-    val navHostState = rememberNavHostState(backstack)
-    val showDialog by rememberUpdatedState(backstack.entries.isNotEmpty())
-
-    if (showDialog) {
-        DisposableEffect(Unit) {
-            onDispose {
-                // Note that the value in the condition must be a State or a State-delegated
-                // property (e.g. here it is backed up by rememberUpdatedState). Otherwise, only
-                // the initially captured value would be used and the condition would never
-                // actually be true.
-                @Suppress("KotlinConstantConditions")
-                if (!showDialog) {
-                    // This cleans up all the saved state and ViewModels when the Dialog is
-                    // conditionally removed from composition. During higher level navigation,
-                    // configuration changes and other activity recreation cases, the saved state
-                    // and ViewModels will be left intact.
-                    navHostState.clear()
-                }
-            }
-        }
-
+    // NavHostVisibility properly clears internal NavHost state when it becomes invisible
+    NavHostVisibility(visible = backstack.entries.isNotEmpty()) {
         // Everything is shown within the same Dialog, so it is not possible to use AlertDialog
         // here, unless you copy the internal AlertDialogContent from the androidx.compose.material
         // package and use it inside this Dialog.
@@ -160,7 +136,7 @@ private fun <T> AnimatedDialogNavHost(
                     )
             )
 
-            AnimatedNavHost(navHostState, transitionSpec) { destination ->
+            AnimatedNavHost(backstack, transitionSpec) { destination ->
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center

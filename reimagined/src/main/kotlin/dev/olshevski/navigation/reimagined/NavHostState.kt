@@ -101,12 +101,7 @@ internal fun <T, S> rememberNavHostStateImpl(
  * ViewModelStore, SavedStateRegistry) for every entry.
  */
 @Stable
-sealed interface NavHostState<T> {
-
-    @ExperimentalReimaginedApi
-    fun clear()
-
-}
+sealed interface NavHostState<T>
 
 @Stable
 sealed interface ScopingNavHostState<T, S> : NavHostState<T>
@@ -334,7 +329,7 @@ internal class NavHostStateImpl<T, S>(
     )
 
     @ExperimentalReimaginedApi
-    override fun clear() {
+    fun clear() {
         getAllHostEntries().forEach { entry ->
             entry.maxLifecycleState = Lifecycle.State.DESTROYED
             removeComponents(entry.id)
