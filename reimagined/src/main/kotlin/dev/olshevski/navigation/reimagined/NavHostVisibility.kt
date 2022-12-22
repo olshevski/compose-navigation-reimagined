@@ -30,6 +30,23 @@ private fun NavController<VisibilityUnit>.setVisibility(visible: Boolean) {
     }
 }
 
+/**
+ * Controls the visibility of any NavHost that is placed inside [content]. When [visible] parameter
+ * is set to false, [content] will be removed from composition, all saved states and architecture
+ * components (Lifecycle, ViewModelStore, SavedStateRegistry) of NavHost entries will be cleared.
+ *
+ * If you do not want to clear entries' saved states and architecture components, you may
+ * hoist NavHostState and use simple condition to control the visibility of NavHost:
+ *
+ * ```kotlin
+ * val state = rememberNavHostState(controller)
+ * if (visible) {
+ *      NavHost(state) {
+ *          ...
+ *      }
+ * }
+ * ```
+ */
 @Composable
 fun NavHostVisibility(
     visible: Boolean,
@@ -42,6 +59,24 @@ fun NavHostVisibility(
     }
 }
 
+/**
+ * Controls the visibility of any NavHost that is placed inside [content] and animates
+ * the appearance and disappearance of it. When [visible] parameter
+ * is set to false, [content] will be removed from composition, all saved states and architecture
+ * components (Lifecycle, ViewModelStore, SavedStateRegistry) of NavHost entries will be cleared.
+ *
+ * If you do not want to clear entries' saved states and architecture components, you may
+ * hoist NavHostState and use simple AnimatedVisibility to control the visibility of NavHost:
+ *
+ * ```kotlin
+ * val state = rememberNavHostState(controller)
+ * AnimatedVisibility(visible) {
+ *      NavHost(state) {
+ *          ...
+ *      }
+ * }
+ * ```
+ */
 @ExperimentalAnimationApi
 @Composable
 fun NavHostAnimatedVisibility(

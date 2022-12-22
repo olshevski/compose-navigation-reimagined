@@ -27,12 +27,41 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.savedstate.SavedStateRegistry
 import kotlinx.parcelize.Parcelize
 
+/**
+ * Remembers [NavHostState]. This allows you to hoist the state of NavHost and
+ * conditionally remove it from composition without losing saved states and created architecture
+ * components (Lifecycle, ViewModelStore, SavedStateRegistry) of every NavHost entry.
+ *
+ * If you do want to remove NavHost from composition and clear all its state, use
+ * [NavHostVisibility] or [NavHostAnimatedVisibility] instead.
+ *
+ * @param backstack the backstack from a [NavController] that will be used to observe navigation
+ * changes. The last entry of the backstack is always the currently displayed entry.
+ * You should do all backstack modifications through the same instance of [NavController],
+ * but using a different [NavController] and setting its backstack will be handled correctly.
+ */
 @ExperimentalReimaginedApi
 @Composable
 fun <T> rememberNavHostState(
     backstack: NavBackstack<T>
 ): NavHostState<T> = rememberScopingNavHostState(backstack, EmptyScopeSpec)
 
+/**
+ * Remembers [ScopingNavHostState]. This allows you to hoist the state of ScopingNavHost and
+ * conditionally remove it from composition without losing saved states and created architecture
+ * components (Lifecycle, ViewModelStore, SavedStateRegistry) of every ScopingNavHost entry.
+ *
+ * If you do want to remove ScopingNavHost from composition and clear all its state, use
+ * [NavHostVisibility] or [NavHostAnimatedVisibility] instead.
+ *
+ * @param backstack the backstack from a [NavController] that will be used to observe navigation
+ * changes. The last entry of the backstack is always the currently displayed entry.
+ * You should do all backstack modifications through the same instance of [NavController],
+ * but using a different [NavController] and setting its backstack will be handled correctly.
+ *
+ * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
+ * create and access scoped [ViewModelStoreOwners][ViewModelStoreOwner].
+ */
 @ExperimentalReimaginedApi
 @Composable
 fun <T, S> rememberScopingNavHostState(
@@ -103,6 +132,10 @@ internal fun <T, S> rememberNavHostStateImpl(
 @Stable
 sealed interface NavHostState<T>
 
+/**
+ * Stores and manages saved state and all Android architecture components (Lifecycle,
+ * ViewModelStore, SavedStateRegistry) for every entry and every scope.
+ */
 @Stable
 sealed interface ScopingNavHostState<T, S> : NavHostState<T>
 

@@ -95,6 +95,31 @@ fun <T> AnimatedNavHost(
     contentSelector = contentSelector
 )
 
+/**
+ * An animated navigation host that selects UI for every destination and provides saved state and
+ * Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry) through
+ * [CompositionLocalProvider] for every unique [NavEntry] in the backstack.
+ *
+ * This composable uses animated transitions to switch between destinations. You may set a custom
+ * [NavTransitionSpec] to specify the desired transitions.
+ *
+ * If you don't need animated transitions use [NavHost] instead.
+ *
+ * @param state state holder of all internal AnimatedNavHost state. Stores and manages saved state
+ * and all Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry)
+ * for every entry.
+ *
+ * @param transitionSpec specifies the desired transitions. If not set, the default transition
+ * will be a simple crossfade.
+ *
+ * @param emptyBackstackPlaceholder an optional placeholder composable that will
+ * be displayed when the backstack is empty. In the majority of cases you don't need
+ * to set this. Note that the provided composable wouldn't get its own scoped components.
+ *
+ * @param contentSelector provides a composable that corresponds to the current last destination
+ * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
+ * provides additional functionality of the AnimatedNavHost through the [AnimatedNavHostScope].
+ */
 @ExperimentalReimaginedApi
 @ExperimentalAnimationApi
 @Composable
@@ -236,6 +261,49 @@ fun <T, S> ScopingAnimatedNavHost(
     contentSelector = contentSelector
 )
 
+/**
+ * An animated navigation host that selects UI for every destination and provides saved state and
+ * Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry) through
+ * [CompositionLocalProvider] for every unique [NavEntry] in the backstack.
+ *
+ * This composable uses animated transitions to switch between destinations. You may set a custom
+ * [NavTransitionSpec] to specify the desired transitions.
+ *
+ * If you don't need animated transitions use [NavHost] instead.
+ *
+ * **Scoping:**
+ *
+ * This version of AnimatedNavHost gives you the ability to define scoped
+ * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
+ *
+ * To do so, you must return a desired set of scopes for each requested destination in
+ * `scopeSpec`. This information will then be used to associate different entries to specified
+ * scopes and keep each scoped ViewModelStoreOwner until any of its associated entries is present
+ * in the backstack. When none of the entries are present anymore, the scoped ViewModelStoreOwner
+ * and all of its ViewModels will be cleared.
+ *
+ * To access a scoped ViewModelStoreOwner, you may call
+ * [ScopingNavHostScope.getScopedViewModelStoreOwner] inside [contentSelector] with the same scope
+ * object you've returned in `scopeSpec`. Then you may pass this scoped ViewModelStoreOwner
+ * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
+ * easily accessible from different destinations.
+ *
+ * @param state state holder of all internal ScopingAnimatedNavHost state. Stores and manages saved
+ * state and all Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry)
+ * for every entry and every scope.
+ *
+ * @param transitionSpec specifies the desired transitions. If not set, the default transition
+ * will be a simple crossfade.
+ *
+ * @param emptyBackstackPlaceholder an optional placeholder composable that will
+ * be displayed when the backstack is empty. In the majority of cases you don't need
+ * to set this. Note that the provided composable wouldn't get its own scoped components.
+ *
+ * @param contentSelector provides a composable that corresponds to the current last destination
+ * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
+ * provides additional functionality of the ScopingAnimatedNavHost through
+ * the [ScopingAnimatedNavHostScope].
+ */
 @ExperimentalReimaginedApi
 @ExperimentalAnimationApi
 @Composable
