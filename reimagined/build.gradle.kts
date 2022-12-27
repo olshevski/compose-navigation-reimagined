@@ -10,6 +10,7 @@ android {
 }
 
 dependencies {
+    api(platform(Libs.AndroidX.Compose.Bom))
     api(Libs.AndroidX.Activity.Compose)
     api(Libs.AndroidX.Compose.Ui)
     api(Libs.AndroidX.Compose.Animation)
@@ -19,6 +20,7 @@ dependencies {
     testImplementation(Libs.Google.Truth)
 
     androidTestImplementation(project(":test-utils"))
+    androidTestImplementation(platform(Libs.AndroidX.Compose.Bom))
     androidTestImplementation(Libs.AndroidX.Test.Runner)
     androidTestImplementation(Libs.AndroidX.Compose.UiTestJunit4)
     androidTestImplementation(Libs.AndroidX.Compose.UiTestManifest)

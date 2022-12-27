@@ -43,8 +43,8 @@ open class MainActivityScope(protected val composeRule: MainActivityComposeRule)
     }
 
     fun assertActivityClosed() {
-        Truth.assertThat(composeRule.activityRule.scenario.state)
-            .isEqualTo(Lifecycle.State.DESTROYED)
+        Truth.assertThat(composeRule.activityRule.scenario.state.isAtLeast(Lifecycle.State.STARTED))
+            .isFalse()
     }
 
     fun pressBack() {
