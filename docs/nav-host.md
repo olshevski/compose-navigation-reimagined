@@ -35,7 +35,7 @@ if (visible) {
 }
 ```
 
-In this example the state of NavHost will be properly preserved, as it is placed outside of condition.
+In this example, the state of NavHost will be properly preserved, as it is placed outside of condition.
 
 If you do want to clear the state when NavHost is removed by condition, use `NavHostVisibility`/`NavHostAnimatedVisibility`. These composables properly clear the internal state of NavHost when the `visible` parameter is set to `false`:
 
@@ -48,9 +48,3 @@ NavHostVisibility(visible) {
 ```
 
 You can explore the sample of NavHostVisibility usage [here](https://github.com/olshevski/compose-navigation-reimagined/blob/main/sample/src/main/kotlin/dev/olshevski/navigation/reimagined/sample/ui/experimental/BetterDialogTransitionsScreen.kt).
-
-!!! question "Why all the hustle?"
-
-    By default, NavHost saves its internal state when leaving composition in order to be restored after a configuration change or process recreation. As a result of this it will save its state even when removed from composition by condition. Some resources will be lost in this case and never cleared up properly (e.g. ViewModels).
-
-    There is no way (known to me) how to differentiate these different cases automatically, so it is left to the user of the library to specify their intentions explicitly.
