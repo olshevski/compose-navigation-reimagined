@@ -26,5 +26,5 @@ private fun BottomNavigationBackHandler(
 !!! bug
     Always place your NavBackHandler/BackHandler **before** the corresponding NavHost.
 
-    As both BackHandler and NavHost use Lifecycle under the hood, there is a case when the order of back handling may be restored incorrectly after a process/activity recreation. This is how the framework works and there is nothing to do about it. Simple placement of BackHandler before NavHost guarantees no issues in this part.
+    As both BackHandler and NavHost use Lifecycle under the hood, there is a case when the order of back handling may be restored incorrectly after process/activity recreation. This is how the framework works and there is nothing to do about it. Simple placement of BackHandler before NavHost guarantees no issues in this part.
 

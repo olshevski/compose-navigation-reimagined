@@ -35,7 +35,7 @@ open class MainActivityScope(protected val composeRule: MainActivityComposeRule)
     }
 
     /**
-     * Additionally cleans ViewModelStore when Activity is recreated. This emulates the case of
+     * Additionally clears ViewModelStore when Activity is recreated. This emulates the case of
      * full Activity recreation when no non-configuration instances are restored.
      */
     fun recreateActivityAndClearViewModels() {

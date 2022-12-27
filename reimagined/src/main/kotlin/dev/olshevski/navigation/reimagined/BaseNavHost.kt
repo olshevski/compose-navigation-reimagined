@@ -100,7 +100,7 @@ fun <T, S> BaseNavHost(
  * **Note:** this is still an early public version of the API. It may get some changes
  * in the future.
  *
- * @param state state holder of all internal BaseNavHost state. Stores and manages saved state
+ * @param state holder of all internal BaseNavHost state. Stores and manages saved state
  * and all Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry)
  * for every entry and every scope.
  *

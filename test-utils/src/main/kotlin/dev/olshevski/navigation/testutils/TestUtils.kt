@@ -43,7 +43,7 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.r
 }
 
 /**
- * Additionally cleans ViewModelStore when Activity is recreated. This emulates the case of
+ * Additionally clears ViewModelStore when Activity is recreated. This emulates the case of
  * full Activity recreation when no non-configuration instances are restored.
  */
 fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.recreateActivityAndClearViewModels() {

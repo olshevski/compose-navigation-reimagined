@@ -39,7 +39,7 @@ private fun NavController<VisibilityUnit>.setVisibility(visible: Boolean) {
  * hoist NavHostState and use simple condition to control the visibility of NavHost:
  *
  * ```kotlin
- * val state = rememberNavHostState(controller)
+ * val state = rememberNavHostState(backstack)
  * if (visible) {
  *      NavHost(state) {
  *          ...
@@ -69,7 +69,7 @@ fun NavHostVisibility(
  * hoist NavHostState and use simple AnimatedVisibility to control the visibility of NavHost:
  *
  * ```kotlin
- * val state = rememberNavHostState(controller)
+ * val state = rememberNavHostState(backstack)
  * AnimatedVisibility(visible) {
  *      NavHost(state) {
  *          ...

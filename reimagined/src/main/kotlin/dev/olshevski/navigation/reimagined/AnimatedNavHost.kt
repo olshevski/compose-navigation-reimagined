@@ -105,7 +105,7 @@ fun <T> AnimatedNavHost(
  *
  * If you don't need animated transitions use [NavHost] instead.
  *
- * @param state state holder of all internal AnimatedNavHost state. Stores and manages saved state
+ * @param state holder of all internal AnimatedNavHost state. Stores and manages saved state
  * and all Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry)
  * for every entry.
  *
@@ -288,8 +288,8 @@ fun <T, S> ScopingAnimatedNavHost(
  * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
  * easily accessible from different destinations.
  *
- * @param state state holder of all internal ScopingAnimatedNavHost state. Stores and manages saved
- * state and all Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry)
+ * @param state holder of all internal ScopingAnimatedNavHost state. Stores and manages saved state
+ * and all Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry)
  * for every entry and every scope.
  *
  * @param transitionSpec specifies the desired transitions. If not set, the default transition

@@ -88,7 +88,7 @@ fun <T> NavHost(
  * If you need animated transitions use [AnimatedNavHost] instead. For smoother transitions
  * between dialogs use [DialogNavHost].
  *
- * @param state state holder of all internal NavHost state. Stores and manages saved state
+ * @param state holder of all internal NavHost state. Stores and manages saved state
  * and all Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry)
  * for every entry.
  *
@@ -254,7 +254,7 @@ fun <T, S> ScopingNavHost(
  * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
  * easily accessible from different destinations.
  *
- * @param state state holder of all internal ScopingNavHost state. Stores and manages saved state
+ * @param state holder of all internal ScopingNavHost state. Stores and manages saved state
  * and all Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry)
  * for every entry and every scope.
  *
