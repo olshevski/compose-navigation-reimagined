@@ -8,10 +8,16 @@ import androidx.compose.runtime.Stable
  * transitions. The order of the [items] is the same as the order of entries in the backstack.
  */
 @Stable
-data class NavSnapshot<out T, S> internal constructor(
+class NavSnapshot<out T, S> internal constructor(
     val items: List<NavSnapshotItem<T, S>>,
     val action: NavAction
-)
+) {
+
+    override fun toString() = "NavSnapshot(items=$items, action=$action)"
+
+    // snapshots must never be checked for structural equality, only for referential
+
+}
 
 @Stable
 data class NavSnapshotItem<out T, S> internal constructor(
