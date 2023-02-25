@@ -12,6 +12,8 @@ import androidx.compose.animation.with
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelStoreOwner
 
 /**
@@ -45,13 +47,17 @@ import androidx.lifecycle.ViewModelStoreOwner
 @Composable
 fun <T> AnimatedNavHost(
     controller: NavController<T>,
+    modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
+    contentAlignment: Alignment = Alignment.TopStart,
     contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
 ) = AnimatedNavHost(
     backstack = controller.backstack,
+    modifier = modifier,
     transitionSpec = transitionSpec,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
+    contentAlignment = contentAlignment,
     contentSelector = contentSelector
 )
 
@@ -85,13 +91,17 @@ fun <T> AnimatedNavHost(
 @Composable
 fun <T> AnimatedNavHost(
     backstack: NavBackstack<T>,
+    modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
+    contentAlignment: Alignment = Alignment.TopStart,
     contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
 ) = @OptIn(ExperimentalReimaginedApi::class) AnimatedNavHost(
     state = rememberNavHostState(backstack),
+    modifier = modifier,
     transitionSpec = transitionSpec,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
+    contentAlignment = contentAlignment,
     contentSelector = contentSelector
 )
 
@@ -125,13 +135,17 @@ fun <T> AnimatedNavHost(
 @Composable
 fun <T> AnimatedNavHost(
     state: NavHostState<T>,
+    modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
+    contentAlignment: Alignment = Alignment.TopStart,
     contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
 ) = @Suppress("UNCHECKED_CAST") ScopingAnimatedNavHost(
     state = state as ScopingNavHostState<T, Nothing>,
+    modifier = modifier,
     transitionSpec = transitionSpec,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
+    contentAlignment = contentAlignment,
     contentSelector = contentSelector
 )
 
@@ -188,14 +202,18 @@ fun <T> AnimatedNavHost(
 fun <T, S> ScopingAnimatedNavHost(
     controller: NavController<T>,
     scopeSpec: NavScopeSpec<T, S>,
+    modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
+    contentAlignment: Alignment = Alignment.TopStart,
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(destination: T) -> Unit
 ) = ScopingAnimatedNavHost(
     backstack = controller.backstack,
     scopeSpec = scopeSpec,
+    modifier = modifier,
     transitionSpec = transitionSpec,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
+    contentAlignment = contentAlignment,
     contentSelector = contentSelector
 )
 
@@ -251,13 +269,17 @@ fun <T, S> ScopingAnimatedNavHost(
 fun <T, S> ScopingAnimatedNavHost(
     backstack: NavBackstack<T>,
     scopeSpec: NavScopeSpec<T, S>,
+    modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
+    contentAlignment: Alignment = Alignment.TopStart,
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(destination: T) -> Unit
 ) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
     state = rememberScopingNavHostState(backstack, scopeSpec),
+    modifier = modifier,
     transitionSpec = transitionSpec,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
+    contentAlignment = contentAlignment,
     contentSelector = contentSelector
 )
 
@@ -309,8 +331,10 @@ fun <T, S> ScopingAnimatedNavHost(
 @Composable
 fun <T, S> ScopingAnimatedNavHost(
     state: ScopingNavHostState<T, S>,
+    modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
+    contentAlignment: Alignment = Alignment.TopStart,
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(T) -> Unit
 ) = BaseNavHost(state) { targetSnapshot ->
     val transition = updateTransition(
@@ -318,10 +342,12 @@ fun <T, S> ScopingAnimatedNavHost(
         label = "AnimatedNavHost"
     )
     transition.AnimatedContent(
+        modifier = modifier,
         transitionSpec = {
             selectTransition(transitionSpec, targetState.action)
         },
-        contentKey = { it.items.lastOrNull()?.hostEntry?.id }
+        contentKey = { it.items.lastOrNull()?.hostEntry?.id },
+        contentAlignment = contentAlignment
     ) { snapshot ->
         val lastSnapshotItem = snapshot.items.lastOrNull()
         if (lastSnapshotItem != null) {
