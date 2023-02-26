@@ -136,7 +136,10 @@ private fun <T> AnimatedDialogNavHost(
                     )
             )
 
-            AnimatedNavHost(backstack, transitionSpec) { destination ->
+            AnimatedNavHost(
+                backstack = backstack,
+                transitionSpec = transitionSpec
+            ) { destination ->
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
