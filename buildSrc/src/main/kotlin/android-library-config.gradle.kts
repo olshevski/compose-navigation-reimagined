@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     `android-library`
     `kotlin-android`
@@ -8,6 +11,7 @@ android {
 
     defaultConfig {
         minSdk = AndroidSdkVersion.Min
+        @Suppress("DEPRECATION")
         targetSdk = AndroidSdkVersion.Target
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -25,10 +29,6 @@ android {
         }
     }
 
-    kotlinOptions {
-        freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
-    }
-
     buildFeatures {
         compose = true
     }
@@ -42,4 +42,8 @@ android {
             it.useJUnitPlatform()
         }
     }
+}
+
+tasks.withType<KotlinCompile> {
+    compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
 }
