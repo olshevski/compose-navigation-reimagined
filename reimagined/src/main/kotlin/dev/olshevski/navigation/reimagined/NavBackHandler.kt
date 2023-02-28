@@ -21,12 +21,15 @@ import androidx.lifecycle.Lifecycle
  * after a process/activity recreation. This is how the framework works and there is nothing
  * to do about it. Simple placement of [BackHandler] before [NavHost] guarantees no issues
  * in this part.
+ *
+ * @param enabled if this NavBackHandler should be enabled. If you need to conditionally disable
+ * NavBackHandler it is better to use this property instead of removing it from composition (for
+ * same reason described in the notice above).
  */
 @Composable
 fun <T> NavBackHandler(
-    controller: NavController<T>
-) {
-    BackHandler(enabled = controller.backstack.entries.size > 1) {
-        controller.pop()
-    }
+    controller: NavController<T>,
+    enabled: Boolean = true
+) = BackHandler(enabled = enabled && controller.backstack.entries.size > 1) {
+    controller.pop()
 }
