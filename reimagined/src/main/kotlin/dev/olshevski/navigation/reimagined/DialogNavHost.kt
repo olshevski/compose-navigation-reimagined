@@ -27,7 +27,7 @@ private val NoneTransitionSpec = NavTransitionSpec<Any?> { _, _, _ ->
  * Note that DialogNavHost doesn't wrap your composables into a [Dialog]. You need to use
  * either `Dialog` or `AlertDialog` composable inside a [contentSelector] yourself.
  *
- * @param controller a navigation controller that will provide its backstack to this
+ * @param controller the navigation controller that will provide its backstack to this
  * DialogNavHost. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but setting a different [NavController] will be handled correctly.
@@ -120,7 +120,7 @@ fun <T> DialogNavHost(
  * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
  * easily accessible from different destinations.
  *
- * @param controller a navigation controller that will provide its backstack to this
+ * @param controller the navigation controller that will provide its backstack to this
  * DialogNavHost. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but setting a different [NavController] will be handled correctly.

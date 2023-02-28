@@ -46,7 +46,7 @@ import kotlinx.parcelize.Parcelize
  * transitions between different BottomSheets, as well as all other features of the regular
  * [NavHost].
  *
- * @param controller a navigation controller that will provide its backstack to this
+ * @param controller the navigation controller that will provide its backstack to this
  * BottomSheetNavHost. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but setting a different [NavController] will be handled correctly.
@@ -185,7 +185,7 @@ fun <T> BottomSheetNavHost(
  * transitions between different BottomSheets, as well as all other features of the regular
  * [ScopingNavHost].
  *
- * @param controller a navigation controller that will provide its backstack to this
+ * @param controller the navigation controller that will provide its backstack to this
  * BottomSheetNavHost. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but setting a different [NavController] will be handled correctly.
