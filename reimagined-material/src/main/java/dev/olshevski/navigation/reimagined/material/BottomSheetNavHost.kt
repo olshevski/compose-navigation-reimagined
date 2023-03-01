@@ -389,7 +389,7 @@ fun <T, S> ScopingBottomSheetNavHost(
         Scrim(
             color = scrimColor,
             onDismiss = {
-                if (sheetState?.confirmStateChange?.invoke(BottomSheetValue.Hidden) == true) {
+                if (sheetState?.swipeableState?.confirmValueChange?.invoke(BottomSheetValue.Hidden) == true) {
                     onDismissRequest()
                 }
             },
@@ -442,7 +442,8 @@ fun <T, S> ScopingBottomSheetNavHost(
 
                 sheetState?.let { sheetState ->
                     // wait until anchors are calculated
-                    snapshotFlow { sheetState.anchors }.filter { it.isNotEmpty() }.first()
+                    snapshotFlow { sheetState.swipeableState.anchors }.filter { it.isNotEmpty() }
+                        .first()
                     sheetState.show()
                 }
             } finally {
