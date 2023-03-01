@@ -511,13 +511,24 @@ private fun ModalBottomSheetAnchorChangeHandler(
     snapTo: (target: BottomSheetValue) -> Unit,
 ) = AnchorChangeHandler<BottomSheetValue> { previousTarget, previousAnchors, newAnchors ->
     val previousTargetOffset = previousAnchors[previousTarget]
+    // New target selection is fixed here, the original implementation had an issue when
+    // HalfExpanded state was selected incorrectly instead of Expanded state.
+    // Now the selection priorities are correct.
     val newTarget = when (previousTarget) {
         Hidden -> Hidden
-        HalfExpanded, Expanded -> {
-            val hasHalfExpandedState = newAnchors.containsKey(HalfExpanded)
-            val newTarget = if (hasHalfExpandedState) HalfExpanded
-            else if (newAnchors.containsKey(Expanded)) Expanded else Hidden
-            newTarget
+        HalfExpanded -> {
+            when {
+                newAnchors.containsKey(HalfExpanded) -> HalfExpanded
+                newAnchors.containsKey(Expanded) -> Expanded
+                else -> Hidden
+            }
+        }
+        Expanded -> {
+            when {
+                newAnchors.containsKey(Expanded) -> Expanded
+                newAnchors.containsKey(HalfExpanded) -> HalfExpanded
+                else -> Hidden
+            }
         }
     }
     val newTargetOffset = newAnchors.getValue(newTarget)
