@@ -282,9 +282,12 @@ internal fun BottomSheetLayout(
                 .offset {
                     IntOffset(
                         0,
-                        sheetState.swipeableState
-                            .requireOffset()
-                            .roundToInt()
+                        sheetState.swipeableState.let { swipeableState ->
+                            swipeableState
+                                .requireOffset()
+                                .coerceIn(swipeableState.minOffset, swipeableState.maxOffset)
+                                .roundToInt()
+                        }
                     )
                 }
                 .swipeableV2(
