@@ -37,6 +37,9 @@ import androidx.lifecycle.ViewModelStoreOwner
  * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
  *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
+ *
  * @param contentAlignment the alignment inside AnimatedNavHost
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
@@ -53,6 +56,7 @@ fun <T> AnimatedNavHost(
     controller: NavController<T>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.QueueAll,
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
@@ -60,6 +64,7 @@ fun <T> AnimatedNavHost(
     backstack = controller.backstack,
     modifier = modifier,
     transitionSpec = transitionSpec,
+    transitionQueueing = transitionQueueing,
     contentAlignment = contentAlignment,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
@@ -85,6 +90,9 @@ fun <T> AnimatedNavHost(
  * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
  *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
+ *
  * @param contentAlignment the alignment inside AnimatedNavHost
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
@@ -101,6 +109,7 @@ fun <T> AnimatedNavHost(
     backstack: NavBackstack<T>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.QueueAll,
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
@@ -108,6 +117,7 @@ fun <T> AnimatedNavHost(
     state = rememberNavHostState(backstack),
     modifier = modifier,
     transitionSpec = transitionSpec,
+    transitionQueueing = transitionQueueing,
     contentAlignment = contentAlignment,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
@@ -132,6 +142,9 @@ fun <T> AnimatedNavHost(
  * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
  *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
+ *
  * @param contentAlignment the alignment inside AnimatedNavHost
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
@@ -149,6 +162,7 @@ fun <T> AnimatedNavHost(
     state: NavHostState<T>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.QueueAll,
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
@@ -156,6 +170,7 @@ fun <T> AnimatedNavHost(
     state = state as ScopingNavHostState<T, Nothing>,
     modifier = modifier,
     transitionSpec = transitionSpec,
+    transitionQueueing = transitionQueueing,
     contentAlignment = contentAlignment,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
@@ -202,6 +217,9 @@ fun <T> AnimatedNavHost(
  * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
  *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
+ *
  * @param contentAlignment the alignment inside AnimatedNavHost
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
@@ -220,6 +238,7 @@ fun <T, S> ScopingAnimatedNavHost(
     scopeSpec: NavScopeSpec<T, S>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.QueueAll,
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(destination: T) -> Unit
@@ -228,6 +247,7 @@ fun <T, S> ScopingAnimatedNavHost(
     scopeSpec = scopeSpec,
     modifier = modifier,
     transitionSpec = transitionSpec,
+    transitionQueueing = transitionQueueing,
     contentAlignment = contentAlignment,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
@@ -271,6 +291,9 @@ fun <T, S> ScopingAnimatedNavHost(
  * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
  *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
+ *
  * @param contentAlignment the alignment inside AnimatedNavHost
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
@@ -289,6 +312,7 @@ fun <T, S> ScopingAnimatedNavHost(
     scopeSpec: NavScopeSpec<T, S>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.QueueAll,
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(destination: T) -> Unit
@@ -296,6 +320,7 @@ fun <T, S> ScopingAnimatedNavHost(
     state = rememberScopingNavHostState(backstack, scopeSpec),
     modifier = modifier,
     transitionSpec = transitionSpec,
+    transitionQueueing = transitionQueueing,
     contentAlignment = contentAlignment,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
@@ -337,6 +362,9 @@ fun <T, S> ScopingAnimatedNavHost(
  * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
  *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
+ *
  * @param contentAlignment the alignment inside AnimatedNavHost
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
@@ -355,10 +383,14 @@ fun <T, S> ScopingAnimatedNavHost(
     state: ScopingNavHostState<T, S>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.QueueAll,
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(T) -> Unit
-) = BaseNavHost(state) { targetSnapshot ->
+) = BaseNavHost(
+    state = state,
+    transitionQueueing = transitionQueueing
+) { targetSnapshot ->
     val transition = updateTransition(
         targetState = targetSnapshot,
         label = "AnimatedNavHost"

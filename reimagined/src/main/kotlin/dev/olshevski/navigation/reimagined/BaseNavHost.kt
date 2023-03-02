@@ -56,6 +56,9 @@ import androidx.lifecycle.ViewModelStoreOwner
  * [RESUMED][Lifecycle.State.RESUMED] state. With this function parameter, you can have several
  * entries receive `RESUMED` state. It is also possible to control lifecycle states of entries
  * dynamically. BaseNavHost will subscribe to all [State] object changes read inside [visibleItems].
+ *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
  */
 @ExperimentalReimaginedApi
 @Composable
@@ -63,10 +66,12 @@ fun <T, S> BaseNavHost(
     backstack: NavBackstack<T>,
     scopeSpec: NavScopeSpec<T, S>,
     visibleItems: (snapshot: NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.QueueAll,
     transition: @Composable (snapshot: NavSnapshot<T, S>) -> NavSnapshot<T, S>
 ) = BaseNavHost(
     state = rememberScopingNavHostState(backstack, scopeSpec),
     visibleItems = visibleItems,
+    transitionQueueing = transitionQueueing,
     transition = transition
 )
 
@@ -109,12 +114,16 @@ fun <T, S> BaseNavHost(
  * [RESUMED][Lifecycle.State.RESUMED] state. With this function parameter, you can have several
  * entries receive `RESUMED` state. It is also possible to control lifecycle states of entries
  * dynamically. BaseNavHost will subscribe to all [State] object changes read inside [visibleItems].
+ *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
  */
 @ExperimentalReimaginedApi
 @Composable
 fun <T, S> BaseNavHost(
     state: ScopingNavHostState<T, S>,
     visibleItems: (snapshot: NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.QueueAll,
     transition: @Composable (snapshot: NavSnapshot<T, S>) -> NavSnapshot<T, S>
 ) {
     state as NavHostStateImpl
@@ -128,7 +137,7 @@ fun <T, S> BaseNavHost(
         }
 
         val (targetSnapshot, currentSnapshot) =
-            enqueueSnapshotTransition(latestSnapshot, transition)
+            enqueueSnapshotTransition(latestSnapshot, transitionQueueing, transition)
 
         val targetVisibleItems by remember(targetSnapshot) {
             derivedStateOf { visibleItems(targetSnapshot) }
@@ -164,13 +173,14 @@ fun <T, S> BaseNavHost(
  * switch to a new target state instantaneously.
  */
 @Composable
-private fun <T> enqueueSnapshotTransition(
-    snapshot: T,
-    transition: @Composable (snapshot: T) -> T
-): TransitionState<T> {
+private fun <T, S> enqueueSnapshotTransition(
+    snapshot: NavSnapshot<T, S>,
+    transitionQueueing: NavTransitionQueueing,
+    transition: @Composable (snapshot: NavSnapshot<T, S>) -> NavSnapshot<T, S>
+): TransitionState<NavSnapshot<T, S>> {
     // Queue of pending transitions. The first item in the queue is the currently running
     // transition.
-    val queue = remember { mutableStateListOf<T>() }
+    val queue = remember { mutableStateListOf<NavSnapshot<T, S>>() }
     val targetSnapshot by remember(snapshot) {
         derivedStateOf { queue.firstOrNull() ?: snapshot }
     }
@@ -178,7 +188,7 @@ private fun <T> enqueueSnapshotTransition(
 
     DisposableEffect(snapshot) {
         if (currentSnapshot != snapshot) {
-            queue.add(snapshot)
+            queue.addToQueue(transitionQueueing, snapshot)
         }
         onDispose {}
     }
@@ -191,6 +201,24 @@ private fun <T> enqueueSnapshotTransition(
         }
     }
     return TransitionState(targetSnapshot = targetSnapshot, currentSnapshot = currentSnapshot)
+}
+
+private fun <T, S> MutableList<NavSnapshot<T, S>>.addToQueue(
+    queueing: NavTransitionQueueing,
+    snapshot: NavSnapshot<T, S>
+) {
+    when (queueing) {
+        NavTransitionQueueing.QueueAll -> add(snapshot)
+        NavTransitionQueueing.Conflate -> {
+            // Keep 2 items max: the first item is the currently running transition, the second one
+            // is the pending transition. Replace the pending transition.
+            if (size < 2) {
+                add(snapshot)
+            } else {
+                set(1, snapshot)
+            }
+        }
+    }
 }
 
 @Stable
