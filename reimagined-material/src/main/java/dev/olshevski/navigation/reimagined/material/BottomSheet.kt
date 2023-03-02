@@ -283,6 +283,8 @@ internal fun BottomSheetLayout(
                     IntOffset(
                         0,
                         sheetState.swipeableState.let { swipeableState ->
+                            // FIX: Offset is coerced here, so bottom sheet is not overshoot above
+                            // the bottom line of the screen.
                             swipeableState
                                 .requireOffset()
                                 .coerceIn(swipeableState.minOffset, swipeableState.maxOffset)
@@ -514,7 +516,7 @@ private fun ModalBottomSheetAnchorChangeHandler(
     snapTo: (target: BottomSheetValue) -> Unit,
 ) = AnchorChangeHandler<BottomSheetValue> { previousTarget, previousAnchors, newAnchors ->
     val previousTargetOffset = previousAnchors[previousTarget]
-    // New target selection is fixed here, the original implementation had an issue when
+    // FIX: New target selection is fixed here, the original implementation had an issue when
     // HalfExpanded state was selected incorrectly instead of Expanded state.
     // Now the selection priorities are correct.
     val newTarget = when (previousTarget) {
