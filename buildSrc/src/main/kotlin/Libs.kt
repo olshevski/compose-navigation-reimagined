@@ -8,7 +8,7 @@ object Libs {
 
         object Compose {
             const val CompilerVersion = "1.4.3"
-            const val Bom = "dev.chrisbanes.compose:compose-bom:2023.02.00-beta02"
+            const val Bom = "dev.chrisbanes.compose:compose-bom:2023.02.00-beta03"
             const val Animation = "androidx.compose.animation:animation"
             const val Material = "androidx.compose.material:material"
             const val MaterialIconsExtended = "androidx.compose.material:material-icons-extended"
