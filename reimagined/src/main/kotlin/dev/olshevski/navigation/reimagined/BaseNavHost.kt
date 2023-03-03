@@ -11,6 +11,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStoreOwner
 
@@ -188,7 +189,7 @@ private fun <T, S> enqueueSnapshotTransition(
 
     DisposableEffect(snapshot) {
         if (currentSnapshot != snapshot) {
-            queue.addToQueue(transitionQueueing, snapshot)
+            addToQueue(queue, snapshot, transitionQueueing)
         }
         onDispose {}
     }
@@ -203,19 +204,22 @@ private fun <T, S> enqueueSnapshotTransition(
     return TransitionState(targetSnapshot = targetSnapshot, currentSnapshot = currentSnapshot)
 }
 
-private fun <T, S> MutableList<NavSnapshot<T, S>>.addToQueue(
-    queueing: NavTransitionQueueing,
-    snapshot: NavSnapshot<T, S>
+private fun <T, S> addToQueue(
+    queue: SnapshotStateList<NavSnapshot<T, S>>,
+    snapshot: NavSnapshot<T, S>,
+    transitionQueueing: NavTransitionQueueing
 ) {
-    when (queueing) {
-        NavTransitionQueueing.QueueAll -> add(snapshot)
+    when (transitionQueueing) {
+        NavTransitionQueueing.QueueAll -> queue.add(snapshot)
         NavTransitionQueueing.Conflate -> {
             // Keep 2 items max: the first item is the currently running transition, the second one
             // is the pending transition. Replace the pending transition.
-            if (size < 2) {
-                add(snapshot)
+            if (queue.size < 2) {
+                queue.add(snapshot)
             } else {
-                set(1, snapshot)
+                // covers the case when transitionQueueing was changed on the fly
+                queue.removeRange(1, queue.size)
+                queue.add(snapshot)
             }
         }
     }
