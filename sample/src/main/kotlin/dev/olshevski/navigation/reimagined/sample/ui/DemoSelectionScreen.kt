@@ -32,6 +32,7 @@ fun DemoSelectionScreen(
                 R.string.demo_selection__bottom_sheet_nav_host_button to MainDestination.BottomSheetNavHost,
                 R.string.demo_selection__bottom_navigation_button to MainDestination.BottomNavigation,
                 R.string.demo_selection__view_models_button to MainDestination.ViewModels,
+                R.string.demo_selection__state_view_models_button to MainDestination.StateViewModels,
                 R.string.demo_selection__scoped_view_models_button to MainDestination.ScopedViewModels,
                 R.string.demo_selection__deeplinks_button to MainDestination.Deeplinks(),
                 R.string.demo_selection__better_dialog_transitions to MainDestination.BetterDialogTransitions

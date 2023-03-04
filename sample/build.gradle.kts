@@ -28,6 +28,7 @@ dependencies {
     debugImplementation(Libs.AndroidX.Compose.UiTooling)
     implementation(Libs.AndroidX.Compose.UiToolingPreview)
     implementation(Libs.AndroidX.Lifecycle.ViewModel.Compose)
+    implementation(Libs.AndroidX.Lifecycle.ViewModel.ComposeRuntime)
 
     androidTestImplementation(project(":test-utils"))
     androidTestImplementation(Libs.AndroidX.Test.Runner)

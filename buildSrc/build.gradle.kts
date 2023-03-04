@@ -10,7 +10,7 @@ java {
 
 dependencies {
     implementation("com.android.tools.build:gradle:7.3.1")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10")
 
     // fix the issue with Hilt down the line: https://github.com/google/dagger/issues/3068
     implementation("com.squareup:javapoet:1.13.0")
