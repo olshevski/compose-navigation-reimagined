@@ -493,12 +493,13 @@ private fun <T, S> SnapshotBottomSheetLayout(
             onDismissRequest = onDismissRequest,
             sheetContent = {
                 lastSnapshotItem.hostEntry.ComponentsProvider {
-                    val scope = remember(snapshot, sheetState) {
+                    val columnScope = this@BottomSheetLayout
+                    val scope = remember(snapshot, sheetState, columnScope) {
                         ScopingBottomSheetNavHostScopeImpl(
                             hostEntries = snapshot.items.map { it.hostEntry },
                             scopedHostEntries = lastSnapshotItem.scopedHostEntries,
                             sheetState = sheetState,
-                            columnScope = this@BottomSheetLayout
+                            columnScope = columnScope
                         )
                     }
                     scope.contentSelector(lastSnapshotItem.hostEntry.destination)
