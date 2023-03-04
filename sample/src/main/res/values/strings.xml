@@ -9,6 +9,7 @@
     <string name="demo_selection__dialog_nav_host_button">DialogNavHost</string>
     <string name="demo_selection__bottom_sheet_nav_host_button">BottomSheetNavHost</string>
     <string name="demo_selection__view_models_button">ViewModels</string>
+    <string name="demo_selection__state_view_models_button">StateViewModels</string>
     <string name="demo_selection__scoped_view_models_button">Scoped ViewModels</string>
     <string name="demo_selection__bottom_navigation_button">BottomNavigation</string>
     <string name="demo_selection__deeplinks_button">Deeplinks</string>

@@ -26,6 +26,7 @@ import dev.olshevski.navigation.reimagined.sample.ui.demo.DialogNavHostScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.PassValuesScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.ReturnResultsScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.ScopedViewModelsScreen
+import dev.olshevski.navigation.reimagined.sample.ui.demo.StateViewModelsScreen
 import dev.olshevski.navigation.reimagined.sample.ui.demo.ViewModelsScreen
 import dev.olshevski.navigation.reimagined.sample.ui.experimental.BetterDialogTransitionsScreen
 
@@ -87,6 +88,7 @@ fun MainScreen() {
             MainDestination.BottomSheetNavHost -> BottomSheetNavHostScreen()
             MainDestination.BottomNavigation -> BottomNavigationScreen()
             MainDestination.ViewModels -> ViewModelsScreen()
+            MainDestination.StateViewModels -> StateViewModelsScreen()
             MainDestination.ScopedViewModels -> ScopedViewModelsScreen()
             is MainDestination.Deeplinks -> DeeplinksScreen(destination.initialBackstack)
             MainDestination.BetterDialogTransitions -> BetterDialogTransitionsScreen()

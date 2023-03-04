@@ -31,6 +31,9 @@ sealed class MainDestination : Parcelable {
     object ViewModels : MainDestination()
 
     @Parcelize
+    object StateViewModels : MainDestination()
+
+    @Parcelize
     object ScopedViewModels : MainDestination()
 
     @Parcelize
