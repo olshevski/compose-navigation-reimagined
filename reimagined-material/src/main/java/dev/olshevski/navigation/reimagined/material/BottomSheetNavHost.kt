@@ -497,7 +497,8 @@ private fun <T, S> SnapshotBottomSheetLayout(
                         ScopingBottomSheetNavHostScopeImpl(
                             hostEntries = snapshot.items.map { it.hostEntry },
                             scopedHostEntries = lastSnapshotItem.scopedHostEntries,
-                            sheetState = sheetState
+                            sheetState = sheetState,
+                            columnScope = this@BottomSheetLayout
                         )
                     }
                     scope.contentSelector(lastSnapshotItem.hostEntry.destination)
