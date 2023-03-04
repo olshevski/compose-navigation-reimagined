@@ -15,7 +15,7 @@ android {
 
 fun createPublicationName() = name.split("-")
     .mapIndexed { index, s ->
-        if (index == 0) s else s.capitalize()
+        if (index == 0) s else s.replaceFirstChar { it.uppercase() }
     }
     .joinToString(separator = "")
 

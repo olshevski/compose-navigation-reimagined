@@ -11,6 +11,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStoreOwner
 
@@ -56,6 +57,9 @@ import androidx.lifecycle.ViewModelStoreOwner
  * [RESUMED][Lifecycle.State.RESUMED] state. With this function parameter, you can have several
  * entries receive `RESUMED` state. It is also possible to control lifecycle states of entries
  * dynamically. BaseNavHost will subscribe to all [State] object changes read inside [visibleItems].
+ *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
  */
 @ExperimentalReimaginedApi
 @Composable
@@ -63,10 +67,12 @@ fun <T, S> BaseNavHost(
     backstack: NavBackstack<T>,
     scopeSpec: NavScopeSpec<T, S>,
     visibleItems: (snapshot: NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.QueueAll,
     transition: @Composable (snapshot: NavSnapshot<T, S>) -> NavSnapshot<T, S>
 ) = BaseNavHost(
     state = rememberScopingNavHostState(backstack, scopeSpec),
     visibleItems = visibleItems,
+    transitionQueueing = transitionQueueing,
     transition = transition
 )
 
@@ -100,7 +106,7 @@ fun <T, S> BaseNavHost(
  * **Note:** this is still an early public version of the API. It may get some changes
  * in the future.
  *
- * @param state holder of all internal BaseNavHost state. Stores and manages saved state
+ * @param state the holder of all internal BaseNavHost state. Stores and manages saved state
  * and all Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry)
  * for every entry and every scope.
  *
@@ -109,12 +115,16 @@ fun <T, S> BaseNavHost(
  * [RESUMED][Lifecycle.State.RESUMED] state. With this function parameter, you can have several
  * entries receive `RESUMED` state. It is also possible to control lifecycle states of entries
  * dynamically. BaseNavHost will subscribe to all [State] object changes read inside [visibleItems].
+ *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
  */
 @ExperimentalReimaginedApi
 @Composable
 fun <T, S> BaseNavHost(
     state: ScopingNavHostState<T, S>,
     visibleItems: (snapshot: NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.QueueAll,
     transition: @Composable (snapshot: NavSnapshot<T, S>) -> NavSnapshot<T, S>
 ) {
     state as NavHostStateImpl
@@ -128,7 +138,7 @@ fun <T, S> BaseNavHost(
         }
 
         val (targetSnapshot, currentSnapshot) =
-            enqueueSnapshotTransition(latestSnapshot, transition)
+            enqueueSnapshotTransition(latestSnapshot, transitionQueueing, transition)
 
         val targetVisibleItems by remember(targetSnapshot) {
             derivedStateOf { visibleItems(targetSnapshot) }
@@ -164,13 +174,14 @@ fun <T, S> BaseNavHost(
  * switch to a new target state instantaneously.
  */
 @Composable
-private fun <T> enqueueSnapshotTransition(
-    snapshot: T,
-    transition: @Composable (snapshot: T) -> T
-): TransitionState<T> {
+private fun <T, S> enqueueSnapshotTransition(
+    snapshot: NavSnapshot<T, S>,
+    transitionQueueing: NavTransitionQueueing,
+    transition: @Composable (snapshot: NavSnapshot<T, S>) -> NavSnapshot<T, S>
+): TransitionState<NavSnapshot<T, S>> {
     // Queue of pending transitions. The first item in the queue is the currently running
     // transition.
-    val queue = remember { mutableStateListOf<T>() }
+    val queue = remember { mutableStateListOf<NavSnapshot<T, S>>() }
     val targetSnapshot by remember(snapshot) {
         derivedStateOf { queue.firstOrNull() ?: snapshot }
     }
@@ -178,7 +189,7 @@ private fun <T> enqueueSnapshotTransition(
 
     DisposableEffect(snapshot) {
         if (currentSnapshot != snapshot) {
-            queue.add(snapshot)
+            addToQueue(queue, snapshot, transitionQueueing)
         }
         onDispose {}
     }
@@ -191,6 +202,27 @@ private fun <T> enqueueSnapshotTransition(
         }
     }
     return TransitionState(targetSnapshot = targetSnapshot, currentSnapshot = currentSnapshot)
+}
+
+private fun <T, S> addToQueue(
+    queue: SnapshotStateList<NavSnapshot<T, S>>,
+    snapshot: NavSnapshot<T, S>,
+    transitionQueueing: NavTransitionQueueing
+) {
+    when (transitionQueueing) {
+        NavTransitionQueueing.QueueAll -> queue.add(snapshot)
+        NavTransitionQueueing.Conflate -> {
+            // Keep 2 items max: the first item is the currently running transition, the second one
+            // is the pending transition. Replace the pending transition.
+            if (queue.size < 2) {
+                queue.add(snapshot)
+            } else {
+                // covers the case when transitionQueueing was changed on the fly
+                queue.removeRange(1, queue.size)
+                queue.add(snapshot)
+            }
+        }
+    }
 }
 
 @Stable

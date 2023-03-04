@@ -56,6 +56,21 @@ sealed class BaseNavHostEntry(
         SavedStateViewModelFactory(application, this, null)
     }
 
+    override val lifecycle: Lifecycle = lifecycleRegistry
+
+    override val defaultViewModelProviderFactory: ViewModelProvider.Factory = defaultFactory
+
+    override val defaultViewModelCreationExtras: CreationExtras
+        get() {
+            val extras = MutableCreationExtras()
+            if (application != null) {
+                extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] = application
+            }
+            extras[SAVED_STATE_REGISTRY_OWNER_KEY] = this
+            extras[VIEW_MODEL_STORE_OWNER_KEY] = this
+            return extras
+        }
+
     init {
         savedStateRegistryController.performAttach()
         enableSavedStateHandles()
@@ -81,17 +96,4 @@ sealed class BaseNavHostEntry(
     internal fun restoreState(savedState: Bundle) {
         savedStateRegistryController.performRestore(savedState)
     }
-
-    override val defaultViewModelProviderFactory = defaultFactory
-
-    override val defaultViewModelCreationExtras: CreationExtras
-        get() {
-            val extras = MutableCreationExtras()
-            if (application != null) {
-                extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] = application
-            }
-            extras[SAVED_STATE_REGISTRY_OWNER_KEY] = this
-            extras[VIEW_MODEL_STORE_OWNER_KEY] = this
-            return extras
-        }
 }

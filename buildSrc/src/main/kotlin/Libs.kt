@@ -7,9 +7,8 @@ object Libs {
         }
 
         object Compose {
-            // https://androidx.dev/storage/compose-compiler/repository/
-            const val CompilerVersion = "1.4.1-dev-k1.8.10-c312d77f4cb"
-            const val Bom = "androidx.compose:compose-bom:2023.01.00"
+            const val CompilerVersion = "1.4.3"
+            const val Bom = "dev.chrisbanes.compose:compose-bom:2023.02.00-beta03"
             const val Animation = "androidx.compose.animation:animation"
             const val Material = "androidx.compose.material:material"
             const val MaterialIconsExtended = "androidx.compose.material:material-icons-extended"
@@ -33,8 +32,8 @@ object Libs {
         }
 
         object Test {
-            const val Espresso = "androidx.test.espresso:espresso-core:3.5.0"
-            const val Runner = "androidx.test:runner:1.5.0"
+            const val Espresso = "androidx.test.espresso:espresso-core:3.5.1"
+            const val Runner = "androidx.test:runner:1.5.2"
         }
     }
 
@@ -42,7 +41,7 @@ object Libs {
         const val Truth = "com.google.truth:truth:1.1.3"
 
         object Dagger {
-            const val Version = "2.44.2"
+            const val Version = "2.45"
             const val Api = "com.google.dagger:dagger:$Version"
             const val Compiler = "com.google.dagger:dagger-compiler:$Version"
             const val HiltAndroid = "com.google.dagger:hilt-android:$Version"
@@ -51,11 +50,11 @@ object Libs {
     }
 
     object JUnit {
-        const val Juniper = "org.junit.jupiter:junit-jupiter:5.9.1"
+        const val Juniper = "org.junit.jupiter:junit-jupiter:5.9.2"
     }
 
     object Koin {
-        const val Compose = "io.insert-koin:koin-androidx-compose:3.4.0"
+        const val Compose = "io.insert-koin:koin-androidx-compose:3.4.2"
     }
 
 }
