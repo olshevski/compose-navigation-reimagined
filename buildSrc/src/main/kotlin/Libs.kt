@@ -3,12 +3,13 @@ object Libs {
     object AndroidX {
 
         object Activity {
-            const val Compose = "androidx.activity:activity-compose:1.6.1"
+            const val Compose = "androidx.activity:activity-compose:1.7.0-beta02"
         }
 
         object Compose {
-            const val CompilerVersion = "1.3.2"
-            const val Bom = "androidx.compose:compose-bom:2022.12.00"
+            // https://androidx.dev/storage/compose-compiler/repository/
+            const val CompilerVersion = "1.4.1-dev-k1.8.10-c312d77f4cb"
+            const val Bom = "androidx.compose:compose-bom:2023.01.00"
             const val Animation = "androidx.compose.animation:animation"
             const val Material = "androidx.compose.material:material"
             const val MaterialIconsExtended = "androidx.compose.material:material-icons-extended"
@@ -22,11 +23,12 @@ object Libs {
         }
 
         object Lifecycle {
-            private const val Version = "2.5.1"
+            private const val Version = "2.6.0-rc01"
 
             object ViewModel {
                 const val Api = "androidx.lifecycle:lifecycle-viewmodel:$Version"
                 const val Compose = "androidx.lifecycle:lifecycle-viewmodel-compose:$Version"
+                const val ComposeRuntime = "androidx.lifecycle:lifecycle-runtime-compose:$Version"
             }
         }
 

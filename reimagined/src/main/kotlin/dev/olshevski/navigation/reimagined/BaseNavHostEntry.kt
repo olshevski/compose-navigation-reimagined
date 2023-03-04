@@ -25,14 +25,14 @@ import kotlin.properties.Delegates
 @Stable
 sealed class BaseNavHostEntry(
     val id: NavId,
-    private val viewModelStore: ViewModelStore,
+    override val viewModelStore: ViewModelStore,
     private val application: Application?
 ) : ViewModelStoreOwner,
     LifecycleOwner,
     SavedStateRegistryOwner,
     HasDefaultViewModelProviderFactory {
 
-    private val lifecycleRegistry = LifecycleRegistry(this)
+    override val lifecycle: LifecycleRegistry = LifecycleRegistry(this)
 
     internal var hostLifecycleState by Delegates.observable(Lifecycle.State.INITIALIZED) { _, _, _ ->
         updateLifecycleRegistry()
@@ -61,12 +61,8 @@ sealed class BaseNavHostEntry(
         enableSavedStateHandles()
     }
 
-    override fun getViewModelStore() = viewModelStore
-
-    override fun getLifecycle(): Lifecycle = lifecycleRegistry
-
     private fun updateLifecycleRegistry() {
-        val currentState = lifecycleRegistry.currentState
+        val currentState = lifecycle.currentState
         val newState = minOf(maxLifecycleState, hostLifecycleState)
 
         if (currentState != newState) {
@@ -76,9 +72,9 @@ sealed class BaseNavHostEntry(
             if (currentState == Lifecycle.State.INITIALIZED && newState == Lifecycle.State.DESTROYED) {
                 // Lifecycle should not move straight from INITIALIZED to DESTROYED,
                 // only INITIALIZED -> STARTED -> DESTROYED is allowed
-                lifecycleRegistry.currentState = Lifecycle.State.STARTED
+                lifecycle.currentState = Lifecycle.State.STARTED
             }
-            lifecycleRegistry.currentState = newState
+            lifecycle.currentState = newState
         }
     }
 
@@ -86,16 +82,16 @@ sealed class BaseNavHostEntry(
         savedStateRegistryController.performRestore(savedState)
     }
 
-    override fun getDefaultViewModelProviderFactory() = defaultFactory
+    override val defaultViewModelProviderFactory = defaultFactory
 
-    override fun getDefaultViewModelCreationExtras(): CreationExtras {
-        val extras = MutableCreationExtras()
-        if (application != null) {
-            extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] = application
+    override val defaultViewModelCreationExtras: CreationExtras
+        get() {
+            val extras = MutableCreationExtras()
+            if (application != null) {
+                extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] = application
+            }
+            extras[SAVED_STATE_REGISTRY_OWNER_KEY] = this
+            extras[VIEW_MODEL_STORE_OWNER_KEY] = this
+            return extras
         }
-        extras[SAVED_STATE_REGISTRY_OWNER_KEY] = this
-        extras[VIEW_MODEL_STORE_OWNER_KEY] = this
-        return extras
-    }
-
 }
