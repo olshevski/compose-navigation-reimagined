@@ -1,31 +1,49 @@
-@file:Suppress("DeprecatedCallableAddReplaceWith") @file:JvmName("BottomSheetNavHostKt")
-
 package dev.olshevski.navigation.reimagined.material
 
-import androidx.compose.foundation.layout.Column
+import android.os.Parcelable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.Surface
-import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.ViewModelStoreOwner
+import dev.olshevski.navigation.reimagined.BaseNavHost
+import dev.olshevski.navigation.reimagined.ComponentsProvider
 import dev.olshevski.navigation.reimagined.EmptyScopeSpec
+import dev.olshevski.navigation.reimagined.ExperimentalReimaginedApi
 import dev.olshevski.navigation.reimagined.NavBackstack
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.NavHost
+import dev.olshevski.navigation.reimagined.NavId
 import dev.olshevski.navigation.reimagined.NavScopeSpec
+import dev.olshevski.navigation.reimagined.NavSnapshot
 import dev.olshevski.navigation.reimagined.ScopingNavHost
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.popAll
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.parcelize.Parcelize
 
 /**
  * NavHost analogue of [ModalBottomSheetLayout] from Material package. Provides better visual
  * transitions between different BottomSheets, as well as all other features of the regular
  * [NavHost].
+ *
+ * Unlike [ModalBottomSheetLayout] and [BottomSheetNavHost] you need to use Surface
+ * in [contentSelector] yourself. This allows you to customize Surface for each destination.
  *
  * @param controller the navigation controller that will provide its backstack to this
  * BottomSheetNavHost. The last entry of the backstack is always the currently displayed entry.
@@ -41,16 +59,6 @@ import dev.olshevski.navigation.reimagined.popAll
  * @param sheetLayoutModifier the modifier applied to the inner bottom sheet layout only. May be
  * used to handle window insets.
  *
- * @param sheetShape the shape of the bottom sheet
- *
- * @param sheetElevation the elevation of the bottom sheet
- *
- * @param sheetBackgroundColor the background color of the bottom sheet
- *
- * @param sheetContentColor the preferred content color provided by the bottom sheet to its
- * children. Defaults to the matching content color for [sheetBackgroundColor], or if that is not
- * a color from the theme, this will keep the same content color set above the bottom sheet.
- *
  * @param sheetPropertiesSpec specifies [BottomSheetProperties] for every BottomSheet destination
  *
  * @param scrimColor the color of the scrim that is applied to the rest of the screen when the
@@ -63,20 +71,13 @@ import dev.olshevski.navigation.reimagined.popAll
  * provides additional functionality of the BottomSheetNavHost through
  * the [BottomSheetNavHostScope].
  */
-@Deprecated(
-    message = "Use NewBottomSheetNavHost. It will replace BottomSheetNavHost in a future release.",
-)
 @ExperimentalMaterialApi
 @Composable
-fun <T> BottomSheetNavHost(
+fun <T> NewBottomSheetNavHost(
     controller: NavController<T>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetLayoutModifier: Modifier = Modifier,
-    sheetShape: Shape = BottomSheetDefaults.shape,
-    sheetElevation: Dp = BottomSheetDefaults.Elevation,
-    sheetBackgroundColor: Color = BottomSheetDefaults.backgroundColor,
-    sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
@@ -88,19 +89,16 @@ fun <T> BottomSheetNavHost(
     sheetLayoutModifier = sheetLayoutModifier,
     sheetPropertiesSpec = sheetPropertiesSpec,
     scrimColor = scrimColor,
-    contentSelector = wrapInDefaultSurface(
-        sheetShape,
-        sheetElevation,
-        sheetBackgroundColor,
-        sheetContentColor,
-        contentSelector
-    )
+    contentSelector = contentSelector
 )
 
 /**
  * NavHost analogue of [ModalBottomSheetLayout] from Material package. Provides better visual
  * transitions between different BottomSheets, as well as all other features of the regular
  * [NavHost].
+ *
+ * Unlike [ModalBottomSheetLayout] and [BottomSheetNavHost] you need to use Surface
+ * in [contentSelector] yourself. This allows you to customize Surface for each destination.
  *
  * @param backstack the backstack from a [NavController] that will be used to observe navigation
  * changes. The last entry of the backstack is always the currently displayed entry.
@@ -116,16 +114,6 @@ fun <T> BottomSheetNavHost(
  * @param sheetLayoutModifier the modifier applied to the inner bottom sheet layout only. May be
  * used to handle window insets.
  *
- * @param sheetShape the shape of the bottom sheet
- *
- * @param sheetElevation the elevation of the bottom sheet
- *
- * @param sheetBackgroundColor the background color of the bottom sheet
- *
- * @param sheetContentColor the preferred content color provided by the bottom sheet to its
- * children. Defaults to the matching content color for [sheetBackgroundColor], or if that is not
- * a color from the theme, this will keep the same content color set above the bottom sheet.
- *
  * @param sheetPropertiesSpec specifies [BottomSheetProperties] for every BottomSheet destination
  *
  * @param scrimColor the color of the scrim that is applied to the rest of the screen when the
@@ -138,20 +126,13 @@ fun <T> BottomSheetNavHost(
  * provides additional functionality of the BottomSheetNavHost through
  * the [BottomSheetNavHostScope].
  */
-@Deprecated(
-    message = "Use NewBottomSheetNavHost. It will replace BottomSheetNavHost in a future release.",
-)
 @ExperimentalMaterialApi
 @Composable
-fun <T> BottomSheetNavHost(
+fun <T> NewBottomSheetNavHost(
     backstack: NavBackstack<T>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetLayoutModifier: Modifier = Modifier,
-    sheetShape: Shape = BottomSheetDefaults.shape,
-    sheetElevation: Dp = BottomSheetDefaults.Elevation,
-    sheetBackgroundColor: Color = BottomSheetDefaults.backgroundColor,
-    sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
@@ -163,19 +144,16 @@ fun <T> BottomSheetNavHost(
     sheetLayoutModifier = sheetLayoutModifier,
     sheetPropertiesSpec = sheetPropertiesSpec,
     scrimColor = scrimColor,
-    contentSelector = wrapInDefaultSurface(
-        sheetShape,
-        sheetElevation,
-        sheetBackgroundColor,
-        sheetContentColor,
-        contentSelector
-    )
+    contentSelector = contentSelector
 )
 
 /**
  * NavHost analogue of [ModalBottomSheetLayout] from Material package. Provides better visual
  * transitions between different BottomSheets, as well as all other features of the regular
  * [ScopingNavHost].
+ *
+ * Unlike [ModalBottomSheetLayout] and [ScopingBottomSheetNavHost] you need to use Surface
+ * in [contentSelector] yourself. This allows you to customize Surface for each destination.
  *
  * @param controller the navigation controller that will provide its backstack to this
  * BottomSheetNavHost. The last entry of the backstack is always the currently displayed entry.
@@ -194,16 +172,6 @@ fun <T> BottomSheetNavHost(
  * @param sheetLayoutModifier the modifier applied to the inner bottom sheet layout only. May be
  * used to handle window insets.
  *
- * @param sheetShape the shape of the bottom sheet
- *
- * @param sheetElevation the elevation of the bottom sheet
- *
- * @param sheetBackgroundColor the background color of the bottom sheet
- *
- * @param sheetContentColor the preferred content color provided by the bottom sheet to its
- * children. Defaults to the matching content color for [sheetBackgroundColor], or if that is not
- * a color from the theme, this will keep the same content color set above the bottom sheet.
- *
  * @param sheetPropertiesSpec specifies [BottomSheetProperties] for every BottomSheet destination
  *
  * @param scrimColor the color of the scrim that is applied to the rest of the screen when the
@@ -216,21 +184,14 @@ fun <T> BottomSheetNavHost(
  * provides additional functionality of the ScopingBottomSheetNavHost through
  * the [ScopingBottomSheetNavHostScope].
  */
-@Deprecated(
-    message = "Use NewScopingBottomSheetNavHost. It will replace ScopingBottomSheetNavHost in a future release.",
-)
 @ExperimentalMaterialApi
 @Composable
-fun <T, S> ScopingBottomSheetNavHost(
+fun <T, S> NewScopingBottomSheetNavHost(
     controller: NavController<T>,
     scopeSpec: NavScopeSpec<T, S>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetLayoutModifier: Modifier = Modifier,
-    sheetShape: Shape = BottomSheetDefaults.shape,
-    sheetElevation: Dp = BottomSheetDefaults.Elevation,
-    sheetBackgroundColor: Color = BottomSheetDefaults.backgroundColor,
-    sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
@@ -242,19 +203,16 @@ fun <T, S> ScopingBottomSheetNavHost(
     sheetLayoutModifier = sheetLayoutModifier,
     sheetPropertiesSpec = sheetPropertiesSpec,
     scrimColor = scrimColor,
-    contentSelector = wrapInDefaultSurface(
-        sheetShape,
-        sheetElevation,
-        sheetBackgroundColor,
-        sheetContentColor,
-        contentSelector
-    )
+    contentSelector = contentSelector
 )
 
 /**
  * NavHost analogue of [ModalBottomSheetLayout] from Material package. Provides better visual
  * transitions between different BottomSheets, as well as all other features of the regular
  * [ScopingNavHost].
+ *
+ * Unlike [ModalBottomSheetLayout] and [ScopingBottomSheetNavHost] you need to use Surface
+ * in [contentSelector] yourself. This allows you to customize Surface for each destination.
  *
  * @param backstack the backstack from a [NavController] that will be used to observe navigation
  * changes. The last entry of the backstack is always the currently displayed entry.
@@ -273,16 +231,6 @@ fun <T, S> ScopingBottomSheetNavHost(
  * @param sheetLayoutModifier the modifier applied to the inner bottom sheet layout only. May be
  * used to handle window insets.
  *
- * @param sheetShape the shape of the bottom sheet
- *
- * @param sheetElevation the elevation of the bottom sheet
- *
- * @param sheetBackgroundColor the background color of the bottom sheet
- *
- * @param sheetContentColor the preferred content color provided by the bottom sheet to its
- * children. Defaults to the matching content color for [sheetBackgroundColor], or if that is not
- * a color from the theme, this will keep the same content color set above the bottom sheet.
- *
  * @param sheetPropertiesSpec specifies [BottomSheetProperties] for every BottomSheet destination
  *
  * @param scrimColor the color of the scrim that is applied to the rest of the screen when the
@@ -295,58 +243,205 @@ fun <T, S> ScopingBottomSheetNavHost(
  * provides additional functionality of the ScopingBottomSheetNavHost through
  * the [ScopingBottomSheetNavHostScope].
  */
-@Deprecated(
-    message = "Use NewScopingBottomSheetNavHost. It will replace ScopingBottomSheetNavHost in a future release.",
-)
 @ExperimentalMaterialApi
 @Composable
-fun <T, S> ScopingBottomSheetNavHost(
+fun <T, S> NewScopingBottomSheetNavHost(
     backstack: NavBackstack<T>,
     scopeSpec: NavScopeSpec<T, S>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetLayoutModifier: Modifier = Modifier,
-    sheetShape: Shape = BottomSheetDefaults.shape,
-    sheetElevation: Dp = BottomSheetDefaults.Elevation,
-    sheetBackgroundColor: Color = BottomSheetDefaults.backgroundColor,
-    sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
-) = NewScopingBottomSheetNavHost(
+) = @OptIn(ExperimentalReimaginedApi::class) BaseNavHost(
     backstack = backstack,
-    scopeSpec = scopeSpec,
-    onDismissRequest = onDismissRequest,
-    modifier = modifier,
-    sheetLayoutModifier = sheetLayoutModifier,
-    sheetPropertiesSpec = sheetPropertiesSpec,
-    scrimColor = scrimColor,
-    contentSelector = wrapInDefaultSurface(
-        sheetShape,
-        sheetElevation,
-        sheetBackgroundColor,
-        sheetContentColor,
-        contentSelector
-    )
-)
+    scopeSpec = scopeSpec
+) { snapshot ->
+    val targetSnapshot by rememberUpdatedState(snapshot)
+    var currentSnapshot by remember { mutableStateOf(targetSnapshot) }
 
-@ExperimentalMaterialApi
-@Composable
-private inline fun <T, S> wrapInDefaultSurface(
-    sheetShape: Shape,
-    sheetElevation: Dp,
-    sheetBackgroundColor: Color,
-    sheetContentColor: Color,
-    crossinline contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit
-): @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit = {
-    Surface(
-        shape = sheetShape,
-        elevation = sheetElevation,
-        color = sheetBackgroundColor,
-        contentColor = sheetContentColor
+    // isTransitionRunning marks the switch from targetSnapshot to currentSnapshot,
+    // while isTransitionAnimating is for the whole animation of the sheet change
+    val isTransitionRunning = remember {
+        derivedStateOf { currentSnapshot != targetSnapshot }
+    }
+    var isTransitionAnimating by remember { mutableStateOf(false) }
+
+    var sheetState: BottomSheetState? by rememberSaveable(
+        saver = Saver(
+            save = { mutableState ->
+                val sheetState = mutableState.value
+                if (sheetState != null && sheetState.currentValue != BottomSheetValue.Hidden) {
+                    BottomSheetSavedState(
+                        id = sheetState.hostEntryId,
+                        value = sheetState.currentValue,
+                    )
+                } else {
+                    null
+                }
+            },
+            restore = { savedState ->
+                val lastEntry = currentSnapshot.lastEntry
+                if (lastEntry != null && lastEntry.id == savedState.id) {
+                    mutableStateOf(
+                        BottomSheetState(
+                            hostEntryId = lastEntry.id,
+                            initialValue = savedState.value,
+                            isTransitionRunningState = isTransitionRunning,
+                            sheetProperties = sheetPropertiesSpec.getBottomSheetProperties(lastEntry.destination)
+                        )
+                    )
+                } else {
+                    null
+                }
+            }
+        )
     ) {
-        Column {
-            contentSelector(it)
+        mutableStateOf(
+            currentSnapshot.lastEntry?.let { lastEntry ->
+                val sheetProperties =
+                    sheetPropertiesSpec.getBottomSheetProperties(lastEntry.destination)
+                BottomSheetState(
+                    hostEntryId = lastEntry.id,
+                    initialValue = if (sheetProperties.isSkipHalfExpanded) {
+                        BottomSheetValue.Expanded
+                    } else {
+                        BottomSheetValue.HalfExpanded
+                    },
+                    isTransitionRunningState = isTransitionRunning,
+                    sheetProperties = sheetProperties
+                )
+            }
+        )
+    }
+
+    val isScrimVisible by remember {
+        derivedStateOf {
+            if (isTransitionRunning.value) {
+                targetSnapshot.items.isNotEmpty()
+            } else {
+                currentSnapshot.items.isNotEmpty()
+            }
         }
     }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        Scrim(
+            color = scrimColor,
+            onDismiss = {
+                if (sheetState?.swipeableState?.confirmValueChange?.invoke(BottomSheetValue.Hidden) == true) {
+                    onDismissRequest()
+                }
+            },
+            visible = isScrimVisible
+        )
+        if (currentSnapshot.items.isNotEmpty()) {
+
+            // Need to isolate BottomSheetLayout into a separate composable, so it doesn't
+            // capture currentSnapshot and sheetState as MutableState instances.
+            //
+            // The latter causes the underlying SubcomposeLayout to recompose independently of
+            // outer recomposition path, which causes logical issues and may lead to crashes.
+            //
+            // The SubcomposeLayout issue is tracked here:
+            // https://issuetracker.google.com/issues/254645321
+
+            SnapshotBottomSheetLayout(
+                modifier = sheetLayoutModifier,
+                snapshot = currentSnapshot,
+                sheetState = sheetState!!,
+                onDismissRequest = onDismissRequest,
+                contentSelector = contentSelector
+            )
+        }
+    }
+
+    LaunchedEffect(targetSnapshot) {
+        if (targetSnapshot.lastEntry != currentSnapshot.lastEntry) {
+            try {
+                isTransitionAnimating = true
+                sheetState?.let { sheetState ->
+                    if (sheetState.currentValue != BottomSheetValue.Hidden) {
+                        sheetState.hide()
+                    }
+                }
+
+                currentSnapshot = targetSnapshot
+                sheetState = currentSnapshot.lastEntry?.let { lastEntry ->
+                    BottomSheetState(
+                        hostEntryId = lastEntry.id,
+                        initialValue = BottomSheetValue.Hidden,
+                        isTransitionRunningState = isTransitionRunning,
+                        sheetProperties = sheetPropertiesSpec.getBottomSheetProperties(lastEntry.destination)
+                    )
+                }
+
+                sheetState?.let { sheetState ->
+                    // wait until anchors are calculated
+                    snapshotFlow { sheetState.swipeableState.anchors }.filter { it.isNotEmpty() }
+                        .first()
+                    sheetState.show()
+                }
+            } finally {
+                isTransitionAnimating = false
+            }
+        } else {
+            currentSnapshot = targetSnapshot
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        snapshotFlow {
+            !isTransitionAnimating && sheetState?.targetValue == BottomSheetValue.Hidden
+                    && sheetState?.isAnimationRunning == true
+        }.collect {
+            if (it) {
+                onDismissRequest()
+            }
+        }
+    }
+
+    currentSnapshot
 }
+
+@ExperimentalMaterialApi
+@Composable
+private fun <T, S> SnapshotBottomSheetLayout(
+    modifier: Modifier,
+    snapshot: NavSnapshot<T, S>,
+    sheetState: BottomSheetState,
+    onDismissRequest: () -> Unit,
+    contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
+) {
+    val lastSnapshotItem = snapshot.items.last()
+    key(lastSnapshotItem.hostEntry.id) {
+        val destination = lastSnapshotItem.hostEntry.destination
+        BottomSheetLayout(
+            modifier = modifier,
+            sheetState = sheetState,
+            onDismissRequest = onDismissRequest,
+            sheetContent = {
+                lastSnapshotItem.hostEntry.ComponentsProvider {
+                    val scope = remember(snapshot, sheetState) {
+                        ScopingBottomSheetNavHostScopeImpl(
+                            hostEntries = snapshot.items.map { it.hostEntry },
+                            scopedHostEntries = lastSnapshotItem.scopedHostEntries,
+                            sheetState = sheetState
+                        )
+                    }
+                    scope.contentSelector(destination)
+                }
+            },
+        )
+    }
+}
+
+@ExperimentalMaterialApi
+@Parcelize
+private data class BottomSheetSavedState(
+    val id: NavId,
+    val value: BottomSheetValue
+) : Parcelable
+
+private val <T, S> NavSnapshot<T, S>.lastEntry get() = items.lastOrNull()?.hostEntry

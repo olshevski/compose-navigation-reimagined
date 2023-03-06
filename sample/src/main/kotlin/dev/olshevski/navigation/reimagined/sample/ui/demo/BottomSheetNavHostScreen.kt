@@ -1,18 +1,23 @@
 package dev.olshevski.navigation.reimagined.sample.ui.demo
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import dev.olshevski.navigation.reimagined.material.BottomSheetNavHost
+import androidx.compose.ui.unit.dp
 import dev.olshevski.navigation.reimagined.material.BottomSheetNavHostScope
 import dev.olshevski.navigation.reimagined.material.BottomSheetValue
+import dev.olshevski.navigation.reimagined.material.NewBottomSheetNavHost
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.popAll
@@ -58,24 +63,30 @@ fun BottomSheetNavHostScreen() = Box {
         }
     }
 
-    BottomSheetNavHost(
-        backstack = navController.backstack,
-        onDismissRequest = { navController.pop() }
+    NewBottomSheetNavHost(
+        controller = navController,
+        onDismissRequest = { navController.pop() },
     ) { destination ->
-        when (destination) {
-            BottomSheetDestination.First -> FirstBottomSheet(
-                onOpenSecondSheetClick = {
-                    navController.navigate(BottomSheetDestination.Second)
-                }
-            )
-            BottomSheetDestination.Second -> SecondBottomSheet(
-                onCloseClick = {
-                    navController.pop()
-                },
-                onCloseAllClick = {
-                    navController.popAll()
-                }
-            )
+        val shapeRadius by animateDpAsState(if (sheetState.isFullyExpanded) 0.dp else 16.dp)
+        Surface(
+            shape = RoundedCornerShape(topStart = shapeRadius, topEnd = shapeRadius),
+            elevation = 16.dp
+        ) {
+            when (destination) {
+                BottomSheetDestination.First -> FirstBottomSheet(
+                    onOpenSecondSheetClick = {
+                        navController.navigate(BottomSheetDestination.Second)
+                    }
+                )
+                BottomSheetDestination.Second -> SecondBottomSheet(
+                    onCloseClick = {
+                        navController.pop()
+                    },
+                    onCloseAllClick = {
+                        navController.popAll()
+                    }
+                )
+            }
         }
     }
 }

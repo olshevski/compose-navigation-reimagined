@@ -23,18 +23,16 @@ fun ScreenLayout(
     title: String,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit = {}
-) {
-    Column(modifier.fillMaxSize()) {
-        Text(
-            text = title,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(16.dp),
-            style = MaterialTheme.typography.h5
-        )
-        Divider()
-        content()
-    }
+) = Column(modifier.fillMaxSize()) {
+    Text(
+        text = title,
+        modifier = Modifier
+            .align(Alignment.CenterHorizontally)
+            .padding(16.dp),
+        style = MaterialTheme.typography.h5
+    )
+    Divider()
+    content()
 }
 
 @Composable
@@ -42,25 +40,22 @@ fun ContentLayout(
     modifier: Modifier = Modifier,
     title: String? = null,
     content: @Composable ColumnScope.() -> Unit = {}
+) = Column(
+    modifier = modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState())
+        .padding(horizontal = 32.dp, vertical = 16.dp),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.spacedBy(16.dp)
 ) {
-    val scrollState = rememberScrollState()
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(horizontal = 32.dp, vertical = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        if (title != null) {
-            Text(
-                text = title,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.h6
-            )
-        }
-        content()
+    if (title != null) {
+        Text(
+            text = title,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.h6
+        )
     }
+    content()
 }
 
 @Composable
@@ -68,36 +63,11 @@ fun DialogLayout(
     title: String,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
-) {
-    Card(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Column(
-            Modifier.padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(
-                text = title,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.h6
-            )
-            content()
-        }
-
-    }
-}
-
-@Composable
-fun BottomSheetLayout(
-    title: String,
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
+) = Card(
+    modifier = modifier.fillMaxWidth()
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(32.dp),
+        Modifier.padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -108,6 +78,27 @@ fun BottomSheetLayout(
         )
         content()
     }
+
+}
+
+@Composable
+fun BottomSheetLayout(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) = Column(
+    modifier = modifier
+        .fillMaxWidth()
+        .padding(32.dp),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.spacedBy(16.dp)
+) {
+    Text(
+        text = title,
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.h6
+    )
+    content()
 }
 
 @Composable

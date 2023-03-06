@@ -1,6 +1,5 @@
 package dev.olshevski.navigation.reimagined.material
 
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModelStoreOwner
@@ -12,7 +11,7 @@ import dev.olshevski.navigation.reimagined.currentHostEntry
 
 @ExperimentalMaterialApi
 @Stable
-interface BottomSheetNavHostScope<out T> : NavHostScope<T>, ColumnScope {
+interface BottomSheetNavHostScope<out T> : NavHostScope<T> {
 
     /**
      * [BottomSheetState] of the current BottomSheet.
@@ -32,8 +31,7 @@ internal class ScopingBottomSheetNavHostScopeImpl<out T, S>(
     override val hostEntries: List<NavHostEntry<T>>,
     private val scopedHostEntries: Map<S, ScopedNavHostEntry<S>>,
     override val sheetState: BottomSheetState,
-    columnScope: ColumnScope
-) : ScopingBottomSheetNavHostScope<T, S>, ColumnScope by columnScope {
+) : ScopingBottomSheetNavHostScope<T, S> {
 
     override fun getScopedViewModelStoreOwner(scope: S): ViewModelStoreOwner =
         scopedHostEntries[scope]

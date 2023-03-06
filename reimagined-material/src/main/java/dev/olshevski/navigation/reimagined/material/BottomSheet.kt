@@ -23,9 +23,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -34,10 +34,10 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -59,7 +59,6 @@ import androidx.compose.ui.semantics.expand
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
@@ -161,6 +160,24 @@ class BottomSheetState internal constructor(
     val hasHalfExpandedState: Boolean
         get() = swipeableState.hasAnchorForValue(HalfExpanded)
 
+    /**
+     * Offset (in pixels) from the top of the sheet layout. Zero offset means that the bottom sheet
+     * takes up the whole layout height.
+     */
+    val offset: Int by derivedStateOf {
+        swipeableState.offset
+            ?.coerceIn(swipeableState.minOffset, swipeableState.maxOffset)
+            ?.roundToInt()
+            ?: Int.MAX_VALUE
+    }
+
+    /**
+     * Whether the bottom sheet is in [Expanded] state and takes up the whole layout height.
+     */
+    val isFullyExpanded: Boolean by derivedStateOf {
+        offset <= 0
+    }
+
     init {
         if (isSkipHalfExpanded) {
             require(initialValue != HalfExpanded) {
@@ -245,12 +262,8 @@ class BottomSheetState internal constructor(
 @Composable
 internal fun BottomSheetLayout(
     modifier: Modifier,
-    sheetContent: @Composable ColumnScope.() -> Unit,
+    sheetContent: @Composable BoxScope.() -> Unit,
     sheetState: BottomSheetState,
-    sheetShape: Shape,
-    sheetElevation: Dp,
-    sheetBackgroundColor: Color,
-    sheetContentColor: Color,
     onDismissRequest: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -266,9 +279,9 @@ internal fun BottomSheetLayout(
     }
     BoxWithConstraints(modifier.fillMaxSize()) {
         val fullHeight = constraints.maxHeight.toFloat()
-        Surface(
+        Box(
             Modifier
-                .align(Alignment.TopCenter) // We offset from the top so we'll center from there
+                .align(Alignment.TopCenter) // We offset from the top, so we'll center from there
                 .widthIn(max = MaxModalBottomSheetWidth)
                 .fillMaxWidth()
                 .nestedScroll(
@@ -283,8 +296,8 @@ internal fun BottomSheetLayout(
                     IntOffset(
                         0,
                         sheetState.swipeableState.let { swipeableState ->
-                            // FIX: Offset is coerced here, so bottom sheet is not overshoot above
-                            // the bottom line of the screen.
+                            // FIXED: Offset is coerced here, so bottom sheet is not overshoot
+                            // above the top line of the screen.
                             swipeableState
                                 .requireOffset()
                                 .coerceIn(swipeableState.minOffset, swipeableState.maxOffset)
@@ -340,13 +353,8 @@ internal fun BottomSheetLayout(
                         }
                     }
                 },
-            shape = sheetShape,
-            elevation = sheetElevation,
-            color = sheetBackgroundColor,
-            contentColor = sheetContentColor
-        ) {
-            Column(content = sheetContent)
-        }
+            content = sheetContent
+        )
     }
 }
 
@@ -385,19 +393,14 @@ internal fun Scrim(
     }
 }
 
-/**
- * Contains useful Defaults for [BottomSheetLayout].
- */
 internal object BottomSheetDefaults {
 
-    /**
-     * The default elevation used by [BottomSheetLayout].
-     */
     val Elevation = 16.dp
 
-    /**
-     * The default scrim color used by [BottomSheetLayout].
-     */
+    val backgroundColor: Color
+        @Composable
+        get() = MaterialTheme.colors.surface
+
     val scrimColor: Color
         @Composable
         get() = MaterialTheme.colors.onSurface.copy(alpha = 0.32f)
@@ -409,48 +412,6 @@ internal object BottomSheetDefaults {
             bottomEnd = CornerSize(0.dp)
         )
 }
-
-/**
- * Bottom sheet properties.
- *
- * @param animationSpec the default animation that will be used to animate to a new state
- * @param isSkipHalfExpanded whether the half expanded state, if the sheet is tall enough, should
- * be skipped. If true, the sheet will always expand to the [Expanded] state and move to the
- * [Hidden] state when hiding the sheet, either programmatically or by user interaction.
- * @param confirmValueChange optional callback invoked to confirm or veto a pending value change
- */
-@ExperimentalMaterialApi
-class BottomSheetProperties(
-    val animationSpec: AnimationSpec<Float> = SwipeableV2Defaults.AnimationSpec,
-    val confirmValueChange: (newValue: BottomSheetValue) -> Boolean = { true },
-    val isSkipHalfExpanded: Boolean = false
-) {
-
-    @Deprecated(
-        message = "This constructor is deprecated. confirmStateChange has been renamed to confirmValueChange",
-        ReplaceWith("BottomSheetProperties(animationSpec, confirmStateChange, isSkipHalfExpanded)")
-    )
-    @ExperimentalMaterialApi
-    constructor(
-        animationSpec: AnimationSpec<Float> = SwipeableV2Defaults.AnimationSpec,
-        isSkipHalfExpanded: Boolean = false,
-        confirmStateChange: (newValue: BottomSheetValue) -> Boolean = { true }
-    ) : this(
-        animationSpec = animationSpec,
-        isSkipHalfExpanded = isSkipHalfExpanded,
-        confirmValueChange = confirmStateChange
-    )
-
-}
-
-/**
- * Default bottom sheet properties. May be used as a default value for those bottom sheets that
- * do not require any customization.
- */
-@ExperimentalMaterialApi
-val DefaultBottomSheetProperties = BottomSheetProperties(
-    confirmValueChange = { true }
-)
 
 @Suppress("FunctionName")
 @OptIn(ExperimentalMaterialApi::class)
@@ -516,7 +477,7 @@ private fun ModalBottomSheetAnchorChangeHandler(
     snapTo: (target: BottomSheetValue) -> Unit,
 ) = AnchorChangeHandler<BottomSheetValue> { previousTarget, previousAnchors, newAnchors ->
     val previousTargetOffset = previousAnchors[previousTarget]
-    // FIX: New target selection is fixed here, the original implementation had an issue when
+    // FIXED: New target selection is fixed here, the original implementation had an issue when
     // HalfExpanded state was selected incorrectly instead of Expanded state.
     // Now the selection priorities are correct.
     val newTarget = when (previousTarget) {
