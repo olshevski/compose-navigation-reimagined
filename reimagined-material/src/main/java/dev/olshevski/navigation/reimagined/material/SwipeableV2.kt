@@ -19,6 +19,8 @@ package dev.olshevski.navigation.reimagined.material
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.animate
+import androidx.compose.foundation.MutatePriority
+import androidx.compose.foundation.gestures.DragScope
 import androidx.compose.foundation.gestures.DraggableState
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -48,11 +50,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 /*
- * Direct copy of SwipeableV2.kt from androidx.compose.material package (last commit 0b0b341).
+ * Direct copy of SwipeableV2.kt from androidx.compose.material package (last commit ba223e3).
  * Needed to access some internal state.
  *
  * Reference:
@@ -86,7 +89,7 @@ internal fun <T> Modifier.swipeableV2(
     reverseDirection: Boolean = false,
     interactionSource: MutableInteractionSource? = null
 ) = draggable(
-    state = state.draggableState,
+    state = state.swipeDraggableState,
     orientation = orientation,
     enabled = enabled,
     interactionSource = interactionSource,
@@ -175,6 +178,27 @@ internal class SwipeableV2State<T>(
         SwipeableV2Defaults.PositionalThreshold,
     internal val velocityThreshold: Dp = SwipeableV2Defaults.VelocityThreshold,
 ) {
+
+    private val swipeMutex = InternalMutatorMutex()
+
+    internal val swipeDraggableState = object : DraggableState {
+        private val dragScope = object : DragScope {
+            override fun dragBy(pixels: Float) {
+                this@SwipeableV2State.dispatchRawDelta(pixels)
+            }
+        }
+
+        override suspend fun drag(
+            dragPriority: MutatePriority,
+            block: suspend DragScope.() -> Unit
+        ) {
+            swipe(dragPriority) { dragScope.block() }
+        }
+
+        override fun dispatchRawDelta(delta: Float) {
+            this@SwipeableV2State.dispatchRawDelta(delta)
+        }
+    }
 
     /**
      * The current value of the [SwipeableV2State].
@@ -266,9 +290,6 @@ internal class SwipeableV2State<T>(
     val maxOffset by derivedStateOf { anchors.maxOrNull() ?: Float.POSITIVE_INFINITY }
 
     private var animationTarget: T? by mutableStateOf(null)
-    internal val draggableState = DraggableState {
-        offset = ((offset ?: 0f) + it).coerceIn(minOffset, maxOffset)
-    }
 
     internal var anchors by mutableStateOf(emptyMap<T, Float>())
 
@@ -287,9 +308,10 @@ internal class SwipeableV2State<T>(
         val previousAnchorsEmpty = anchors.isEmpty()
         anchors = newAnchors
         val initialValueHasAnchor = if (previousAnchorsEmpty) {
-            val initialValueAnchor = anchors[currentValue]
+            val initialValue = currentValue
+            val initialValueAnchor = anchors[initialValue]
             val initialValueHasAnchor = initialValueAnchor != null
-            if (initialValueHasAnchor) offset = initialValueAnchor
+            if (initialValueHasAnchor) trySnapTo(initialValue)
             initialValueHasAnchor
         } else true
         return !initialValueHasAnchor || !previousAnchorsEmpty
@@ -311,20 +333,7 @@ internal class SwipeableV2State<T>(
      * @param targetValue The target value of the animation
      */
     suspend fun snapTo(targetValue: T) {
-        val targetOffset = anchors[targetValue]
-        if (targetOffset != null) {
-            try {
-                draggableState.drag {
-                    animationTarget = targetValue
-                    dragBy(targetOffset - requireOffset())
-                }
-                this.currentValue = targetValue
-            } finally {
-                animationTarget = null
-            }
-        } else {
-            currentValue = targetValue
-        }
+        swipe { snap(targetValue) }
     }
 
     /**
@@ -345,7 +354,7 @@ internal class SwipeableV2State<T>(
         val targetOffset = anchors[targetValue]
         if (targetOffset != null) {
             try {
-                draggableState.drag {
+                swipe {
                     animationTarget = targetValue
                     var prev = offset ?: 0f
                     animate(prev, targetOffset, velocity, animationSpec) { value, velocity ->
@@ -392,17 +401,17 @@ internal class SwipeableV2State<T>(
     }
 
     /**
-     * Swipe by the [delta], coerce it in the bounds and dispatch it to the [draggableState].
+     * Swipe by the [delta], coerce it in the bounds and dispatch it to the [SwipeableV2State].
      *
-     * @return The delta the [draggableState] will consume
+     * @return The delta the consumed by the [SwipeableV2State]
      */
     fun dispatchRawDelta(delta: Float): Float {
         val currentDragPosition = offset ?: 0f
         val potentiallyConsumed = currentDragPosition + delta
         val clamped = potentiallyConsumed.coerceIn(minOffset, maxOffset)
         val deltaToConsume = clamped - currentDragPosition
-        if (abs(deltaToConsume) > 0) {
-            draggableState.dispatchRawDelta(deltaToConsume)
+        if (abs(deltaToConsume) >= 0) {
+            offset = ((offset ?: 0f) + deltaToConsume).coerceIn(minOffset, maxOffset)
         }
         return deltaToConsume
     }
@@ -452,6 +461,31 @@ internal class SwipeableV2State<T>(
     private fun requireDensity() = requireNotNull(density) {
         "SwipeableState did not have a density attached. Are you using Modifier.swipeable with " +
                 "this=$this SwipeableState?"
+    }
+
+    private suspend fun swipe(
+        swipePriority: MutatePriority = MutatePriority.Default,
+        action: suspend () -> Unit
+    ): Unit = coroutineScope { swipeMutex.mutate(swipePriority, action) }
+
+    /**
+     * Attempt to snap synchronously. Snapping can happen synchronously when there is no other swipe
+     * transaction like a drag or an animation is progress. If there is another interaction in
+     * progress, the suspending [snapTo] overload needs to be used.
+     *
+     * @return true if the synchronous snap was successful, or false if we couldn't snap synchronous
+     */
+    internal fun trySnapTo(targetValue: T): Boolean = swipeMutex.tryMutate { snap(targetValue) }
+
+    private fun snap(targetValue: T) {
+        val targetOffset = anchors[targetValue]
+        if (targetOffset != null) {
+            dispatchRawDelta(targetOffset - (offset ?: 0f))
+            currentValue = targetValue
+            animationTarget = null
+        } else {
+            currentValue = targetValue
+        }
     }
 
     companion object {
@@ -662,6 +696,3 @@ private fun <T> Map<T, Float>.closestAnchor(
 
 private fun <T> Map<T, Float>.minOrNull() = minOfOrNull { (_, offset) -> offset }
 private fun <T> Map<T, Float>.maxOrNull() = maxOfOrNull { (_, offset) -> offset }
-private fun <T> Map<T, Float>.requireAnchor(value: T) = requireNotNull(this[value]) {
-    "Required anchor $value was not found in anchors. Current anchors: ${this.toMap()}"
-}

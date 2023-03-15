@@ -164,6 +164,7 @@ class BottomSheetState internal constructor(
      * Offset (in pixels) from the top of the sheet layout. Zero offset means that the bottom sheet
      * takes up the whole layout height.
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     val offset: Int by derivedStateOf {
         swipeableState.offset
             ?.coerceIn(swipeableState.minOffset, swipeableState.maxOffset)
@@ -249,6 +250,10 @@ class BottomSheetState internal constructor(
 
     internal suspend fun snapTo(target: BottomSheetValue) = swipeableState.snapTo(target)
 
+    internal fun trySnapTo(target: BottomSheetValue): Boolean {
+        return swipeableState.trySnapTo(target)
+    }
+
     @Suppress("unused")
     internal fun requireOffset() = swipeableState.requireOffset()
 
@@ -274,7 +279,10 @@ internal fun BottomSheetLayout(
             animateTo = { target, velocity ->
                 scope.launch { sheetState.animateTo(target, velocity = velocity) }
             },
-            snapTo = { target -> scope.launch { sheetState.snapTo(target) } }
+            snapTo = { target ->
+                val didSnapSynchronously = sheetState.trySnapTo(target)
+                if (!didSnapSynchronously) scope.launch { sheetState.snapTo(target) }
+            }
         )
     }
     BoxWithConstraints(modifier.fillMaxSize()) {
