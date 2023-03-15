@@ -15,9 +15,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import dev.olshevski.navigation.reimagined.material.BottomSheetLayoutNavHost
 import dev.olshevski.navigation.reimagined.material.BottomSheetNavHostScope
 import dev.olshevski.navigation.reimagined.material.BottomSheetValue
-import dev.olshevski.navigation.reimagined.material.NewBottomSheetNavHost
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.popAll
@@ -63,7 +63,7 @@ fun BottomSheetNavHostScreen() = Box {
         }
     }
 
-    NewBottomSheetNavHost(
+    BottomSheetLayoutNavHost(
         controller = navController,
         onDismissRequest = { navController.pop() },
     ) { destination ->

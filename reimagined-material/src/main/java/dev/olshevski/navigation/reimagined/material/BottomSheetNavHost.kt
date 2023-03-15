@@ -64,7 +64,7 @@ import dev.olshevski.navigation.reimagined.popAll
  * the [BottomSheetNavHostScope].
  */
 @Deprecated(
-    message = "Use NewBottomSheetNavHost. It will replace BottomSheetNavHost in a future release.",
+    message = "Use BottomSheetLayoutNavHost instead",
 )
 @ExperimentalMaterialApi
 @Composable
@@ -80,7 +80,7 @@ fun <T> BottomSheetNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
-) = NewScopingBottomSheetNavHost(
+) = ScopingBottomSheetLayoutNavHost(
     backstack = controller.backstack,
     scopeSpec = EmptyScopeSpec,
     onDismissRequest = onDismissRequest,
@@ -139,7 +139,7 @@ fun <T> BottomSheetNavHost(
  * the [BottomSheetNavHostScope].
  */
 @Deprecated(
-    message = "Use NewBottomSheetNavHost. It will replace BottomSheetNavHost in a future release.",
+    message = "Use BottomSheetLayoutNavHost instead",
 )
 @ExperimentalMaterialApi
 @Composable
@@ -155,7 +155,7 @@ fun <T> BottomSheetNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
-) = NewScopingBottomSheetNavHost(
+) = ScopingBottomSheetLayoutNavHost(
     backstack = backstack,
     scopeSpec = EmptyScopeSpec,
     onDismissRequest = onDismissRequest,
@@ -217,7 +217,7 @@ fun <T> BottomSheetNavHost(
  * the [ScopingBottomSheetNavHostScope].
  */
 @Deprecated(
-    message = "Use NewScopingBottomSheetNavHost. It will replace ScopingBottomSheetNavHost in a future release.",
+    message = "Use ScopingBottomSheetLayoutNavHost instead",
 )
 @ExperimentalMaterialApi
 @Composable
@@ -234,7 +234,7 @@ fun <T, S> ScopingBottomSheetNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
-) = NewScopingBottomSheetNavHost(
+) = ScopingBottomSheetLayoutNavHost(
     backstack = controller.backstack,
     scopeSpec = scopeSpec,
     onDismissRequest = onDismissRequest,
@@ -296,7 +296,7 @@ fun <T, S> ScopingBottomSheetNavHost(
  * the [ScopingBottomSheetNavHostScope].
  */
 @Deprecated(
-    message = "Use NewScopingBottomSheetNavHost. It will replace ScopingBottomSheetNavHost in a future release.",
+    message = "Use ScopingBottomSheetLayoutNavHost instead",
 )
 @ExperimentalMaterialApi
 @Composable
@@ -313,7 +313,7 @@ fun <T, S> ScopingBottomSheetNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
-) = NewScopingBottomSheetNavHost(
+) = ScopingBottomSheetLayoutNavHost(
     backstack = backstack,
     scopeSpec = scopeSpec,
     onDismissRequest = onDismissRequest,

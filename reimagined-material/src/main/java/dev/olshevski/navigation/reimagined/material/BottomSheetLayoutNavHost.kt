@@ -73,7 +73,7 @@ import kotlinx.parcelize.Parcelize
  */
 @ExperimentalMaterialApi
 @Composable
-fun <T> NewBottomSheetNavHost(
+fun <T> BottomSheetLayoutNavHost(
     controller: NavController<T>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
@@ -81,7 +81,7 @@ fun <T> NewBottomSheetNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
-) = NewScopingBottomSheetNavHost(
+) = ScopingBottomSheetLayoutNavHost(
     backstack = controller.backstack,
     scopeSpec = EmptyScopeSpec,
     onDismissRequest = onDismissRequest,
@@ -128,7 +128,7 @@ fun <T> NewBottomSheetNavHost(
  */
 @ExperimentalMaterialApi
 @Composable
-fun <T> NewBottomSheetNavHost(
+fun <T> BottomSheetLayoutNavHost(
     backstack: NavBackstack<T>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
@@ -136,7 +136,7 @@ fun <T> NewBottomSheetNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
-) = NewScopingBottomSheetNavHost(
+) = ScopingBottomSheetLayoutNavHost(
     backstack = backstack,
     scopeSpec = EmptyScopeSpec,
     onDismissRequest = onDismissRequest,
@@ -186,7 +186,7 @@ fun <T> NewBottomSheetNavHost(
  */
 @ExperimentalMaterialApi
 @Composable
-fun <T, S> NewScopingBottomSheetNavHost(
+fun <T, S> ScopingBottomSheetLayoutNavHost(
     controller: NavController<T>,
     scopeSpec: NavScopeSpec<T, S>,
     onDismissRequest: () -> Unit,
@@ -195,7 +195,7 @@ fun <T, S> NewScopingBottomSheetNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = BottomSheetDefaults.scrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
-) = NewScopingBottomSheetNavHost(
+) = ScopingBottomSheetLayoutNavHost(
     backstack = controller.backstack,
     scopeSpec = scopeSpec,
     onDismissRequest = onDismissRequest,
@@ -245,7 +245,7 @@ fun <T, S> NewScopingBottomSheetNavHost(
  */
 @ExperimentalMaterialApi
 @Composable
-fun <T, S> NewScopingBottomSheetNavHost(
+fun <T, S> ScopingBottomSheetLayoutNavHost(
     backstack: NavBackstack<T>,
     scopeSpec: NavScopeSpec<T, S>,
     onDismissRequest: () -> Unit,
