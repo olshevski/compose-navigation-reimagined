@@ -97,42 +97,6 @@ class NavController<T> internal constructor(
     val backstack get() = _backstack
 
     /**
-     * An optional listener of backstack changes. It will be invoked after every call
-     * to [setNewBackstack].
-     */
-    @Suppress("MemberVisibilityCanBePrivate")
-    @Deprecated("Use recommended Compose methods to listen for 'backstack' changes, e.g. snapshotFlow, derivedStateOf, etc.")
-    var onBackstackChange: ((backstack: NavBackstack<T>) -> Unit)? = null
-
-    /**
-     * Sets new backstack [entries] and the [action] describing the change. You should use
-     * existing entries from [backstack] to preserve their identities and associated components
-     * (lifecycles, saved states, view models). New entries can be created with [navEntry] method.
-     *
-     * Any new rearrangement, duplication and removal of existing entries is a valid change.
-     *
-     * Use this method when none of the built-in extension methods ([navigate], [pop],
-     * [replaceLast] and their variations) suits your need.
-     *
-     * This function does not guarantee thread-safety and is intended to be called only
-     * from the main thread.
-     *
-     * @param action an optional parameter, used as a hint for [AnimatedNavHost] to select
-     * a transition animation. In all other cases it doesn't affect anything. Existing types
-     * of actions may be used: [NavAction.Navigate], [NavAction.Replace] or [NavAction.Pop].
-     * You may also extend [NavAction] interface to create new actions appropriate for your use
-     * case.
-     */
-    @MainThread
-    @Deprecated(
-        message = "Use setNewBackstack instead",
-        level = DeprecationLevel.HIDDEN,
-        replaceWith = ReplaceWith("setNewBackstack(entries, action)")
-    )
-    fun setNewBackstackEntries(entries: List<NavEntry<T>>, action: NavAction = NavAction.Navigate) =
-        setNewBackstack(entries, action)
-
-    /**
      * Creates and sets a new backstack filled with [entries].
      *
      * You should use existing entries from [backstack] to preserve their identities and associated
@@ -158,8 +122,6 @@ class NavController<T> internal constructor(
             entries = entries.toList(), // protection from outer modifications
             action = action
         )
-        @Suppress("DEPRECATION")
-        onBackstackChange?.invoke(_backstack)
     }
 
     override fun toString() =

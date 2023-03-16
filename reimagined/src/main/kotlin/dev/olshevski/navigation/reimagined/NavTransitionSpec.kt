@@ -98,10 +98,3 @@ internal val CrossfadeTransitionSpec = object : NavTransitionSpec<Any?> {
     ): ContentTransform = crossfade()
 
 }
-
-@Deprecated(
-    message = "Renamed to NavTransitionSpec for simplicity",
-    replaceWith = ReplaceWith("NavTransitionSpec<T>")
-)
-@OptIn(ExperimentalAnimationApi::class)
-typealias AnimatedNavHostTransitionSpec<T> = NavTransitionSpec<T>
