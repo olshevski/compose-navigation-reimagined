@@ -36,7 +36,7 @@ import kotlinx.parcelize.Parcelize
  */
 @InternalReimaginedApi
 @Composable
-fun <T, S> CommonBottomSheetLayoutNavHost(
+fun <T, S> CommonBottomSheetNavHost(
     backstack: NavBackstack<T>,
     scopeSpec: NavScopeSpec<T, S>,
     onDismissRequest: () -> Unit,

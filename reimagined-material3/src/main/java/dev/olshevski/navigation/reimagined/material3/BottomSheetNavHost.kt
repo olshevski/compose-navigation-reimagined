@@ -1,6 +1,7 @@
-package dev.olshevski.navigation.reimagined.material
+package dev.olshevski.navigation.reimagined.material3
 
-import androidx.compose.material.ModalBottomSheetDefaults
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -12,6 +13,12 @@ import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.NavHost
 import dev.olshevski.navigation.reimagined.NavScopeSpec
 import dev.olshevski.navigation.reimagined.ScopingNavHost
+import dev.olshevski.navigation.reimagined.material.BottomSheetNavHostScope
+import dev.olshevski.navigation.reimagined.material.BottomSheetProperties
+import dev.olshevski.navigation.reimagined.material.BottomSheetPropertiesSpec
+import dev.olshevski.navigation.reimagined.material.CommonBottomSheetNavHost
+import dev.olshevski.navigation.reimagined.material.DefaultBottomSheetPropertiesSpec
+import dev.olshevski.navigation.reimagined.material.ScopingBottomSheetNavHostScope
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.popAll
 
@@ -20,8 +27,8 @@ import dev.olshevski.navigation.reimagined.popAll
  * transitions between different BottomSheets, as well as all other features of the regular
  * [NavHost].
  *
- * Unlike for ModalBottomSheetLayout you need to use Surface in [contentSelector] yourself. This
- * allows you to customize Surface for each destination.
+ * Unlike in ModalBottomSheetLayout, you need to use Surface inside [contentSelector] yourself.
+ * This allows you to customize Surface for each destination.
  *
  * @param controller the navigation controller that will provide its backstack to this
  * BottomSheetNavHost. The last entry of the backstack is always the currently displayed entry.
@@ -50,15 +57,15 @@ import dev.olshevski.navigation.reimagined.popAll
  * the [BottomSheetNavHostScope].
  */
 @Composable
-fun <T> BottomSheetLayoutNavHost(
+fun <T> BottomSheetNavHost(
     controller: NavController<T>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetLayoutModifier: Modifier = Modifier,
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
-    scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
+    scrimColor: Color = @OptIn(ExperimentalMaterial3Api::class) BottomSheetDefaults.ScrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
-) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
+) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetNavHost(
     backstack = controller.backstack,
     scopeSpec = EmptyScopeSpec,
     onDismissRequest = onDismissRequest,
@@ -74,8 +81,8 @@ fun <T> BottomSheetLayoutNavHost(
  * transitions between different BottomSheets, as well as all other features of the regular
  * [NavHost].
  *
- * Unlike for ModalBottomSheetLayout you need to use Surface in [contentSelector] yourself. This
- * allows you to customize Surface for each destination.
+ * Unlike in ModalBottomSheetLayout, you need to use Surface inside [contentSelector] yourself.
+ * This allows you to customize Surface for each destination.
  *
  * @param backstack the backstack from a [NavController] that will be used to observe navigation
  * changes. The last entry of the backstack is always the currently displayed entry.
@@ -104,15 +111,15 @@ fun <T> BottomSheetLayoutNavHost(
  * the [BottomSheetNavHostScope].
  */
 @Composable
-fun <T> BottomSheetLayoutNavHost(
+fun <T> BottomSheetNavHost(
     backstack: NavBackstack<T>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetLayoutModifier: Modifier = Modifier,
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
-    scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
+    scrimColor: Color = @OptIn(ExperimentalMaterial3Api::class) BottomSheetDefaults.ScrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
-) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
+) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetNavHost(
     backstack = backstack,
     scopeSpec = EmptyScopeSpec,
     onDismissRequest = onDismissRequest,
@@ -128,8 +135,8 @@ fun <T> BottomSheetLayoutNavHost(
  * transitions between different BottomSheets, as well as all other features of the regular
  * [ScopingNavHost].
  *
- * Unlike for ModalBottomSheetLayout you need to use Surface in [contentSelector] yourself. This
- * allows you to customize Surface for each destination.
+ * Unlike in ModalBottomSheetLayout, you need to use Surface inside [contentSelector] yourself.
+ * This allows you to customize Surface for each destination.
  *
  * @param controller the navigation controller that will provide its backstack to this
  * BottomSheetNavHost. The last entry of the backstack is always the currently displayed entry.
@@ -161,16 +168,16 @@ fun <T> BottomSheetLayoutNavHost(
  * the [ScopingBottomSheetNavHostScope].
  */
 @Composable
-fun <T, S> ScopingBottomSheetLayoutNavHost(
+fun <T, S> ScopingBottomSheetNavHost(
     controller: NavController<T>,
     scopeSpec: NavScopeSpec<T, S>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetLayoutModifier: Modifier = Modifier,
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
-    scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
+    scrimColor: Color = @OptIn(ExperimentalMaterial3Api::class) BottomSheetDefaults.ScrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
-) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
+) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetNavHost(
     backstack = controller.backstack,
     scopeSpec = scopeSpec,
     onDismissRequest = onDismissRequest,
@@ -186,8 +193,8 @@ fun <T, S> ScopingBottomSheetLayoutNavHost(
  * transitions between different BottomSheets, as well as all other features of the regular
  * [ScopingNavHost].
  *
- * Unlike for ModalBottomSheetLayout you need to use Surface in [contentSelector] yourself. This
- * allows you to customize Surface for each destination.
+ * Unlike in ModalBottomSheetLayout, you need to use Surface inside [contentSelector] yourself.
+ * This allows you to customize Surface for each destination.
  *
  * @param backstack the backstack from a [NavController] that will be used to observe navigation
  * changes. The last entry of the backstack is always the currently displayed entry.
@@ -219,16 +226,16 @@ fun <T, S> ScopingBottomSheetLayoutNavHost(
  * the [ScopingBottomSheetNavHostScope].
  */
 @Composable
-fun <T, S> ScopingBottomSheetLayoutNavHost(
+fun <T, S> ScopingBottomSheetNavHost(
     backstack: NavBackstack<T>,
     scopeSpec: NavScopeSpec<T, S>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetLayoutModifier: Modifier = Modifier,
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
-    scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
+    scrimColor: Color = @OptIn(ExperimentalMaterial3Api::class) BottomSheetDefaults.ScrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
-) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
+) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetNavHost(
     backstack = backstack,
     scopeSpec = scopeSpec,
     onDismissRequest = onDismissRequest,

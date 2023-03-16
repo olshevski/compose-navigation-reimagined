@@ -65,7 +65,7 @@ import dev.olshevski.navigation.reimagined.popAll
  * the [BottomSheetNavHostScope].
  */
 @Deprecated(
-    message = "Use BottomSheetLayoutNavHost and define Surface manually instead",
+    message = "Use NewBottomSheetNavHost and define Surface manually instead",
 )
 @Composable
 fun <T> BottomSheetNavHost(
@@ -80,7 +80,7 @@ fun <T> BottomSheetNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
-) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
+) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetNavHost(
     backstack = controller.backstack,
     scopeSpec = EmptyScopeSpec,
     onDismissRequest = onDismissRequest,
@@ -139,7 +139,7 @@ fun <T> BottomSheetNavHost(
  * the [BottomSheetNavHostScope].
  */
 @Deprecated(
-    message = "Use BottomSheetLayoutNavHost and define Surface manually instead",
+    message = "Use NewBottomSheetNavHost and define Surface manually instead",
 )
 @Composable
 fun <T> BottomSheetNavHost(
@@ -154,7 +154,7 @@ fun <T> BottomSheetNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
-) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
+) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetNavHost(
     backstack = backstack,
     scopeSpec = EmptyScopeSpec,
     onDismissRequest = onDismissRequest,
@@ -216,7 +216,7 @@ fun <T> BottomSheetNavHost(
  * the [ScopingBottomSheetNavHostScope].
  */
 @Deprecated(
-    message = "Use BottomSheetLayoutNavHost and define Surface manually instead",
+    message = "Use NewScopingBottomSheetNavHost and define Surface manually instead",
 )
 @Composable
 fun <T, S> ScopingBottomSheetNavHost(
@@ -232,7 +232,7 @@ fun <T, S> ScopingBottomSheetNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
-) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
+) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetNavHost(
     backstack = controller.backstack,
     scopeSpec = scopeSpec,
     onDismissRequest = onDismissRequest,
@@ -294,7 +294,7 @@ fun <T, S> ScopingBottomSheetNavHost(
  * the [ScopingBottomSheetNavHostScope].
  */
 @Deprecated(
-    message = "Use BottomSheetLayoutNavHost and define Surface manually instead",
+    message = "Use NewScopingBottomSheetNavHost and define Surface manually instead",
 )
 @Composable
 fun <T, S> ScopingBottomSheetNavHost(
@@ -310,7 +310,7 @@ fun <T, S> ScopingBottomSheetNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
-) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
+) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetNavHost(
     backstack = backstack,
     scopeSpec = scopeSpec,
     onDismissRequest = onDismissRequest,

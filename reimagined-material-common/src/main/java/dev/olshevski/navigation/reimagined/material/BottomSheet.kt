@@ -97,7 +97,7 @@ enum class BottomSheetValue {
 }
 
 /**
- * State of the internal [BottomSheetLayout] composable inside [CommonBottomSheetLayoutNavHost].
+ * State of the internal [BottomSheetLayout] composable inside [CommonBottomSheetNavHost].
  * This is direct analogue of `ModalBottomSheetState` from Material package.
  */
 @Stable
@@ -216,7 +216,7 @@ class BottomSheetState internal constructor(
      * Half expand the bottom sheet if half expand is enabled with animation and suspend until its
      * animation is complete or cancelled.
      *
-     * This call will be ignored if [CommonBottomSheetLayoutNavHost] is in the middle of transition
+     * This call will be ignored if [CommonBottomSheetNavHost] is in the middle of transition
      * to another bottom sheet.
      *
      * @throws [CancellationException] if the animation is interrupted
@@ -232,7 +232,7 @@ class BottomSheetState internal constructor(
      * Fully expand the bottom sheet with animation and suspend until it is fully expanded or
      * animation has been cancelled.
      *
-     * This call will be ignored if [CommonBottomSheetLayoutNavHost] is in the middle of transition
+     * This call will be ignored if [CommonBottomSheetNavHost] is in the middle of transition
      * to another bottom sheet.
      *
      * @throws [CancellationException] if the animation is interrupted
