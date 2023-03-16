@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetDefaults
-import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.Surface
 import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
@@ -25,7 +24,7 @@ import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.popAll
 
 /**
- * NavHost analogue of [ModalBottomSheetLayout] from Material package. Provides better visual
+ * NavHost analogue of ModalBottomSheetLayout from Material package. Provides better visual
  * transitions between different BottomSheets, as well as all other features of the regular
  * [NavHost].
  *
@@ -99,7 +98,7 @@ fun <T> BottomSheetNavHost(
 )
 
 /**
- * NavHost analogue of [ModalBottomSheetLayout] from Material package. Provides better visual
+ * NavHost analogue of ModalBottomSheetLayout from Material package. Provides better visual
  * transitions between different BottomSheets, as well as all other features of the regular
  * [NavHost].
  *
@@ -173,7 +172,7 @@ fun <T> BottomSheetNavHost(
 )
 
 /**
- * NavHost analogue of [ModalBottomSheetLayout] from Material package. Provides better visual
+ * NavHost analogue of ModalBottomSheetLayout from Material package. Provides better visual
  * transitions between different BottomSheets, as well as all other features of the regular
  * [ScopingNavHost].
  *
@@ -251,7 +250,7 @@ fun <T, S> ScopingBottomSheetNavHost(
 )
 
 /**
- * NavHost analogue of [ModalBottomSheetLayout] from Material package. Provides better visual
+ * NavHost analogue of ModalBottomSheetLayout from Material package. Provides better visual
  * transitions between different BottomSheets, as well as all other features of the regular
  * [ScopingNavHost].
  *
