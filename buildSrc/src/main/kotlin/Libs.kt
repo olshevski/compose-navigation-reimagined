@@ -3,12 +3,12 @@ object Libs {
     object AndroidX {
 
         object Activity {
-            const val Compose = "androidx.activity:activity-compose:1.7.0-beta02"
+            const val Compose = "androidx.activity:activity-compose:1.7.0-rc01"
         }
 
         object Compose {
             const val CompilerVersion = "1.4.3"
-            const val Bom = "dev.chrisbanes.compose:compose-bom:2023.02.00-beta03"
+            const val Bom = "dev.chrisbanes.compose:compose-bom:2023.02.00-rc02"
             const val Animation = "androidx.compose.animation:animation"
             const val Foundation = "androidx.compose.foundation:foundation"
             const val Material = "androidx.compose.material:material"
@@ -25,7 +25,7 @@ object Libs {
         }
 
         object Lifecycle {
-            private const val Version = "2.6.0-beta01"
+            private const val Version = "2.6.0"
 
             object ViewModel {
                 const val Api = "androidx.lifecycle:lifecycle-viewmodel:$Version"
