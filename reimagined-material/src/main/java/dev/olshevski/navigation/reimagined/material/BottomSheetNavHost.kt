@@ -66,7 +66,7 @@ import dev.olshevski.navigation.reimagined.popAll
  * the [BottomSheetNavHostScope].
  */
 @Deprecated(
-    message = "Use BottomSheetLayoutNavHost instead",
+    message = "Use BottomSheetLayoutNavHost and define Surface manually instead",
 )
 @Composable
 fun <T> BottomSheetNavHost(
@@ -140,7 +140,7 @@ fun <T> BottomSheetNavHost(
  * the [BottomSheetNavHostScope].
  */
 @Deprecated(
-    message = "Use BottomSheetLayoutNavHost instead",
+    message = "Use BottomSheetLayoutNavHost and define Surface manually instead",
 )
 @Composable
 fun <T> BottomSheetNavHost(
@@ -217,7 +217,7 @@ fun <T> BottomSheetNavHost(
  * the [ScopingBottomSheetNavHostScope].
  */
 @Deprecated(
-    message = "Use ScopingBottomSheetLayoutNavHost instead",
+    message = "Use BottomSheetLayoutNavHost and define Surface manually instead",
 )
 @Composable
 fun <T, S> ScopingBottomSheetNavHost(
@@ -295,7 +295,7 @@ fun <T, S> ScopingBottomSheetNavHost(
  * the [ScopingBottomSheetNavHostScope].
  */
 @Deprecated(
-    message = "Use ScopingBottomSheetLayoutNavHost instead",
+    message = "Use BottomSheetLayoutNavHost and define Surface manually instead",
 )
 @Composable
 fun <T, S> ScopingBottomSheetNavHost(

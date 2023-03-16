@@ -125,7 +125,7 @@ fun <T> BottomSheetLayoutNavHost(
 )
 
 /**
- * NavHost analogue of `ModalBottomSheetLayout` from Material package. Provides better visual
+ * NavHost analogue of [ModalBottomSheetLayout] from Material package. Provides better visual
  * transitions between different BottomSheets, as well as all other features of the regular
  * [ScopingNavHost].
  *
