@@ -89,7 +89,12 @@ fun NavHostAnimatedVisibility(
 ) {
     val controller = rememberNavController<VisibilityUnit>(initialBackstack = emptyList())
     controller.setVisibility(visible)
-    BaseNavHost(controller.backstack, EmptyScopeSpec) { targetSnapshot ->
+    BaseNavHost(
+        rememberScopingNavHostState(
+            controller.backstack,
+            EmptyScopeSpec
+        )
+    ) { targetSnapshot ->
         val transition = updateTransition(
             targetState = targetSnapshot,
             label = "NavHostAnimatedVisibility"

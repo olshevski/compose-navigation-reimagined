@@ -25,6 +25,7 @@ import dev.olshevski.navigation.reimagined.NavBackstack
 import dev.olshevski.navigation.reimagined.NavId
 import dev.olshevski.navigation.reimagined.NavScopeSpec
 import dev.olshevski.navigation.reimagined.NavSnapshot
+import dev.olshevski.navigation.reimagined.rememberScopingNavHostState
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.parcelize.Parcelize
@@ -45,8 +46,7 @@ fun <T, S> CommonBottomSheetLayoutNavHost(
     scrimColor: Color,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
 ) = @OptIn(ExperimentalReimaginedApi::class) BaseNavHost(
-    backstack = backstack,
-    scopeSpec = scopeSpec
+    state = rememberScopingNavHostState(backstack, scopeSpec)
 ) { snapshot ->
     val targetSnapshot by rememberUpdatedState(snapshot)
     var currentSnapshot by remember { mutableStateOf(targetSnapshot) }
