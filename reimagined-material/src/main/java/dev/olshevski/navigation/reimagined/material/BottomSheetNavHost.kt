@@ -1,9 +1,10 @@
-@file:Suppress("DeprecatedCallableAddReplaceWith") @file:JvmName("BottomSheetNavHostKt")
-
 package dev.olshevski.navigation.reimagined.material
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetDefaults
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.Surface
 import androidx.compose.material.contentColorFor
@@ -12,8 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import dev.olshevski.navigation.reimagined.EmptyScopeSpec
+import dev.olshevski.navigation.reimagined.ExperimentalReimaginedApi
 import dev.olshevski.navigation.reimagined.NavBackstack
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.NavHost
@@ -74,13 +77,13 @@ fun <T> BottomSheetNavHost(
     modifier: Modifier = Modifier,
     sheetLayoutModifier: Modifier = Modifier,
     sheetShape: Shape = BottomSheetDefaults.shape,
-    sheetElevation: Dp = BottomSheetDefaults.Elevation,
-    sheetBackgroundColor: Color = BottomSheetDefaults.backgroundColor,
+    sheetElevation: Dp = ModalBottomSheetDefaults.Elevation,
+    sheetBackgroundColor: Color = MaterialTheme.colors.surface,
     sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
-    scrimColor: Color = BottomSheetDefaults.scrimColor,
+    scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
-) = ScopingBottomSheetLayoutNavHost(
+) = @OptIn(ExperimentalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
     backstack = controller.backstack,
     scopeSpec = EmptyScopeSpec,
     onDismissRequest = onDismissRequest,
@@ -149,13 +152,13 @@ fun <T> BottomSheetNavHost(
     modifier: Modifier = Modifier,
     sheetLayoutModifier: Modifier = Modifier,
     sheetShape: Shape = BottomSheetDefaults.shape,
-    sheetElevation: Dp = BottomSheetDefaults.Elevation,
-    sheetBackgroundColor: Color = BottomSheetDefaults.backgroundColor,
+    sheetElevation: Dp = ModalBottomSheetDefaults.Elevation,
+    sheetBackgroundColor: Color = MaterialTheme.colors.surface,
     sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
-    scrimColor: Color = BottomSheetDefaults.scrimColor,
+    scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
-) = ScopingBottomSheetLayoutNavHost(
+) = @OptIn(ExperimentalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
     backstack = backstack,
     scopeSpec = EmptyScopeSpec,
     onDismissRequest = onDismissRequest,
@@ -228,13 +231,13 @@ fun <T, S> ScopingBottomSheetNavHost(
     modifier: Modifier = Modifier,
     sheetLayoutModifier: Modifier = Modifier,
     sheetShape: Shape = BottomSheetDefaults.shape,
-    sheetElevation: Dp = BottomSheetDefaults.Elevation,
-    sheetBackgroundColor: Color = BottomSheetDefaults.backgroundColor,
+    sheetElevation: Dp = ModalBottomSheetDefaults.Elevation,
+    sheetBackgroundColor: Color = MaterialTheme.colors.surface,
     sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
-    scrimColor: Color = BottomSheetDefaults.scrimColor,
+    scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
-) = ScopingBottomSheetLayoutNavHost(
+) = @OptIn(ExperimentalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
     backstack = controller.backstack,
     scopeSpec = scopeSpec,
     onDismissRequest = onDismissRequest,
@@ -307,13 +310,13 @@ fun <T, S> ScopingBottomSheetNavHost(
     modifier: Modifier = Modifier,
     sheetLayoutModifier: Modifier = Modifier,
     sheetShape: Shape = BottomSheetDefaults.shape,
-    sheetElevation: Dp = BottomSheetDefaults.Elevation,
-    sheetBackgroundColor: Color = BottomSheetDefaults.backgroundColor,
+    sheetElevation: Dp = ModalBottomSheetDefaults.Elevation,
+    sheetBackgroundColor: Color = MaterialTheme.colors.surface,
     sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
-    scrimColor: Color = BottomSheetDefaults.scrimColor,
+    scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
-) = ScopingBottomSheetLayoutNavHost(
+) = @OptIn(ExperimentalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
     backstack = backstack,
     scopeSpec = scopeSpec,
     onDismissRequest = onDismissRequest,
@@ -330,7 +333,7 @@ fun <T, S> ScopingBottomSheetNavHost(
     )
 )
 
-@ExperimentalMaterialApi
+@ExperimentalReimaginedApi
 @Composable
 private inline fun <T, S> wrapInDefaultSurface(
     sheetShape: Shape,
@@ -349,4 +352,15 @@ private inline fun <T, S> wrapInDefaultSurface(
             contentSelector(it)
         }
     }
+}
+
+internal object BottomSheetDefaults {
+
+    val shape: Shape
+        @Composable
+        get() = MaterialTheme.shapes.large.copy(
+            bottomStart = CornerSize(0.dp),
+            bottomEnd = CornerSize(0.dp)
+        )
+
 }

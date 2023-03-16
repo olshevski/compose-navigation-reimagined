@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.ModalBottomSheetDefaults
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -70,7 +71,7 @@ fun BottomSheetNavHostScreen() = Box {
         val shapeRadius by animateDpAsState(if (sheetState.isFullyExpanded) 0.dp else 16.dp)
         Surface(
             shape = RoundedCornerShape(topStart = shapeRadius, topEnd = shapeRadius),
-            elevation = 16.dp
+            elevation = ModalBottomSheetDefaults.Elevation
         ) {
             when (destination) {
                 BottomSheetDestination.First -> FirstBottomSheet(

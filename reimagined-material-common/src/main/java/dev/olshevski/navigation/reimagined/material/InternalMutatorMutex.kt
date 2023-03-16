@@ -126,6 +126,7 @@ internal class InternalMutatorMutex {
      * @param block mutation code to run mutually exclusive with any other call to [mutate],
      * [mutateWith] or [tryMutate].
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     suspend fun <T, R> mutateWith(
         receiver: T,
         priority: MutatePriority = MutatePriority.Default,

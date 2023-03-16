@@ -10,15 +10,17 @@ object Libs {
             const val CompilerVersion = "1.4.3"
             const val Bom = "dev.chrisbanes.compose:compose-bom:2023.02.00-beta03"
             const val Animation = "androidx.compose.animation:animation"
+            const val Foundation = "androidx.compose.foundation:foundation"
             const val Material = "androidx.compose.material:material"
             const val MaterialIconsExtended = "androidx.compose.material:material-icons-extended"
             const val Runtime = "androidx.compose.runtime:runtime"
-            const val Ui = "androidx.compose.ui:ui"
             const val UiTooling = "androidx.compose.ui:ui-tooling"
             const val UiToolingPreview = "androidx.compose.ui:ui-tooling-preview"
             const val UiTestJunit4 = "androidx.compose.ui:ui-test-junit4"
             const val UiTestManifest = "androidx.compose.ui:ui-test-manifest"
-            const val UiUtil = "androidx.compose.ui:ui-util"
+
+            // note to self, dependencies go as follows:
+            // runtime <- ui <- foundation-layout <- animation <- foundation <- material
         }
 
         object Lifecycle {

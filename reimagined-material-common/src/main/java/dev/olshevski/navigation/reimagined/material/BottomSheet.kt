@@ -30,10 +30,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
@@ -45,7 +41,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -62,6 +57,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import dev.olshevski.navigation.reimagined.ExperimentalReimaginedApi
 import dev.olshevski.navigation.reimagined.NavId
 import dev.olshevski.navigation.reimagined.material.BottomSheetValue.Expanded
 import dev.olshevski.navigation.reimagined.material.BottomSheetValue.HalfExpanded
@@ -81,8 +77,8 @@ import kotlin.math.roundToInt
 /**
  * Possible values of [BottomSheetState].
  */
-@ExperimentalMaterialApi
 enum class BottomSheetValue {
+
     /**
      * The bottom sheet is not visible.
      */
@@ -102,10 +98,10 @@ enum class BottomSheetValue {
 }
 
 /**
- * State of the internal [BottomSheetLayout] composable inside [BottomSheetNavHost]. This is
- * direct analogue of [ModalBottomSheetState] from Material package.
+ * State of the internal [BottomSheetLayout] composable inside [CommonBottomSheetLayoutNavHost].
+ * This is direct analogue of `ModalBottomSheetState` from Material package.
  */
-@ExperimentalMaterialApi
+@ExperimentalReimaginedApi
 @Stable
 class BottomSheetState internal constructor(
     internal val hostEntryId: NavId,
@@ -198,6 +194,7 @@ class BottomSheetState internal constructor(
     /**
      * Whether the bottom sheet is in [Expanded] state and takes up the whole layout height.
      */
+    @Suppress("unused")
     val isFullyExpanded: Boolean by derivedStateOf {
         offset <= 0
     }
@@ -221,8 +218,8 @@ class BottomSheetState internal constructor(
      * Half expand the bottom sheet if half expand is enabled with animation and suspend until its
      * animation is complete or cancelled.
      *
-     * This call will be ignored if [BottomSheetNavHost] is in the middle of transition to another
-     * bottom sheet.
+     * This call will be ignored if [CommonBottomSheetLayoutNavHost] is in the middle of transition
+     * to another bottom sheet.
      *
      * @throws [CancellationException] if the animation is interrupted
      */
@@ -237,8 +234,8 @@ class BottomSheetState internal constructor(
      * Fully expand the bottom sheet with animation and suspend until it is fully expanded or
      * animation has been cancelled.
      *
-     * This call will be ignored if [BottomSheetNavHost] is in the middle of transition to another
-     * bottom sheet.
+     * This call will be ignored if [CommonBottomSheetLayoutNavHost] is in the middle of transition
+     * to another bottom sheet.
      *
      * @throws [CancellationException] if the animation is interrupted
      */
@@ -300,7 +297,7 @@ class BottomSheetState internal constructor(
 
 }
 
-@ExperimentalMaterialApi
+@ExperimentalReimaginedApi
 @Composable
 internal fun BottomSheetLayout(
     modifier: Modifier,
@@ -437,28 +434,8 @@ internal fun Scrim(
     }
 }
 
-internal object BottomSheetDefaults {
-
-    val Elevation = 16.dp
-
-    val backgroundColor: Color
-        @Composable
-        get() = MaterialTheme.colors.surface
-
-    val scrimColor: Color
-        @Composable
-        get() = MaterialTheme.colors.onSurface.copy(alpha = 0.32f)
-
-    val shape: Shape
-        @Composable
-        get() = MaterialTheme.shapes.large.copy(
-            bottomStart = CornerSize(0.dp),
-            bottomEnd = CornerSize(0.dp)
-        )
-}
-
 @Suppress("FunctionName")
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalReimaginedApi::class)
 private fun ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
     state: SwipeableV2State<*>,
     @Suppress("SameParameterValue") orientation: Orientation
@@ -507,14 +484,16 @@ private fun ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
     )
 
     @JvmName("velocityToFloat")
-    private fun Velocity.toFloat() = if (orientation == Orientation.Horizontal) x else y
+    private fun Velocity.toFloat() =
+        if (orientation == Orientation.Horizontal) x else y
 
     @JvmName("offsetToFloat")
-    private fun Offset.toFloat(): Float = if (orientation == Orientation.Horizontal) x else y
+    private fun Offset.toFloat(): Float =
+        if (orientation == Orientation.Horizontal) x else y
 }
 
 @Suppress("FunctionName", "RemoveExplicitTypeArguments")
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalReimaginedApi::class)
 private fun ModalBottomSheetAnchorChangeHandler(
     state: BottomSheetState,
     animateTo: (target: BottomSheetValue, velocity: Float) -> Unit,

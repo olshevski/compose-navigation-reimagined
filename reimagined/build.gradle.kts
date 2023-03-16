@@ -12,7 +12,6 @@ android {
 dependencies {
     api(platform(Libs.AndroidX.Compose.Bom))
     api(Libs.AndroidX.Activity.Compose)
-    api(Libs.AndroidX.Compose.Ui)
     api(Libs.AndroidX.Compose.Animation)
     api(Libs.AndroidX.Lifecycle.ViewModel.Compose)
 
