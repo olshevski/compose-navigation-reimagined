@@ -96,7 +96,7 @@ enum class BottomSheetValue {
     /**
      * The bottom sheet is partially visible at 50% of the screen height. This state is only
      * enabled if the height of the bottom sheet is more than 50% of the screen height and
-     * [BottomSheetState.isSkipHalfExpanded] is false.
+     * [BottomSheetState.skipHalfExpanded] is false.
      */
     HalfExpanded
 }
@@ -112,9 +112,18 @@ class BottomSheetState internal constructor(
     initialValue: BottomSheetValue,
     isTransitionRunningState: State<Boolean>,
     animationSpec: AnimationSpec<Float>,
-    internal val isSkipHalfExpanded: Boolean,
+    internal val skipHalfExpanded: Boolean,
     confirmValueChange: (BottomSheetValue) -> Boolean
 ) {
+
+    init {
+        if (skipHalfExpanded) {
+            require(initialValue != HalfExpanded) {
+                "The initial value must not be set to HalfExpanded if skipHalfExpanded is set to" +
+                        " true."
+            }
+        }
+    }
 
     internal constructor(
         hostEntryId: NavId,
@@ -126,7 +135,7 @@ class BottomSheetState internal constructor(
         initialValue = initialValue,
         isTransitionRunningState = isTransitionRunningState,
         animationSpec = sheetProperties.animationSpec,
-        isSkipHalfExpanded = sheetProperties.isSkipHalfExpanded,
+        skipHalfExpanded = sheetProperties.skipHalfExpanded,
         confirmValueChange = sheetProperties.confirmValueChange
     )
 
@@ -140,9 +149,23 @@ class BottomSheetState internal constructor(
         velocityThreshold = VelocityThreshold
     )
 
+    /**
+     * The current value of the state.
+     *
+     * If no swipe or animation is in progress, this corresponds to the state the bottom sheet is
+     * currently in. If a swipe or an animation is in progress, this corresponds the state the sheet
+     * was in before the swipe or animation started.
+     */
     val currentValue: BottomSheetValue
         get() = swipeableState.currentValue
 
+    /**
+     * The target value of the bottom sheet state.
+     *
+     * If a swipe is in progress, this is the value that the sheet would animate to if the
+     * swipe finishes. If an animation is running, this is the target value of that animation.
+     * Finally, if no swipe or animation is in progress, this is the same as the [currentValue].
+     */
     val targetValue: BottomSheetValue
         get() = swipeableState.targetValue
 
@@ -155,7 +178,7 @@ class BottomSheetState internal constructor(
     /**
      * Whether the bottom sheet has [HalfExpanded] state. This state is only
      * enabled if the height of the bottom sheet is more than 50% of the screen height and
-     * [isSkipHalfExpanded] is set to false.
+     * [skipHalfExpanded] is set to false.
      */
     val hasHalfExpandedState: Boolean
         get() = swipeableState.hasAnchorForValue(HalfExpanded)
@@ -177,15 +200,6 @@ class BottomSheetState internal constructor(
      */
     val isFullyExpanded: Boolean by derivedStateOf {
         offset <= 0
-    }
-
-    init {
-        if (isSkipHalfExpanded) {
-            require(initialValue != HalfExpanded) {
-                "The initial value must not be set to HalfExpanded if skipHalfExpanded is set to" +
-                        " true."
-            }
-        }
     }
 
     /**
@@ -220,7 +234,7 @@ class BottomSheetState internal constructor(
     }
 
     /**
-     * Fully expand the bottom sheet with animation and suspend until it if fully expanded or
+     * Fully expand the bottom sheet with animation and suspend until it is fully expanded or
      * animation has been cancelled.
      *
      * This call will be ignored if [BottomSheetNavHost] is in the middle of transition to another
@@ -236,24 +250,47 @@ class BottomSheetState internal constructor(
     }
 
     /**
-     * Hide the bottom sheet with animation and suspend until it if fully hidden or animation has
+     * Hide the bottom sheet with animation and suspend until it is fully hidden or animation has
      * been cancelled.
      *
      * @throws [CancellationException] if the animation is interrupted
      */
     internal suspend fun hide() = animateTo(Hidden)
 
+    /**
+     * Animate to a [targetValue].
+     * If the [targetValue] is not in the set of anchors, the [currentValue] will be updated to the
+     * [targetValue] without updating the offset.
+     *
+     * @throws CancellationException if the interaction interrupted by another interaction like a
+     * gesture interaction or another programmatic interaction like a [animateTo] or [snapTo] call.
+     *
+     * @param targetValue The target value of the animation
+     */
     internal suspend fun animateTo(
-        target: BottomSheetValue,
+        targetValue: BottomSheetValue,
         velocity: Float = swipeableState.lastVelocity
-    ) = swipeableState.animateTo(target, velocity)
+    ) = swipeableState.animateTo(targetValue, velocity)
 
-    internal suspend fun snapTo(target: BottomSheetValue) = swipeableState.snapTo(target)
+    /**
+     * Snap to a [targetValue] without any animation.
+     *
+     * @throws CancellationException if the interaction interrupted by another interaction like a
+     * gesture interaction or another programmatic interaction like a [animateTo] or [snapTo] call.
+     *
+     * @param targetValue The target value of the animation
+     */
+    internal suspend fun snapTo(targetValue: BottomSheetValue) = swipeableState.snapTo(targetValue)
 
-    internal fun trySnapTo(target: BottomSheetValue): Boolean {
-        return swipeableState.trySnapTo(target)
+    internal fun trySnapTo(targetValue: BottomSheetValue): Boolean {
+        return swipeableState.trySnapTo(targetValue)
     }
 
+    /**
+     * Require the current offset (in pixels) of the bottom sheet.
+     *
+     * @throws IllegalStateException If the offset has not been initialized yet
+     */
     @Suppress("unused")
     internal fun requireOffset() = swipeableState.requireOffset()
 
@@ -272,7 +309,6 @@ internal fun BottomSheetLayout(
     onDismissRequest: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    val orientation = Orientation.Vertical
     val anchorChangeHandler = remember(sheetState, scope) {
         ModalBottomSheetAnchorChangeHandler(
             state = sheetState,
@@ -293,10 +329,10 @@ internal fun BottomSheetLayout(
                 .widthIn(max = MaxModalBottomSheetWidth)
                 .fillMaxWidth()
                 .nestedScroll(
-                    remember(sheetState.swipeableState, orientation) {
+                    remember(sheetState.swipeableState) {
                         ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
                             state = sheetState.swipeableState,
-                            orientation = orientation
+                            orientation = Orientation.Vertical
                         )
                     }
                 )
@@ -315,7 +351,7 @@ internal fun BottomSheetLayout(
                 }
                 .swipeableV2(
                     state = sheetState.swipeableState,
-                    orientation = orientation,
+                    orientation = Orientation.Vertical,
                     enabled = sheetState.isVisible && !sheetState.isTransitionRunning,
                 )
                 .swipeAnchors(
@@ -327,7 +363,7 @@ internal fun BottomSheetLayout(
                         Hidden -> fullHeight
                         HalfExpanded -> when {
                             sheetSize.height < fullHeight / 2f -> null
-                            sheetState.isSkipHalfExpanded -> null
+                            sheetState.skipHalfExpanded -> null
                             else -> fullHeight / 2f
                         }
 
@@ -369,7 +405,7 @@ internal fun BottomSheetLayout(
 @Composable
 internal fun Scrim(
     color: Color,
-    onDismiss: () -> Unit,
+    onDismissRequest: () -> Unit,
     visible: Boolean
 ) {
     if (color.isSpecified) {
@@ -382,10 +418,10 @@ internal fun Scrim(
         val closeSheet = stringResource(androidx.compose.ui.R.string.close_sheet)
         val dismissModifier = if (visible) {
             Modifier
-                .pointerInput(onDismiss) { detectTapGestures { onDismiss() } }
+                .pointerInput(onDismissRequest) { detectTapGestures { onDismissRequest() } }
                 .semantics(mergeDescendants = true) {
                     contentDescription = closeSheet
-                    onClick { onDismiss(); true }
+                    onClick { onDismissRequest(); true }
                 }
         } else {
             Modifier
@@ -425,7 +461,7 @@ internal object BottomSheetDefaults {
 @OptIn(ExperimentalMaterialApi::class)
 private fun ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
     state: SwipeableV2State<*>,
-    orientation: Orientation
+    @Suppress("SameParameterValue") orientation: Orientation
 ): NestedScrollConnection = object : NestedScrollConnection {
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
         val delta = available.toFloat()
@@ -507,7 +543,7 @@ private fun ModalBottomSheetAnchorChangeHandler(
     }
     val newTargetOffset = newAnchors.getValue(newTarget)
     if (newTargetOffset != previousTargetOffset) {
-        if (state.isAnimationRunning) {
+        if (state.isAnimationRunning || previousAnchors.isEmpty()) {
             // Re-target the animation to the new offset if it changed
             animateTo(newTarget, state.lastVelocity)
         } else {

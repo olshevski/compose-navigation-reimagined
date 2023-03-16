@@ -13,7 +13,7 @@ import dev.olshevski.navigation.reimagined.material.BottomSheetValue.Hidden
  *
  * @param confirmValueChange optional callback invoked to confirm or veto a pending value change
  *
- * @param isSkipHalfExpanded whether the half expanded state, if the sheet is tall enough, should
+ * @param skipHalfExpanded whether the half expanded state, if the sheet is tall enough, should
  * be skipped. If true, the sheet will always expand to the [Expanded] state and move to the
  * [Hidden] state when hiding the sheet, either programmatically or by user interaction.
  */
@@ -22,11 +22,12 @@ import dev.olshevski.navigation.reimagined.material.BottomSheetValue.Hidden
 class BottomSheetProperties(
     val animationSpec: AnimationSpec<Float> = SwipeableV2Defaults.AnimationSpec,
     val confirmValueChange: (newValue: BottomSheetValue) -> Boolean = { true },
-    val isSkipHalfExpanded: Boolean = false
+    val skipHalfExpanded: Boolean = false
 ) {
 
     @Deprecated(
-        message = "This constructor is deprecated. confirmStateChange has been renamed to confirmValueChange",
+        message = "This constructor is deprecated. `confirmStateChange` has been renamed to " +
+                "`confirmValueChange`, `isSkipHalfExpanded` has been renamed to `skipHalfExpanded`",
         ReplaceWith("BottomSheetProperties(animationSpec, confirmStateChange, isSkipHalfExpanded)")
     )
     @ExperimentalMaterialApi
@@ -36,7 +37,7 @@ class BottomSheetProperties(
         confirmStateChange: (newValue: BottomSheetValue) -> Boolean = { true }
     ) : this(
         animationSpec = animationSpec,
-        isSkipHalfExpanded = isSkipHalfExpanded,
+        skipHalfExpanded = isSkipHalfExpanded,
         confirmValueChange = confirmStateChange
     )
 
@@ -76,13 +77,13 @@ internal val DefaultBottomSheetPropertiesSpec = BottomSheetPropertiesSpec<Any?> 
 fun commonBottomSheetProperties(
     animationSpec: AnimationSpec<Float> = SwipeableV2Defaults.AnimationSpec,
     confirmValueChange: (newValue: BottomSheetValue) -> Boolean = { true },
-    isSkipHalfExpanded: Boolean = false
+    skipHalfExpanded: Boolean = false
 ) = object : BottomSheetPropertiesSpec<Any?> {
 
     private val bottomSheetProperties = BottomSheetProperties(
         animationSpec = animationSpec,
         confirmValueChange = confirmValueChange,
-        isSkipHalfExpanded = isSkipHalfExpanded
+        skipHalfExpanded = skipHalfExpanded
     )
 
     override fun getBottomSheetProperties(destination: Any?) = bottomSheetProperties

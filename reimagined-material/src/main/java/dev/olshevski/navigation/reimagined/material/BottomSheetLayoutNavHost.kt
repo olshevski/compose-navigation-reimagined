@@ -304,7 +304,7 @@ fun <T, S> ScopingBottomSheetLayoutNavHost(
                     sheetPropertiesSpec.getBottomSheetProperties(lastEntry.destination)
                 BottomSheetState(
                     hostEntryId = lastEntry.id,
-                    initialValue = if (sheetProperties.isSkipHalfExpanded) {
+                    initialValue = if (sheetProperties.skipHalfExpanded) {
                         BottomSheetValue.Expanded
                     } else {
                         BottomSheetValue.HalfExpanded
@@ -329,7 +329,7 @@ fun <T, S> ScopingBottomSheetLayoutNavHost(
     Box(modifier = modifier.fillMaxSize()) {
         Scrim(
             color = scrimColor,
-            onDismiss = {
+            onDismissRequest = {
                 if (sheetState?.swipeableState?.confirmValueChange?.invoke(BottomSheetValue.Hidden) == true) {
                     onDismissRequest()
                 }
