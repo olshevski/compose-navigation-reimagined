@@ -60,8 +60,8 @@ fun <T> AnimatedNavHost(
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
-) = AnimatedNavHost(
-    backstack = controller.backstack,
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
+    state = rememberScopingNavHostState(controller.backstack, EmptyScopeSpec),
     modifier = modifier,
     transitionSpec = transitionSpec,
     transitionQueueing = transitionQueueing,
@@ -113,8 +113,8 @@ fun <T> AnimatedNavHost(
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
-) = @OptIn(ExperimentalReimaginedApi::class) AnimatedNavHost(
-    state = rememberNavHostState(backstack),
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
+    state = rememberScopingNavHostState(backstack, EmptyScopeSpec),
     modifier = modifier,
     transitionSpec = transitionSpec,
     transitionQueueing = transitionQueueing,
@@ -242,9 +242,8 @@ fun <T, S> ScopingAnimatedNavHost(
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(destination: T) -> Unit
-) = ScopingAnimatedNavHost(
-    backstack = controller.backstack,
-    scopeSpec = scopeSpec,
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
+    state = rememberScopingNavHostState(controller.backstack, scopeSpec),
     modifier = modifier,
     transitionSpec = transitionSpec,
     transitionQueueing = transitionQueueing,

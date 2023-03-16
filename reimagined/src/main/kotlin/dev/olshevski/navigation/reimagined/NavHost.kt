@@ -45,8 +45,8 @@ fun <T> NavHost(
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentAlignment: Alignment = Alignment.TopStart,
     contentSelector: @Composable NavHostScope<T>.(destination: T) -> Unit
-) = NavHost(
-    backstack = controller.backstack,
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingNavHost(
+    state = rememberScopingNavHostState(controller.backstack, EmptyScopeSpec),
     modifier = modifier,
     contentAlignment = contentAlignment,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
@@ -88,8 +88,8 @@ fun <T> NavHost(
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable NavHostScope<T>.(destination: T) -> Unit
-) = @OptIn(ExperimentalReimaginedApi::class) NavHost(
-    state = rememberNavHostState(backstack),
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingNavHost(
+    state = rememberScopingNavHostState(backstack, EmptyScopeSpec),
     modifier = modifier,
     contentAlignment = contentAlignment,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,
@@ -196,9 +196,8 @@ fun <T, S> ScopingNavHost(
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable ScopingNavHostScope<T, S>.(destination: T) -> Unit
-) = ScopingNavHost(
-    backstack = controller.backstack,
-    scopeSpec = scopeSpec,
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingNavHost(
+    state = rememberScopingNavHostState(controller.backstack, scopeSpec),
     modifier = modifier,
     contentAlignment = contentAlignment,
     emptyBackstackPlaceholder = emptyBackstackPlaceholder,

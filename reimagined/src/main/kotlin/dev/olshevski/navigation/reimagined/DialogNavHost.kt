@@ -46,9 +46,10 @@ fun <T> DialogNavHost(
     controller: NavController<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable NavHostScope<T>.(destination: T) -> Unit
-) = DialogNavHost(
-    backstack = controller.backstack,
-    emptyBackstackPlaceholder = emptyBackstackPlaceholder,
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
+    state = rememberScopingNavHostState(controller.backstack, EmptyScopeSpec),
+    transitionSpec = NoneTransitionSpec,
+    emptyBackstackPlaceholder = { emptyBackstackPlaceholder() },
     contentSelector = contentSelector
 )
 
@@ -83,9 +84,9 @@ fun <T> DialogNavHost(
     backstack: NavBackstack<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable NavHostScope<T>.(destination: T) -> Unit
-) = ScopingDialogNavHost(
-    backstack = backstack,
-    scopeSpec = EmptyScopeSpec,
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
+    state = rememberScopingNavHostState(backstack, EmptyScopeSpec),
+    transitionSpec = NoneTransitionSpec,
     emptyBackstackPlaceholder = { emptyBackstackPlaceholder() },
     contentSelector = { contentSelector(it) }
 )
@@ -143,9 +144,9 @@ fun <T, S> ScopingDialogNavHost(
     scopeSpec: NavScopeSpec<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable ScopingNavHostScope<T, S>.(destination: T) -> Unit
-) = ScopingDialogNavHost(
-    backstack = controller.backstack,
-    scopeSpec = scopeSpec,
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
+    state = rememberScopingNavHostState(controller.backstack, scopeSpec),
+    transitionSpec = NoneTransitionSpec,
     emptyBackstackPlaceholder = { emptyBackstackPlaceholder() },
     contentSelector = { contentSelector(it) }
 )
@@ -202,9 +203,8 @@ fun <T, S> ScopingDialogNavHost(
     scopeSpec: NavScopeSpec<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable ScopingNavHostScope<T, S>.(destination: T) -> Unit
-) = ScopingAnimatedNavHost(
-    backstack = backstack,
-    scopeSpec = scopeSpec,
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
+    state = rememberScopingNavHostState(backstack, scopeSpec),
     transitionSpec = NoneTransitionSpec,
     emptyBackstackPlaceholder = { emptyBackstackPlaceholder() },
     contentSelector = { contentSelector(it) }
