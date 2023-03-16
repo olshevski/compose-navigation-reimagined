@@ -2,7 +2,6 @@ package dev.olshevski.navigation.reimagined.material
 
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.runtime.Immutable
-import dev.olshevski.navigation.reimagined.ExperimentalReimaginedApi
 import dev.olshevski.navigation.reimagined.material.BottomSheetValue.Expanded
 import dev.olshevski.navigation.reimagined.material.BottomSheetValue.Hidden
 
@@ -19,7 +18,7 @@ import dev.olshevski.navigation.reimagined.material.BottomSheetValue.Hidden
  */
 @Immutable
 class BottomSheetProperties(
-    val animationSpec: AnimationSpec<Float> = @OptIn(ExperimentalReimaginedApi::class) (SwipeableV2Defaults.AnimationSpec),
+    val animationSpec: AnimationSpec<Float> = (SwipeableV2Defaults.AnimationSpec),
     val confirmValueChange: (newValue: BottomSheetValue) -> Boolean = { true },
     val skipHalfExpanded: Boolean = false
 ) {
@@ -30,7 +29,7 @@ class BottomSheetProperties(
         ReplaceWith("BottomSheetProperties(animationSpec, confirmStateChange, isSkipHalfExpanded)")
     )
     constructor(
-        animationSpec: AnimationSpec<Float> = @OptIn(ExperimentalReimaginedApi::class) (SwipeableV2Defaults.AnimationSpec),
+        animationSpec: AnimationSpec<Float> = (SwipeableV2Defaults.AnimationSpec),
         isSkipHalfExpanded: Boolean = false,
         confirmStateChange: (newValue: BottomSheetValue) -> Boolean = { true }
     ) : this(
@@ -69,7 +68,7 @@ val DefaultBottomSheetPropertiesSpec = BottomSheetPropertiesSpec<Any?> {
  * Defines same [BottomSheetProperties] for all destinations.
  */
 fun commonBottomSheetProperties(
-    animationSpec: AnimationSpec<Float> = @OptIn(ExperimentalReimaginedApi::class) (SwipeableV2Defaults.AnimationSpec),
+    animationSpec: AnimationSpec<Float> = (SwipeableV2Defaults.AnimationSpec),
     confirmValueChange: (newValue: BottomSheetValue) -> Boolean = { true },
     skipHalfExpanded: Boolean = false
 ) = object : BottomSheetPropertiesSpec<Any?> {

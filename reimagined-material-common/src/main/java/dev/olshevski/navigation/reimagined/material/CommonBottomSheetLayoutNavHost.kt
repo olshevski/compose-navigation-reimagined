@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import dev.olshevski.navigation.reimagined.BaseNavHost
 import dev.olshevski.navigation.reimagined.ComponentsProvider
 import dev.olshevski.navigation.reimagined.ExperimentalReimaginedApi
+import dev.olshevski.navigation.reimagined.InternalReimaginedApi
 import dev.olshevski.navigation.reimagined.NavBackstack
 import dev.olshevski.navigation.reimagined.NavId
 import dev.olshevski.navigation.reimagined.NavScopeSpec
@@ -32,7 +33,7 @@ import kotlinx.parcelize.Parcelize
  * Common theme-independent implementation of `BottomSheetLayoutNavHost`. Not intended for direct
  * use.
  */
-@ExperimentalReimaginedApi
+@InternalReimaginedApi
 @Composable
 fun <T, S> CommonBottomSheetLayoutNavHost(
     backstack: NavBackstack<T>,
@@ -43,7 +44,7 @@ fun <T, S> CommonBottomSheetLayoutNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T>,
     scrimColor: Color,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
-) = BaseNavHost(
+) = @OptIn(ExperimentalReimaginedApi::class) BaseNavHost(
     backstack = backstack,
     scopeSpec = scopeSpec
 ) { snapshot ->
@@ -194,7 +195,6 @@ fun <T, S> CommonBottomSheetLayoutNavHost(
     currentSnapshot
 }
 
-@ExperimentalReimaginedApi
 @Composable
 private fun <T, S> SnapshotBottomSheetLayout(
     modifier: Modifier,
@@ -226,7 +226,6 @@ private fun <T, S> SnapshotBottomSheetLayout(
     }
 }
 
-@ExperimentalReimaginedApi
 @Parcelize
 private data class BottomSheetSavedState(
     val id: NavId,

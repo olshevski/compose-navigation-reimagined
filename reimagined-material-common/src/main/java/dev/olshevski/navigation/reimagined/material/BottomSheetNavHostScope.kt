@@ -2,7 +2,6 @@ package dev.olshevski.navigation.reimagined.material
 
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModelStoreOwner
-import dev.olshevski.navigation.reimagined.ExperimentalReimaginedApi
 import dev.olshevski.navigation.reimagined.NavHostEntry
 import dev.olshevski.navigation.reimagined.NavHostScope
 import dev.olshevski.navigation.reimagined.ScopedNavHostEntry
@@ -15,7 +14,6 @@ interface BottomSheetNavHostScope<out T> : NavHostScope<T> {
     /**
      * [BottomSheetState] of the current BottomSheet.
      */
-    @OptIn(ExperimentalReimaginedApi::class)
     val sheetState: BottomSheetState
 
 }
@@ -25,7 +23,7 @@ interface ScopingBottomSheetNavHostScope<out T, S> : BottomSheetNavHostScope<T>,
     ScopingNavHostScope<T, S>
 
 @Stable
-internal class ScopingBottomSheetNavHostScopeImpl<out T, S> @ExperimentalReimaginedApi constructor(
+internal class ScopingBottomSheetNavHostScopeImpl<out T, S>(
     override val hostEntries: List<NavHostEntry<T>>,
     private val scopedHostEntries: Map<S, ScopedNavHostEntry<S>>,
     override val sheetState: BottomSheetState,

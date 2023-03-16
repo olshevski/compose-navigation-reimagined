@@ -2,7 +2,6 @@ package dev.olshevski.navigation.reimagined.material
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetDefaults
 import androidx.compose.material.ModalBottomSheetLayout
@@ -16,7 +15,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import dev.olshevski.navigation.reimagined.EmptyScopeSpec
-import dev.olshevski.navigation.reimagined.ExperimentalReimaginedApi
+import dev.olshevski.navigation.reimagined.InternalReimaginedApi
 import dev.olshevski.navigation.reimagined.NavBackstack
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.NavHost
@@ -69,7 +68,6 @@ import dev.olshevski.navigation.reimagined.popAll
 @Deprecated(
     message = "Use BottomSheetLayoutNavHost instead",
 )
-@ExperimentalMaterialApi
 @Composable
 fun <T> BottomSheetNavHost(
     controller: NavController<T>,
@@ -83,7 +81,7 @@ fun <T> BottomSheetNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
-) = @OptIn(ExperimentalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
+) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
     backstack = controller.backstack,
     scopeSpec = EmptyScopeSpec,
     onDismissRequest = onDismissRequest,
@@ -144,7 +142,6 @@ fun <T> BottomSheetNavHost(
 @Deprecated(
     message = "Use BottomSheetLayoutNavHost instead",
 )
-@ExperimentalMaterialApi
 @Composable
 fun <T> BottomSheetNavHost(
     backstack: NavBackstack<T>,
@@ -158,7 +155,7 @@ fun <T> BottomSheetNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
-) = @OptIn(ExperimentalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
+) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
     backstack = backstack,
     scopeSpec = EmptyScopeSpec,
     onDismissRequest = onDismissRequest,
@@ -222,7 +219,6 @@ fun <T> BottomSheetNavHost(
 @Deprecated(
     message = "Use ScopingBottomSheetLayoutNavHost instead",
 )
-@ExperimentalMaterialApi
 @Composable
 fun <T, S> ScopingBottomSheetNavHost(
     controller: NavController<T>,
@@ -237,7 +233,7 @@ fun <T, S> ScopingBottomSheetNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
-) = @OptIn(ExperimentalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
+) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
     backstack = controller.backstack,
     scopeSpec = scopeSpec,
     onDismissRequest = onDismissRequest,
@@ -301,7 +297,6 @@ fun <T, S> ScopingBottomSheetNavHost(
 @Deprecated(
     message = "Use ScopingBottomSheetLayoutNavHost instead",
 )
-@ExperimentalMaterialApi
 @Composable
 fun <T, S> ScopingBottomSheetNavHost(
     backstack: NavBackstack<T>,
@@ -316,7 +311,7 @@ fun <T, S> ScopingBottomSheetNavHost(
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
-) = @OptIn(ExperimentalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
+) = @OptIn(InternalReimaginedApi::class) CommonBottomSheetLayoutNavHost(
     backstack = backstack,
     scopeSpec = scopeSpec,
     onDismissRequest = onDismissRequest,
@@ -333,7 +328,6 @@ fun <T, S> ScopingBottomSheetNavHost(
     )
 )
 
-@ExperimentalReimaginedApi
 @Composable
 private inline fun <T, S> wrapInDefaultSurface(
     sheetShape: Shape,

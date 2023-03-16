@@ -57,7 +57,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
-import dev.olshevski.navigation.reimagined.ExperimentalReimaginedApi
 import dev.olshevski.navigation.reimagined.NavId
 import dev.olshevski.navigation.reimagined.material.BottomSheetValue.Expanded
 import dev.olshevski.navigation.reimagined.material.BottomSheetValue.HalfExpanded
@@ -101,7 +100,6 @@ enum class BottomSheetValue {
  * State of the internal [BottomSheetLayout] composable inside [CommonBottomSheetLayoutNavHost].
  * This is direct analogue of `ModalBottomSheetState` from Material package.
  */
-@ExperimentalReimaginedApi
 @Stable
 class BottomSheetState internal constructor(
     internal val hostEntryId: NavId,
@@ -297,7 +295,6 @@ class BottomSheetState internal constructor(
 
 }
 
-@ExperimentalReimaginedApi
 @Composable
 internal fun BottomSheetLayout(
     modifier: Modifier,
@@ -435,7 +432,6 @@ internal fun Scrim(
 }
 
 @Suppress("FunctionName")
-@OptIn(ExperimentalReimaginedApi::class)
 private fun ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
     state: SwipeableV2State<*>,
     @Suppress("SameParameterValue") orientation: Orientation
@@ -493,7 +489,6 @@ private fun ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
 }
 
 @Suppress("FunctionName", "RemoveExplicitTypeArguments")
-@OptIn(ExperimentalReimaginedApi::class)
 private fun ModalBottomSheetAnchorChangeHandler(
     state: BottomSheetState,
     animateTo: (target: BottomSheetValue, velocity: Float) -> Unit,

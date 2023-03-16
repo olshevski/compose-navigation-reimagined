@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import dev.olshevski.navigation.reimagined.ExperimentalReimaginedApi
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -60,6 +59,9 @@ import kotlin.math.abs
  *
  * Reference:
  * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:compose/material/material/src/commonMain/kotlin/androidx/compose/material/SwipeableV2.kt
+ *
+ * Changes:
+ * - all ExperimentalMaterialApi annotations are removed
  */
 
 /**
@@ -81,7 +83,6 @@ import kotlin.math.abs
  * @param interactionSource Optional [MutableInteractionSource] that will passed on to
  * the internal [Modifier.draggable].
  */
-@ExperimentalReimaginedApi
 internal fun <T> Modifier.swipeableV2(
     state: SwipeableV2State<T>,
     orientation: Orientation,
@@ -111,7 +112,6 @@ internal fun <T> Modifier.swipeableV2(
  * [possibleValues], given this node's layout size. Return the anchor's offset from the initial
  * anchor, or `null` to indicate that a value does not have an anchor.
  */
-@ExperimentalReimaginedApi
 internal fun <T> Modifier.swipeAnchors(
     state: SwipeableV2State<T>,
     possibleValues: Set<T>,
@@ -169,7 +169,6 @@ internal fun <T> Modifier.swipeAnchors(
  * reached.
  */
 @Stable
-@ExperimentalReimaginedApi
 internal class SwipeableV2State<T>(
     initialValue: T,
     internal val animationSpec: AnimationSpec<Float> = SwipeableV2Defaults.AnimationSpec,
@@ -493,7 +492,6 @@ internal class SwipeableV2State<T>(
         /**
          * The default [Saver] implementation for [SwipeableV2State].
          */
-        @ExperimentalReimaginedApi
         fun <T : Any> Saver(
             animationSpec: AnimationSpec<Float>,
             confirmValueChange: (T) -> Boolean,
@@ -522,7 +520,6 @@ internal class SwipeableV2State<T>(
  * @param confirmValueChange Optional callback invoked to confirm or veto a pending value change.
  */
 @Composable
-@ExperimentalReimaginedApi
 internal fun <T : Any> rememberSwipeableV2State(
     initialValue: T,
     animationSpec: AnimationSpec<Float> = SwipeableV2Defaults.AnimationSpec,
@@ -553,7 +550,6 @@ internal fun <T : Any> rememberSwipeableV2State(
  *
  * @see [fractionalPositionalThreshold] for a fractional positional threshold
  */
-@ExperimentalReimaginedApi
 internal fun fixedPositionalThreshold(threshold: Dp): Density.(distance: Float) -> Float = {
     threshold.toPx()
 }
@@ -565,7 +561,6 @@ internal fun fixedPositionalThreshold(threshold: Dp): Density.(distance: Float) 
  *
  * @see [fixedPositionalThreshold] for a fixed positional threshold
  */
-@ExperimentalReimaginedApi
 internal fun fractionalPositionalThreshold(
     fraction: Float
 ): Density.(distance: Float) -> Float = { distance -> distance * fraction }
@@ -574,24 +569,20 @@ internal fun fractionalPositionalThreshold(
  * Contains useful defaults for [swipeableV2] and [SwipeableV2State].
  */
 @Stable
-@ExperimentalReimaginedApi
 internal object SwipeableV2Defaults {
     /**
      * The default animation used by [SwipeableV2State].
      */
-    @ExperimentalReimaginedApi
     val AnimationSpec = SpringSpec<Float>()
 
     /**
      * The default velocity threshold (1.8 dp per millisecond) used by [rememberSwipeableV2State].
      */
-    @ExperimentalReimaginedApi
     val VelocityThreshold: Dp = 125.dp
 
     /**
      * The default positional threshold (56 dp) used by [rememberSwipeableV2State]
      */
-    @ExperimentalReimaginedApi
     val PositionalThreshold: Density.(totalDistance: Float) -> Float =
         fixedPositionalThreshold(56.dp)
 
@@ -610,7 +601,6 @@ internal object SwipeableV2Defaults {
      * @param snap A lambda that gets invoked to snap to a new target
      */
     @Suppress("FunctionName")
-    @ExperimentalReimaginedApi
     internal fun <T> ReconcileAnimationOnAnchorChangeHandler(
         state: SwipeableV2State<T>,
         animate: (target: T, velocity: Float) -> Unit,
@@ -636,7 +626,6 @@ internal object SwipeableV2Defaults {
  *
  * @see SwipeableV2Defaults.ReconcileAnimationOnAnchorChangeHandler for a default implementation
  */
-@ExperimentalReimaginedApi
 internal fun interface AnchorChangeHandler<T> {
 
     /**
