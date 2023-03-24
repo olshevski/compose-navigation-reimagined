@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `kotlin-dsl`
-    id("dev.olshevski.versions") version "1.0.3"
+    id("dev.olshevski.versions") version "1.0.4"
 }
 
 java {
