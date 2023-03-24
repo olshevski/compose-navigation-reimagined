@@ -1,17 +1,9 @@
 package dev.olshevski.navigation.reimagined.material
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetDefaults
-import androidx.compose.material.Surface
-import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import dev.olshevski.navigation.reimagined.EmptyScopeSpec
 import dev.olshevski.navigation.reimagined.InternalReimaginedApi
@@ -28,6 +20,9 @@ import dev.olshevski.navigation.reimagined.popAll
  * transitions between different BottomSheets, as well as all other features of the regular
  * [NavHost].
  *
+ * Unlike in ModalBottomSheetLayout, you need to use Surface inside [contentSelector] yourself.
+ * This allows you to customize Surface for each destination.
+ *
  * @param controller the navigation controller that will provide its backstack to this
  * BottomSheetNavHost. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
@@ -42,16 +37,6 @@ import dev.olshevski.navigation.reimagined.popAll
  * @param sheetLayoutModifier the modifier applied to the inner bottom sheet layout only. May be
  * used to handle window insets.
  *
- * @param sheetShape the shape of the bottom sheet
- *
- * @param sheetElevation the elevation of the bottom sheet
- *
- * @param sheetBackgroundColor the background color of the bottom sheet
- *
- * @param sheetContentColor the preferred content color provided by the bottom sheet to its
- * children. Defaults to the matching content color for [sheetBackgroundColor], or if that is not
- * a color from the theme, this will keep the same content color set above the bottom sheet.
- *
  * @param sheetPropertiesSpec specifies [BottomSheetProperties] for every BottomSheet destination
  *
  * @param scrimColor the color of the scrim that is applied to the rest of the screen when the
@@ -64,19 +49,12 @@ import dev.olshevski.navigation.reimagined.popAll
  * provides additional functionality of the BottomSheetNavHost through
  * the [BottomSheetNavHostScope].
  */
-@Deprecated(
-    message = "Use NewBottomSheetNavHost and define Surface manually instead",
-)
 @Composable
 fun <T> BottomSheetNavHost(
     controller: NavController<T>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetLayoutModifier: Modifier = Modifier,
-    sheetShape: Shape = BottomSheetDefaults.shape,
-    sheetElevation: Dp = ModalBottomSheetDefaults.Elevation,
-    sheetBackgroundColor: Color = MaterialTheme.colors.surface,
-    sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
@@ -88,13 +66,7 @@ fun <T> BottomSheetNavHost(
     sheetLayoutModifier = sheetLayoutModifier,
     sheetPropertiesSpec = sheetPropertiesSpec,
     scrimColor = scrimColor,
-    contentSelector = wrapInDefaultSurface(
-        sheetShape,
-        sheetElevation,
-        sheetBackgroundColor,
-        sheetContentColor,
-        contentSelector
-    )
+    contentSelector = contentSelector
 )
 
 /**
@@ -102,6 +74,9 @@ fun <T> BottomSheetNavHost(
  * transitions between different BottomSheets, as well as all other features of the regular
  * [NavHost].
  *
+ * Unlike in ModalBottomSheetLayout, you need to use Surface inside [contentSelector] yourself.
+ * This allows you to customize Surface for each destination.
+ *
  * @param backstack the backstack from a [NavController] that will be used to observe navigation
  * changes. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
@@ -116,16 +91,6 @@ fun <T> BottomSheetNavHost(
  * @param sheetLayoutModifier the modifier applied to the inner bottom sheet layout only. May be
  * used to handle window insets.
  *
- * @param sheetShape the shape of the bottom sheet
- *
- * @param sheetElevation the elevation of the bottom sheet
- *
- * @param sheetBackgroundColor the background color of the bottom sheet
- *
- * @param sheetContentColor the preferred content color provided by the bottom sheet to its
- * children. Defaults to the matching content color for [sheetBackgroundColor], or if that is not
- * a color from the theme, this will keep the same content color set above the bottom sheet.
- *
  * @param sheetPropertiesSpec specifies [BottomSheetProperties] for every BottomSheet destination
  *
  * @param scrimColor the color of the scrim that is applied to the rest of the screen when the
@@ -138,19 +103,12 @@ fun <T> BottomSheetNavHost(
  * provides additional functionality of the BottomSheetNavHost through
  * the [BottomSheetNavHostScope].
  */
-@Deprecated(
-    message = "Use NewBottomSheetNavHost and define Surface manually instead",
-)
 @Composable
 fun <T> BottomSheetNavHost(
     backstack: NavBackstack<T>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetLayoutModifier: Modifier = Modifier,
-    sheetShape: Shape = BottomSheetDefaults.shape,
-    sheetElevation: Dp = ModalBottomSheetDefaults.Elevation,
-    sheetBackgroundColor: Color = MaterialTheme.colors.surface,
-    sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
     contentSelector: @Composable BottomSheetNavHostScope<T>.(destination: T) -> Unit,
@@ -162,19 +120,16 @@ fun <T> BottomSheetNavHost(
     sheetLayoutModifier = sheetLayoutModifier,
     sheetPropertiesSpec = sheetPropertiesSpec,
     scrimColor = scrimColor,
-    contentSelector = wrapInDefaultSurface(
-        sheetShape,
-        sheetElevation,
-        sheetBackgroundColor,
-        sheetContentColor,
-        contentSelector
-    )
+    contentSelector = contentSelector
 )
 
 /**
  * NavHost analogue of ModalBottomSheetLayout from Material package. Provides better visual
  * transitions between different BottomSheets, as well as all other features of the regular
  * [ScopingNavHost].
+ *
+ * Unlike in ModalBottomSheetLayout, you need to use Surface inside [contentSelector] yourself.
+ * This allows you to customize Surface for each destination.
  *
  * @param controller the navigation controller that will provide its backstack to this
  * BottomSheetNavHost. The last entry of the backstack is always the currently displayed entry.
@@ -193,16 +148,6 @@ fun <T> BottomSheetNavHost(
  * @param sheetLayoutModifier the modifier applied to the inner bottom sheet layout only. May be
  * used to handle window insets.
  *
- * @param sheetShape the shape of the bottom sheet
- *
- * @param sheetElevation the elevation of the bottom sheet
- *
- * @param sheetBackgroundColor the background color of the bottom sheet
- *
- * @param sheetContentColor the preferred content color provided by the bottom sheet to its
- * children. Defaults to the matching content color for [sheetBackgroundColor], or if that is not
- * a color from the theme, this will keep the same content color set above the bottom sheet.
- *
  * @param sheetPropertiesSpec specifies [BottomSheetProperties] for every BottomSheet destination
  *
  * @param scrimColor the color of the scrim that is applied to the rest of the screen when the
@@ -215,9 +160,6 @@ fun <T> BottomSheetNavHost(
  * provides additional functionality of the ScopingBottomSheetNavHost through
  * the [ScopingBottomSheetNavHostScope].
  */
-@Deprecated(
-    message = "Use NewScopingBottomSheetNavHost and define Surface manually instead",
-)
 @Composable
 fun <T, S> ScopingBottomSheetNavHost(
     controller: NavController<T>,
@@ -225,10 +167,6 @@ fun <T, S> ScopingBottomSheetNavHost(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetLayoutModifier: Modifier = Modifier,
-    sheetShape: Shape = BottomSheetDefaults.shape,
-    sheetElevation: Dp = ModalBottomSheetDefaults.Elevation,
-    sheetBackgroundColor: Color = MaterialTheme.colors.surface,
-    sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
@@ -240,19 +178,16 @@ fun <T, S> ScopingBottomSheetNavHost(
     sheetLayoutModifier = sheetLayoutModifier,
     sheetPropertiesSpec = sheetPropertiesSpec,
     scrimColor = scrimColor,
-    contentSelector = wrapInDefaultSurface(
-        sheetShape,
-        sheetElevation,
-        sheetBackgroundColor,
-        sheetContentColor,
-        contentSelector
-    )
+    contentSelector = contentSelector
 )
 
 /**
  * NavHost analogue of ModalBottomSheetLayout from Material package. Provides better visual
  * transitions between different BottomSheets, as well as all other features of the regular
  * [ScopingNavHost].
+ *
+ * Unlike in ModalBottomSheetLayout, you need to use Surface inside [contentSelector] yourself.
+ * This allows you to customize Surface for each destination.
  *
  * @param backstack the backstack from a [NavController] that will be used to observe navigation
  * changes. The last entry of the backstack is always the currently displayed entry.
@@ -271,16 +206,6 @@ fun <T, S> ScopingBottomSheetNavHost(
  * @param sheetLayoutModifier the modifier applied to the inner bottom sheet layout only. May be
  * used to handle window insets.
  *
- * @param sheetShape the shape of the bottom sheet
- *
- * @param sheetElevation the elevation of the bottom sheet
- *
- * @param sheetBackgroundColor the background color of the bottom sheet
- *
- * @param sheetContentColor the preferred content color provided by the bottom sheet to its
- * children. Defaults to the matching content color for [sheetBackgroundColor], or if that is not
- * a color from the theme, this will keep the same content color set above the bottom sheet.
- *
  * @param sheetPropertiesSpec specifies [BottomSheetProperties] for every BottomSheet destination
  *
  * @param scrimColor the color of the scrim that is applied to the rest of the screen when the
@@ -293,9 +218,6 @@ fun <T, S> ScopingBottomSheetNavHost(
  * provides additional functionality of the ScopingBottomSheetNavHost through
  * the [ScopingBottomSheetNavHostScope].
  */
-@Deprecated(
-    message = "Use NewScopingBottomSheetNavHost and define Surface manually instead",
-)
 @Composable
 fun <T, S> ScopingBottomSheetNavHost(
     backstack: NavBackstack<T>,
@@ -303,10 +225,6 @@ fun <T, S> ScopingBottomSheetNavHost(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetLayoutModifier: Modifier = Modifier,
-    sheetShape: Shape = BottomSheetDefaults.shape,
-    sheetElevation: Dp = ModalBottomSheetDefaults.Elevation,
-    sheetBackgroundColor: Color = MaterialTheme.colors.surface,
-    sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
     sheetPropertiesSpec: BottomSheetPropertiesSpec<T> = DefaultBottomSheetPropertiesSpec,
     scrimColor: Color = ModalBottomSheetDefaults.scrimColor,
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
@@ -318,42 +236,5 @@ fun <T, S> ScopingBottomSheetNavHost(
     sheetLayoutModifier = sheetLayoutModifier,
     sheetPropertiesSpec = sheetPropertiesSpec,
     scrimColor = scrimColor,
-    contentSelector = wrapInDefaultSurface(
-        sheetShape,
-        sheetElevation,
-        sheetBackgroundColor,
-        sheetContentColor,
-        contentSelector
-    )
+    contentSelector = contentSelector
 )
-
-@Composable
-private inline fun <T, S> wrapInDefaultSurface(
-    sheetShape: Shape,
-    sheetElevation: Dp,
-    sheetBackgroundColor: Color,
-    sheetContentColor: Color,
-    crossinline contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit
-): @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit = {
-    Surface(
-        shape = sheetShape,
-        elevation = sheetElevation,
-        color = sheetBackgroundColor,
-        contentColor = sheetContentColor
-    ) {
-        Column {
-            contentSelector(it)
-        }
-    }
-}
-
-internal object BottomSheetDefaults {
-
-    val shape: Shape
-        @Composable
-        get() = MaterialTheme.shapes.large.copy(
-            bottomStart = CornerSize(0.dp),
-            bottomEnd = CornerSize(0.dp)
-        )
-
-}
