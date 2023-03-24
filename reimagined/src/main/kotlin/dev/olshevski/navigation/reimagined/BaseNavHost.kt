@@ -61,7 +61,7 @@ import androidx.lifecycle.Lifecycle
 fun <T, S> BaseNavHost(
     state: ScopingNavHostState<T, S>,
     visibleItems: (snapshot: NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },
-    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.QueueAll,
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.Interrupt,
     transition: @Composable (snapshot: NavSnapshot<T, S>) -> NavSnapshot<T, S>
 ) {
     state as NavHostStateImpl
@@ -159,6 +159,7 @@ private fun <T, S> addToQueue(
                 queue.add(snapshot)
             }
         }
+        NavTransitionQueueing.Interrupt -> queue.clear()
     }
 }
 

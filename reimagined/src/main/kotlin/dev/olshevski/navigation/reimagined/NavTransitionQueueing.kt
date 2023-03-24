@@ -1,5 +1,7 @@
 package dev.olshevski.navigation.reimagined
 
+import androidx.compose.animation.AnimatedContent
+
 /**
  * A strategy of processing incoming transitions when transition animations run slower than being
  * added.
@@ -15,8 +17,8 @@ enum class NavTransitionQueueing {
      *
      * *A -> B -> C -> D*
      *
-     * This is the default behaviour. [NavTransitionSpec] may support only the expected set of
-     * possible transitions that your app does.
+     * [NavTransitionSpec] may support only the expected set of possible transitions that your app
+     * does.
      */
     QueueAll,
 
@@ -35,6 +37,19 @@ enum class NavTransitionQueueing {
      * Note that in this case your [NavTransitionSpec] should expect transitions between any
      * possible combination of two destinations.
      */
-    Conflate
+    Conflate,
+
+    /**
+     * The currently running transition will be interrupted and replaced with a new transition.
+     *
+     * It is up to the underlying implementation (e.g. for [AnimatedContent] in [AnimatedNavHost])
+     * to handle and animate after the interruption correctly. Note that it may not look
+     * visually pleasing in all the cases. You can choose to [Conflate] or [QueueAll] in order
+     * to guarantee that the currently running transition finishes before moving to the next one.
+     *
+     * This is the default behaviour. Same as in `QueueAll` [NavTransitionSpec] may support only
+     * the expected set of possible transitions that your app does.
+     */
+    Interrupt
 
 }
