@@ -320,7 +320,10 @@ fun <T, S> ScopingNavHost(
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable ScopingNavHostScope<T, S>.(T) -> Unit
-) = BaseNavHost(state) { snapshot ->
+) = BaseNavHost(
+    state = state,
+    transitionQueueing = NavTransitionQueueing.Interrupt
+) { snapshot ->
     Box(
         modifier = modifier,
         contentAlignment = contentAlignment

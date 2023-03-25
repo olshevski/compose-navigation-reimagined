@@ -47,21 +47,21 @@ import androidx.lifecycle.Lifecycle
  * and all Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry)
  * for every entry and every scope.
  *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
+ *
  * @param visibleItems controls the lifecycle states of [NavHostEntries][NavHostEntry].
  * By default, only the last entry is considered active and promoted to
  * [RESUMED][Lifecycle.State.RESUMED] state. With this function parameter, you can have several
  * entries receive `RESUMED` state. It is also possible to control lifecycle states of entries
  * dynamically. BaseNavHost will subscribe to all [State] object changes read inside [visibleItems].
- *
- * @param transitionQueueing the strategy of processing incoming transitions when transition
- * animations run slower than being added
  */
 @ExperimentalReimaginedApi
 @Composable
 fun <T, S> BaseNavHost(
     state: ScopingNavHostState<T, S>,
+    transitionQueueing: NavTransitionQueueing,
     visibleItems: (snapshot: NavSnapshot<T, S>) -> Set<NavSnapshotItem<T, S>> = { setOfNotNull(it.items.lastOrNull()) },
-    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.Interrupt,
     transition: @Composable (snapshot: NavSnapshot<T, S>) -> NavSnapshot<T, S>
 ) {
     state as NavHostStateImpl
@@ -159,7 +159,9 @@ private fun <T, S> addToQueue(
                 queue.add(snapshot)
             }
         }
-        NavTransitionQueueing.Interrupt -> queue.clear()
+        NavTransitionQueueing.Interrupt -> if (queue.isNotEmpty()) {
+            queue.clear()
+        }
     }
 }
 

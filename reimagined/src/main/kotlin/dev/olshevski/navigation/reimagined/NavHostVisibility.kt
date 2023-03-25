@@ -85,15 +85,17 @@ fun NavHostAnimatedVisibility(
     visible: Boolean,
     enter: EnterTransition = fadeIn(tween()),
     exit: ExitTransition = fadeOut(tween()),
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.Interrupt,
     content: @Composable AnimatedVisibilityScope.() -> Unit
 ) {
     val controller = rememberNavController<VisibilityUnit>(initialBackstack = emptyList())
     controller.setVisibility(visible)
     BaseNavHost(
-        rememberScopingNavHostState(
+        state = rememberScopingNavHostState(
             controller.backstack,
             EmptyScopeSpec
-        )
+        ),
+        transitionQueueing = transitionQueueing
     ) { targetSnapshot ->
         val transition = updateTransition(
             targetState = targetSnapshot,
