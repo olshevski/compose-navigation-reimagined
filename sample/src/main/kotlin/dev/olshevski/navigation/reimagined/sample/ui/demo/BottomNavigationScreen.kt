@@ -26,7 +26,6 @@ import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.NavBackHandler
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.NavHost
-import dev.olshevski.navigation.reimagined.NavTransitionQueueing
 import dev.olshevski.navigation.reimagined.moveToTop
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
@@ -73,8 +72,7 @@ fun BottomNavigationScreen() = ScreenLayout(
     Column {
         Box(Modifier.weight(1f)) {
             AnimatedNavHost(
-                controller = navController,
-                transitionQueueing = NavTransitionQueueing.Conflate
+                controller = navController
             ) { destination ->
                 when (destination) {
                     BottomDestination.Home -> HomeScreen()
