@@ -67,7 +67,7 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 /*
- * Based on ModalBottomSheet.kt from androidx.compose.material package (last commit 039407b).
+ * Based on ModalBottomSheet.kt from androidx.compose.material package (last commit 8cfec3c).
  *
  * Reference:
  * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:compose/material/material/src/commonMain/kotlin/androidx/compose/material/ModalBottomSheet.kt
