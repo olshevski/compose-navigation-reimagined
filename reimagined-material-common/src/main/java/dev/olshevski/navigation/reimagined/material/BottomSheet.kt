@@ -517,7 +517,7 @@ private fun ModalBottomSheetAnchorChangeHandler(
     }
     val newTargetOffset = newAnchors.getValue(newTarget)
     if (newTargetOffset != previousTargetOffset) {
-        if (state.isAnimationRunning || previousAnchors.isEmpty()) {
+        if (state.isAnimationRunning) {
             // Re-target the animation to the new offset if it changed
             animateTo(newTarget, state.lastVelocity)
         } else {
