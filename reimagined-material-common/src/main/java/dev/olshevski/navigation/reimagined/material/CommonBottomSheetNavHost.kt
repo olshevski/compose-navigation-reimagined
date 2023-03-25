@@ -153,11 +153,7 @@ fun <T, S> CommonBottomSheetNavHost(
         if (targetSnapshot.lastEntry != currentSnapshot.lastEntry) {
             try {
                 isTransitionAnimating = true
-                sheetState?.let { sheetState ->
-                    if (sheetState.currentValue != BottomSheetValue.Hidden) {
-                        sheetState.hide()
-                    }
-                }
+                sheetState?.hide()
 
                 currentSnapshot = targetSnapshot
                 sheetState = currentSnapshot.lastEntry?.let { lastEntry ->
