@@ -322,7 +322,7 @@ fun <T, S> ScopingNavHost(
     contentSelector: @Composable ScopingNavHostScope<T, S>.(T) -> Unit
 ) = BaseNavHost(
     state = state,
-    transitionQueueing = NavTransitionQueueing.Interrupt
+    transitionQueueing = NavTransitionQueueing.InterruptCurrent
 ) { snapshot ->
     Box(
         modifier = modifier,

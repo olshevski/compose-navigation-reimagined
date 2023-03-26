@@ -56,7 +56,7 @@ fun <T> AnimatedNavHost(
     controller: NavController<T>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
-    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.Interrupt,
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.InterruptCurrent,
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
@@ -109,7 +109,7 @@ fun <T> AnimatedNavHost(
     backstack: NavBackstack<T>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
-    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.Interrupt,
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.InterruptCurrent,
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
@@ -162,7 +162,7 @@ fun <T> AnimatedNavHost(
     state: NavHostState<T>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
-    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.Interrupt,
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.InterruptCurrent,
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
@@ -238,7 +238,7 @@ fun <T, S> ScopingAnimatedNavHost(
     scopeSpec: NavScopeSpec<T, S>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
-    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.Interrupt,
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.InterruptCurrent,
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(destination: T) -> Unit
@@ -311,7 +311,7 @@ fun <T, S> ScopingAnimatedNavHost(
     scopeSpec: NavScopeSpec<T, S>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
-    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.Interrupt,
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.InterruptCurrent,
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(destination: T) -> Unit
@@ -382,7 +382,7 @@ fun <T, S> ScopingAnimatedNavHost(
     state: ScopingNavHostState<T, S>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
-    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.Interrupt,
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.InterruptCurrent,
     contentAlignment: Alignment = Alignment.TopStart,
     emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(T) -> Unit

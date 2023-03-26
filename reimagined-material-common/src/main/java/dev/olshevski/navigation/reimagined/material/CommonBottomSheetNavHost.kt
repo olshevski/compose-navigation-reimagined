@@ -48,7 +48,7 @@ fun <T, S> CommonBottomSheetNavHost(
     contentSelector: @Composable ScopingBottomSheetNavHostScope<T, S>.(destination: T) -> Unit,
 ) = @OptIn(ExperimentalReimaginedApi::class) BaseNavHost(
     state = rememberScopingNavHostState(backstack, scopeSpec),
-    transitionQueueing = NavTransitionQueueing.Conflate
+    transitionQueueing = NavTransitionQueueing.ConflateQueued
 ) { snapshot ->
     val targetSnapshot by rememberUpdatedState(snapshot)
     var currentSnapshot by remember { mutableStateOf(targetSnapshot) }

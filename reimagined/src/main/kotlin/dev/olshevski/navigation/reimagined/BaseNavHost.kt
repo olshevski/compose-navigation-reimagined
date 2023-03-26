@@ -33,9 +33,20 @@ import androidx.lifecycle.Lifecycle
  * `currentState` is set to `targetState` only when  transition ends. You may think of the input
  * parameter of [transition] as `targetState` and the returned value as `currentState`.
  *
- * BaseNavHost does the internal queueing. It would not send you the next target snapshot unless
- * you finish the transition and return the target snapshot back as a result of [transition].
- * Only then the next target snapshot will be passed into `transition`.
+ * **Queueing:**
+ *
+ * BaseNavHost does the internal queueing depending on [transitionQueueing]:
+ *
+ * - If the parameter is either [QueueAll][NavTransitionQueueing.QueueAll] or
+ * [ConflateQueued][NavTransitionQueueing.ConflateQueued], then BaseNavHost would not send you
+ * the next target snapshot unless you finish the current transition and return the target snapshot
+ * back as a result of [transition]. Only then the next target snapshot will be passed into
+ * `transition`.
+ *
+ * - If the parameter is [InterruptCurrent][NavTransitionQueueing.InterruptCurrent] then
+ * BaseNavHost will send you any new target snapshot as soon as possible. It is up to the
+ * implementation to resolve and animate the interruption correctly. When the last uninterrupted
+ * transition finishes you must return the most recent target snapshot.
  *
  * All library's default NavHosts use BaseNavHost internally, so you may explore their sources as
  * examples.
@@ -151,7 +162,7 @@ private fun <T, S> addToQueue(
 ) {
     when (transitionQueueing) {
         NavTransitionQueueing.QueueAll -> queue.add(snapshot)
-        NavTransitionQueueing.Conflate -> {
+        NavTransitionQueueing.ConflateQueued -> {
             // Keep 2 items max: the first item is the currently running transition, the second one
             // is the pending transition. Replace the pending transition.
             if (queue.size < 2) {
@@ -162,7 +173,7 @@ private fun <T, S> addToQueue(
                 queue.add(snapshot)
             }
         }
-        NavTransitionQueueing.Interrupt -> if (queue.isNotEmpty()) {
+        NavTransitionQueueing.InterruptCurrent -> if (queue.isNotEmpty()) {
             queue.clear()
         }
     }
