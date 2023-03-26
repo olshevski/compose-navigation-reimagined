@@ -92,12 +92,16 @@ fun <T, S> BaseNavHost(
         }
 
         DisposableEffect(currentVisibleItems) {
-            state.onTransitionFinish(currentVisibleItems)
+            if (currentVisibleItems == targetVisibleItems) {
+                state.onTransitionFinish(currentVisibleItems)
+            }
             onDispose {}
         }
 
         DisposableEffect(currentSnapshot) {
-            state.removeOutdatedHostEntries(currentSnapshot)
+            if (currentSnapshot == targetSnapshot) {
+                state.removeOutdatedHostEntries(currentSnapshot)
+            }
             onDispose {}
         }
     }
