@@ -123,9 +123,7 @@ private fun <T, S> enqueueSnapshotTransition(
     // Queue of pending transitions. The first item in the queue is the currently running
     // transition.
     val queue = remember { mutableStateListOf<NavSnapshot<T, S>>() }
-    val targetSnapshot by remember(snapshot) {
-        derivedStateOf { queue.firstOrNull() ?: snapshot }
-    }
+    val targetSnapshot = queue.firstOrNull() ?: snapshot
     val currentSnapshot = transition(targetSnapshot)
 
     DisposableEffect(snapshot) {
@@ -142,6 +140,7 @@ private fun <T, S> enqueueSnapshotTransition(
             }
         }
     }
+
     return TransitionState(targetSnapshot = targetSnapshot, currentSnapshot = currentSnapshot)
 }
 
