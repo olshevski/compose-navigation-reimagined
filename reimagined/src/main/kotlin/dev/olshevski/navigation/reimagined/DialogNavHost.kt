@@ -27,7 +27,7 @@ private val NoneTransitionSpec = NavTransitionSpec<Any?> { _, _, _ ->
  * Note that DialogNavHost doesn't wrap your composables into a [Dialog]. You need to use
  * either `Dialog` or `AlertDialog` composable inside a [contentSelector] yourself.
  *
- * @param controller a navigation controller that will provide its backstack to this
+ * @param controller the navigation controller that will provide its backstack to this
  * DialogNavHost. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but setting a different [NavController] will be handled correctly.
@@ -46,9 +46,10 @@ fun <T> DialogNavHost(
     controller: NavController<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable NavHostScope<T>.(destination: T) -> Unit
-) = DialogNavHost(
-    backstack = controller.backstack,
-    emptyBackstackPlaceholder = emptyBackstackPlaceholder,
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
+    state = rememberScopingNavHostState(controller.backstack, EmptyScopeSpec),
+    transitionSpec = NoneTransitionSpec,
+    emptyBackstackPlaceholder = { emptyBackstackPlaceholder() },
     contentSelector = contentSelector
 )
 
@@ -83,9 +84,9 @@ fun <T> DialogNavHost(
     backstack: NavBackstack<T>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable NavHostScope<T>.(destination: T) -> Unit
-) = ScopingDialogNavHost(
-    backstack = backstack,
-    scopeSpec = EmptyScopeSpec,
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
+    state = rememberScopingNavHostState(backstack, EmptyScopeSpec),
+    transitionSpec = NoneTransitionSpec,
     emptyBackstackPlaceholder = { emptyBackstackPlaceholder() },
     contentSelector = { contentSelector(it) }
 )
@@ -120,7 +121,7 @@ fun <T> DialogNavHost(
  * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
  * easily accessible from different destinations.
  *
- * @param controller a navigation controller that will provide its backstack to this
+ * @param controller the navigation controller that will provide its backstack to this
  * DialogNavHost. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but setting a different [NavController] will be handled correctly.
@@ -143,9 +144,9 @@ fun <T, S> ScopingDialogNavHost(
     scopeSpec: NavScopeSpec<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable ScopingNavHostScope<T, S>.(destination: T) -> Unit
-) = ScopingDialogNavHost(
-    backstack = controller.backstack,
-    scopeSpec = scopeSpec,
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
+    state = rememberScopingNavHostState(controller.backstack, scopeSpec),
+    transitionSpec = NoneTransitionSpec,
     emptyBackstackPlaceholder = { emptyBackstackPlaceholder() },
     contentSelector = { contentSelector(it) }
 )
@@ -202,9 +203,8 @@ fun <T, S> ScopingDialogNavHost(
     scopeSpec: NavScopeSpec<T, S>,
     emptyBackstackPlaceholder: @Composable () -> Unit = {},
     contentSelector: @Composable ScopingNavHostScope<T, S>.(destination: T) -> Unit
-) = ScopingAnimatedNavHost(
-    backstack = backstack,
-    scopeSpec = scopeSpec,
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
+    state = rememberScopingNavHostState(backstack, scopeSpec),
     transitionSpec = NoneTransitionSpec,
     emptyBackstackPlaceholder = { emptyBackstackPlaceholder() },
     contentSelector = { contentSelector(it) }

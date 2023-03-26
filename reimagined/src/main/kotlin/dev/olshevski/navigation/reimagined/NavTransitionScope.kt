@@ -94,10 +94,3 @@ internal class NavTransitionScopeImpl<S>(
         with(animatedContentScope) { using(sizeTransform) }
 
 }
-
-@Deprecated(
-    message = "Renamed to NavTransitionScope for simplicity",
-    replaceWith = ReplaceWith("NavTransitionScope")
-)
-@OptIn(ExperimentalAnimationApi::class)
-typealias AnimatedNavHostTransitionScope = NavTransitionScope

@@ -27,13 +27,20 @@ import androidx.lifecycle.ViewModelStoreOwner
  *
  * If you don't need animated transitions use [NavHost] instead.
  *
- * @param controller a navigation controller that will provide its backstack to this
+ * @param controller the navigation controller that will provide its backstack to this
  * AnimatedNavHost. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but setting a different [NavController] will be handled correctly.
  *
+ * @param modifier the modifier to be applied to AnimatedNavHost
+ *
  * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
+ *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
+ *
+ * @param contentAlignment the alignment inside AnimatedNavHost
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
  * be displayed when the backstack is empty. In the majority of cases you don't need
@@ -49,15 +56,17 @@ fun <T> AnimatedNavHost(
     controller: NavController<T>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
-    emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.InterruptCurrent,
     contentAlignment: Alignment = Alignment.TopStart,
+    emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
-) = AnimatedNavHost(
-    backstack = controller.backstack,
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
+    state = rememberScopingNavHostState(controller.backstack, EmptyScopeSpec),
     modifier = modifier,
     transitionSpec = transitionSpec,
-    emptyBackstackPlaceholder = emptyBackstackPlaceholder,
+    transitionQueueing = transitionQueueing,
     contentAlignment = contentAlignment,
+    emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
 )
 
@@ -76,8 +85,15 @@ fun <T> AnimatedNavHost(
  * You should do all backstack modifications through the same instance of [NavController],
  * but using a different [NavController] and setting its backstack will be handled correctly.
  *
+ * @param modifier the modifier to be applied to AnimatedNavHost
+ *
  * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
+ *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
+ *
+ * @param contentAlignment the alignment inside AnimatedNavHost
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
  * be displayed when the backstack is empty. In the majority of cases you don't need
@@ -93,15 +109,17 @@ fun <T> AnimatedNavHost(
     backstack: NavBackstack<T>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
-    emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.InterruptCurrent,
     contentAlignment: Alignment = Alignment.TopStart,
+    emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
-) = @OptIn(ExperimentalReimaginedApi::class) AnimatedNavHost(
-    state = rememberNavHostState(backstack),
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
+    state = rememberScopingNavHostState(backstack, EmptyScopeSpec),
     modifier = modifier,
     transitionSpec = transitionSpec,
-    emptyBackstackPlaceholder = emptyBackstackPlaceholder,
+    transitionQueueing = transitionQueueing,
     contentAlignment = contentAlignment,
+    emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
 )
 
@@ -115,12 +133,19 @@ fun <T> AnimatedNavHost(
  *
  * If you don't need animated transitions use [NavHost] instead.
  *
- * @param state holder of all internal AnimatedNavHost state. Stores and manages saved state
+ * @param state the holder of all internal AnimatedNavHost state. Stores and manages saved state
  * and all Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry)
  * for every entry.
  *
+ * @param modifier the modifier to be applied to AnimatedNavHost
+ *
  * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
+ *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
+ *
+ * @param contentAlignment the alignment inside AnimatedNavHost
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
  * be displayed when the backstack is empty. In the majority of cases you don't need
@@ -137,15 +162,17 @@ fun <T> AnimatedNavHost(
     state: NavHostState<T>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
-    emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.InterruptCurrent,
     contentAlignment: Alignment = Alignment.TopStart,
+    emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable AnimatedNavHostScope<T>.(destination: T) -> Unit
 ) = @Suppress("UNCHECKED_CAST") ScopingAnimatedNavHost(
     state = state as ScopingNavHostState<T, Nothing>,
     modifier = modifier,
     transitionSpec = transitionSpec,
-    emptyBackstackPlaceholder = emptyBackstackPlaceholder,
+    transitionQueueing = transitionQueueing,
     contentAlignment = contentAlignment,
+    emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
 )
 
@@ -177,7 +204,7 @@ fun <T> AnimatedNavHost(
  * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
  * easily accessible from different destinations.
  *
- * @param controller a navigation controller that will provide its backstack to this
+ * @param controller the navigation controller that will provide its backstack to this
  * AnimatedNavHost. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but setting a different [NavController] will be handled correctly.
@@ -185,8 +212,15 @@ fun <T> AnimatedNavHost(
  * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
  * create and access scoped [ViewModelStoreOwners][ViewModelStoreOwner].
  *
+ * @param modifier the modifier to be applied to AnimatedNavHost
+ *
  * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
+ *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
+ *
+ * @param contentAlignment the alignment inside AnimatedNavHost
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
  * be displayed when the backstack is empty. In the majority of cases you don't need
@@ -204,16 +238,17 @@ fun <T, S> ScopingAnimatedNavHost(
     scopeSpec: NavScopeSpec<T, S>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
-    emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.InterruptCurrent,
     contentAlignment: Alignment = Alignment.TopStart,
+    emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(destination: T) -> Unit
-) = ScopingAnimatedNavHost(
-    backstack = controller.backstack,
-    scopeSpec = scopeSpec,
+) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
+    state = rememberScopingNavHostState(controller.backstack, scopeSpec),
     modifier = modifier,
     transitionSpec = transitionSpec,
-    emptyBackstackPlaceholder = emptyBackstackPlaceholder,
+    transitionQueueing = transitionQueueing,
     contentAlignment = contentAlignment,
+    emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
 )
 
@@ -255,6 +290,11 @@ fun <T, S> ScopingAnimatedNavHost(
  * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
  *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
+ *
+ * @param contentAlignment the alignment inside AnimatedNavHost
+ *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
  * be displayed when the backstack is empty. In the majority of cases you don't need
  * to set this. Note that the provided composable wouldn't get its own scoped components.
@@ -271,15 +311,17 @@ fun <T, S> ScopingAnimatedNavHost(
     scopeSpec: NavScopeSpec<T, S>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
-    emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.InterruptCurrent,
     contentAlignment: Alignment = Alignment.TopStart,
+    emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(destination: T) -> Unit
 ) = @OptIn(ExperimentalReimaginedApi::class) ScopingAnimatedNavHost(
     state = rememberScopingNavHostState(backstack, scopeSpec),
     modifier = modifier,
     transitionSpec = transitionSpec,
-    emptyBackstackPlaceholder = emptyBackstackPlaceholder,
+    transitionQueueing = transitionQueueing,
     contentAlignment = contentAlignment,
+    emptyBackstackPlaceholder = emptyBackstackPlaceholder,
     contentSelector = contentSelector
 )
 
@@ -310,12 +352,19 @@ fun <T, S> ScopingAnimatedNavHost(
  * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
  * easily accessible from different destinations.
  *
- * @param state holder of all internal ScopingAnimatedNavHost state. Stores and manages saved state
- * and all Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry)
+ * @param state the holder of all internal ScopingAnimatedNavHost state. Stores and manages saved
+ * state and all Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry)
  * for every entry and every scope.
+ *
+ * @param modifier the modifier to be applied to AnimatedNavHost
  *
  * @param transitionSpec specifies the desired transitions. If not set, the default transition
  * will be a simple crossfade.
+ *
+ * @param transitionQueueing the strategy of processing incoming transitions when transition
+ * animations run slower than being added
+ *
+ * @param contentAlignment the alignment inside AnimatedNavHost
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
  * be displayed when the backstack is empty. In the majority of cases you don't need
@@ -333,10 +382,14 @@ fun <T, S> ScopingAnimatedNavHost(
     state: ScopingNavHostState<T, S>,
     modifier: Modifier = Modifier,
     transitionSpec: NavTransitionSpec<T> = CrossfadeTransitionSpec,
-    emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.InterruptCurrent,
     contentAlignment: Alignment = Alignment.TopStart,
+    emptyBackstackPlaceholder: @Composable AnimatedVisibilityScope.() -> Unit = {},
     contentSelector: @Composable ScopingAnimatedNavHostScope<T, S>.(T) -> Unit
-) = BaseNavHost(state) { targetSnapshot ->
+) = BaseNavHost(
+    state = state,
+    transitionQueueing = transitionQueueing
+) { targetSnapshot ->
     val transition = updateTransition(
         targetState = targetSnapshot,
         label = "AnimatedNavHost"
@@ -352,11 +405,12 @@ fun <T, S> ScopingAnimatedNavHost(
         val lastSnapshotItem = snapshot.items.lastOrNull()
         if (lastSnapshotItem != null) {
             lastSnapshotItem.hostEntry.ComponentsProvider {
-                val scope = remember(snapshot, this@AnimatedContent) {
+                val animatedVisibilityScope = this@AnimatedContent
+                val scope = remember(snapshot, animatedVisibilityScope) {
                     ScopingAnimatedNavHostScopeImpl(
                         hostEntries = snapshot.items.map { it.hostEntry },
                         scopedHostEntries = lastSnapshotItem.scopedHostEntries,
-                        animatedVisibilityScope = this@AnimatedContent
+                        animatedVisibilityScope = animatedVisibilityScope
                     )
                 }
                 scope.contentSelector(lastSnapshotItem.hostEntry.destination)

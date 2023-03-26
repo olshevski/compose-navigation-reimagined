@@ -25,7 +25,7 @@ import kotlin.properties.Delegates
 @Stable
 sealed class BaseNavHostEntry(
     val id: NavId,
-    private val viewModelStore: ViewModelStore,
+    override val viewModelStore: ViewModelStore,
     private val application: Application?
 ) : ViewModelStoreOwner,
     LifecycleOwner,
@@ -56,14 +56,25 @@ sealed class BaseNavHostEntry(
         SavedStateViewModelFactory(application, this, null)
     }
 
+    override val lifecycle: Lifecycle = lifecycleRegistry
+
+    override val defaultViewModelProviderFactory: ViewModelProvider.Factory = defaultFactory
+
+    override val defaultViewModelCreationExtras: CreationExtras
+        get() {
+            val extras = MutableCreationExtras()
+            if (application != null) {
+                extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] = application
+            }
+            extras[SAVED_STATE_REGISTRY_OWNER_KEY] = this
+            extras[VIEW_MODEL_STORE_OWNER_KEY] = this
+            return extras
+        }
+
     init {
         savedStateRegistryController.performAttach()
         enableSavedStateHandles()
     }
-
-    override fun getViewModelStore() = viewModelStore
-
-    override fun getLifecycle(): Lifecycle = lifecycleRegistry
 
     private fun updateLifecycleRegistry() {
         val currentState = lifecycleRegistry.currentState
@@ -84,18 +95,6 @@ sealed class BaseNavHostEntry(
 
     internal fun restoreState(savedState: Bundle) {
         savedStateRegistryController.performRestore(savedState)
-    }
-
-    override fun getDefaultViewModelProviderFactory() = defaultFactory
-
-    override fun getDefaultViewModelCreationExtras(): CreationExtras {
-        val extras = MutableCreationExtras()
-        if (application != null) {
-            extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] = application
-        }
-        extras[SAVED_STATE_REGISTRY_OWNER_KEY] = this
-        extras[VIEW_MODEL_STORE_OWNER_KEY] = this
-        return extras
     }
 
 }

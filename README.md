@@ -18,7 +18,7 @@ A small and simple, yet fully fledged and customizable navigation library for [J
 Add a single dependency to your project:
 
 ```kotlin
-implementation("dev.olshevski.navigation:reimagined:1.3.1")
+implementation("dev.olshevski.navigation:reimagined:1.4.0")
 ```
 
 Define a set of screens. It is convenient to use a sealed class for this:
@@ -91,10 +91,16 @@ Library-specific `hiltViewModel()` implementation:
 implementation("dev.olshevski.navigation:reimagined-hilt:<latest-version>")
 ```
 
-Support for bottom sheets navigation through `BottomSheetNavHost`:
+`BottomSheetNavHost` implementation:
 
 ```koltin
 implementation("dev.olshevski.navigation:reimagined-material:<latest-version>")
+```
+
+`BottomSheetNavHost`, but only with Material 3 dependencies:
+
+```koltin
+implementation("dev.olshevski.navigation:reimagined-material3:<latest-version>")
 ```
 
 ## Sample
@@ -117,7 +123,7 @@ I've been thinking about Android app architecture and navigation in particular f
 I hope it can help you as well.
 
 <p align="center">
-    <img width="600" src="https://user-images.githubusercontent.com/5606565/153843642-7eb6252f-cabc-4f80-9377-4c66567c98a4.svg" />
+    <img width="600" src="https://user-images.githubusercontent.com/5606565/227801130-39bee5cf-cf75-47c1-8791-f7753b5c7c0d.svg" />
 </p>
 
-*If you like this library and find it useful, please star the project and share it with your fellow developers.*
+*If you like this library and find it useful, please star the project and share it with your fellow developers. You can also [buy me a coffee](https://www.buymeacoffee.com/olshevski).*

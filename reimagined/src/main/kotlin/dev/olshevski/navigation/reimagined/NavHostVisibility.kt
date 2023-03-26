@@ -47,6 +47,7 @@ private fun NavController<VisibilityUnit>.setVisibility(visible: Boolean) {
  * }
  * ```
  */
+@ExperimentalReimaginedApi
 @Composable
 fun NavHostVisibility(
     visible: Boolean,
@@ -77,18 +78,25 @@ fun NavHostVisibility(
  * }
  * ```
  */
+@ExperimentalReimaginedApi
 @ExperimentalAnimationApi
 @Composable
 fun NavHostAnimatedVisibility(
     visible: Boolean,
     enter: EnterTransition = fadeIn(tween()),
     exit: ExitTransition = fadeOut(tween()),
+    transitionQueueing: NavTransitionQueueing = NavTransitionQueueing.InterruptCurrent,
     content: @Composable AnimatedVisibilityScope.() -> Unit
 ) {
     val controller = rememberNavController<VisibilityUnit>(initialBackstack = emptyList())
     controller.setVisibility(visible)
-    @OptIn(ExperimentalReimaginedApi::class)
-    BaseNavHost(controller.backstack, EmptyScopeSpec) { targetSnapshot ->
+    BaseNavHost(
+        state = rememberScopingNavHostState(
+            controller.backstack,
+            EmptyScopeSpec
+        ),
+        transitionQueueing = transitionQueueing
+    ) { targetSnapshot ->
         val transition = updateTransition(
             targetState = targetSnapshot,
             label = "NavHostAnimatedVisibility"
