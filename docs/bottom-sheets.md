@@ -9,7 +9,11 @@ Similar to dialogs, you may use BottomSheetNavHost to handle a backstack of bott
 To use it, you need to add the dependency:
 
 ```kotlin
+// if you are using Material
 implementation("dev.olshevski.navigation:reimagined-material:<latest-version>")
+
+// if you are using Material 3
+implementation("dev.olshevski.navigation:reimagined-material3:<latest-version>")
 ```
 
 The usage would look like this:
@@ -42,9 +46,13 @@ fun NavHostScreen() {
         controller = sheetController,
         onDismissRequest = { sheetController.pop() }
     ) { destination ->
-        when (destination) {
-            SheetDestination.First -> { /* ... */ }
-            SheetDestination.Second -> { /* ... */ }
+        Surface(
+            elevation = ModalBottomSheetDefaults.Elevation
+        ) {
+            when (destination) {
+                SheetDestination.First -> { /* ... */ }
+                SheetDestination.Second -> { /* ... */ }
+            }
         }
     }
 }
