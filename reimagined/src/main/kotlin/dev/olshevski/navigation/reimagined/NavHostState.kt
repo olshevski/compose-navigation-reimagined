@@ -139,7 +139,7 @@ sealed interface NavHostState<T> {
 
     /**
      * Get [NavHostEntry] for the specified [id]. There must be an entry with this id
-     * in the current [backstack]. Otherwise [IllegalStateException] will be thrown.
+     * in the current [backstack]. Otherwise, [IllegalArgumentException] will be thrown.
      *
      * This method is intended to provide access to NavHostEntries outside of the current NavHost,
      * e.g. for communication between several NavHosts. If you want to access NavHostEntries
@@ -159,7 +159,7 @@ sealed interface ScopingNavHostState<T, S> : NavHostState<T> {
 
     /**
      * Get [ScopedNavHostEntry] for the specified [scope]. There must be at least one entry
-     * associated with this scope in the current [backstack]. Otherwise [IllegalStateException]
+     * associated with this scope in the current [backstack]. Otherwise, [IllegalArgumentException]
      * will be thrown.
      *
      * This method is intended to provide access to ScopedNavHostEntries outside of the current
@@ -408,7 +408,7 @@ internal class NavHostStateImpl<T, S>(
     @ExperimentalReimaginedApi
     override fun getHostEntry(id: NavId): NavHostEntry<T> {
         val entry = backstack.entries.find { it.id == id }
-        require(entry != null) {
+        requireNotNull(entry) {
             "There must be an entry with the specified id in the current backstack"
         }
         return hostEntriesMap.getOrPut(entry.id) {
