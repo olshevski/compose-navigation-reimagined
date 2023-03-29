@@ -1,6 +1,13 @@
 package dev.olshevski.navigation.reimagined
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalSavedStateRegistryOwner
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 
 /**
  * Backstack snapshot with all [NavHostEntries][NavHostEntry] and
@@ -24,3 +31,18 @@ data class NavSnapshotItem<out T, S> internal constructor(
     val hostEntry: NavHostEntry<T>,
     val scopedHostEntries: Map<S, ScopedNavHostEntry<S>>
 )
+
+val LocalScopedViewModelStoreOwners =
+    compositionLocalOf<Map<out Any?, ViewModelStoreOwner>> { emptyMap() }
+
+@Composable
+fun NavSnapshotItem<*, *>.ComponentsProvider(
+    content: @Composable () -> Unit
+) = CompositionLocalProvider(
+    LocalLifecycleOwner provides hostEntry,
+    LocalSavedStateRegistryOwner provides hostEntry,
+    LocalViewModelStoreOwner provides hostEntry,
+    LocalScopedViewModelStoreOwners provides scopedHostEntries
+) {
+    hostEntry.SaveableStateProvider(content)
+}

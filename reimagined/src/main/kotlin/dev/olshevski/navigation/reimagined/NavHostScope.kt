@@ -80,7 +80,7 @@ fun <T> NavHostScope<T>.findHostEntry(
  * current destination in `scopeSpec` of [ScopingNavHost], [ScopingAnimatedNavHost] or
  * other `Scoping...NavHost` implementation. Otherwise, [IllegalStateException] will be thrown.
  */
-fun <T, S> ScopingNavHostScope<T, S>.getScopedViewModelStoreOwner(scope: S): ViewModelStoreOwner =
+fun <S> ScopingNavHostScope<*, S>.getScopedViewModelStoreOwner(scope: S): ViewModelStoreOwner =
     scopedHostEntries[scope] ?: error(
         "You should associate the scope ($scope) with the destination " +
                 "(${currentHostEntry.destination}) in a scopeSpec"

@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.olshevski.navigation.reimagined.LocalScopedViewModelStoreOwners
 import dev.olshevski.navigation.reimagined.NavBackHandler
 import dev.olshevski.navigation.reimagined.NavScopeSpec
 import dev.olshevski.navigation.reimagined.ScopingNavHost
@@ -138,11 +139,12 @@ private fun ScopingNavHostScope<ScopedViewModelsDestination, Scope>.SecondScreen
 }
 
 @Composable
-private fun ScopingNavHostScope<ScopedViewModelsDestination, Scope>.ThirdScreen() = ContentLayout(
+private fun ThirdScreen() = ContentLayout(
     title = stringResource(R.string.scoped_view_models__third_screen_title)
 ) {
     val scopedViewModel = viewModel<ScopedViewModel>(
-        viewModelStoreOwner = getScopedViewModelStoreOwner(Scope)
+        // instead of ScopingNavHostScope receiver, a composition local may be used
+        viewModelStoreOwner = LocalScopedViewModelStoreOwners.current[Scope]!!
     )
 
     val text by scopedViewModel.text.collectAsState()
