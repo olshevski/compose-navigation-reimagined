@@ -32,25 +32,18 @@ interface NavHostScope<out T> {
 interface ScopingNavHostScope<out T, S> : NavHostScope<T> {
 
     /**
-     * Returns [ViewModelStoreOwner] for the [scope]. This scope should be associated with the
-     * current destination in `scopeSpec` of [ScopingNavHost], [ScopingAnimatedNavHost] or
-     * other `Scoping...NavHost` implementation. Otherwise, [IllegalStateException] will be thrown.
+     * [ScopedNavHostEntries][ScopedNavHostEntry] for all scopes associated with the current
+     * destination in `scopeSpec`
      */
-    fun getScopedViewModelStoreOwner(scope: S): ViewModelStoreOwner
+    val scopedHostEntries: Map<S, ScopedNavHostEntry<S>>
 
 }
 
 @Stable
 internal open class ScopingNavHostScopeImpl<out T, S>(
     override val hostEntries: List<NavHostEntry<T>>,
-    private val scopedHostEntries: Map<S, ScopedNavHostEntry<S>>
-) : ScopingNavHostScope<T, S> {
-
-    override fun getScopedViewModelStoreOwner(scope: S): ViewModelStoreOwner =
-        scopedHostEntries[scope]
-            ?: error("You should associate the scope ($scope) with the destination (${currentHostEntry.destination}) in a scopeSpec")
-
-}
+    override val scopedHostEntries: Map<S, ScopedNavHostEntry<S>>
+) : ScopingNavHostScope<T, S>
 
 /**
  * Currently displayed [NavHostEntry]. Its destination is the one that is being passed into
@@ -81,3 +74,14 @@ fun <T> NavHostScope<T>.findHostEntry(
         }
     }
 }
+
+/**
+ * Returns [ViewModelStoreOwner] for the [scope]. This scope should be associated with the
+ * current destination in `scopeSpec` of [ScopingNavHost], [ScopingAnimatedNavHost] or
+ * other `Scoping...NavHost` implementation. Otherwise, [IllegalStateException] will be thrown.
+ */
+fun <T, S> ScopingNavHostScope<T, S>.getScopedViewModelStoreOwner(scope: S): ViewModelStoreOwner =
+    scopedHostEntries[scope] ?: error(
+        "You should associate the scope ($scope) with the destination " +
+                "(${currentHostEntry.destination}) in a scopeSpec"
+    )

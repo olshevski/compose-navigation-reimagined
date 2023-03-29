@@ -17,6 +17,7 @@ import dev.olshevski.navigation.reimagined.NavBackHandler
 import dev.olshevski.navigation.reimagined.NavScopeSpec
 import dev.olshevski.navigation.reimagined.ScopingNavHost
 import dev.olshevski.navigation.reimagined.ScopingNavHostScope
+import dev.olshevski.navigation.reimagined.getScopedViewModelStoreOwner
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.sample.R
