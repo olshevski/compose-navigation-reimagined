@@ -37,13 +37,30 @@ interface ScopingNavHostScope<out T, S> : NavHostScope<T> {
      */
     val scopedHostEntries: Map<S, ScopedNavHostEntry<S>>
 
+    /**
+     * Returns [ViewModelStoreOwner] for the [scope]. This scope should be associated with the
+     * current destination in `scopeSpec` of [ScopingNavHost], [ScopingAnimatedNavHost] or
+     * other `Scoping...NavHost` implementation. Otherwise, [IllegalStateException] will be thrown.
+     */
+    @Deprecated("Access scopedHostEntries directly", ReplaceWith("scopedHostEntries[scope]!!"))
+    fun getScopedViewModelStoreOwner(scope: S): ViewModelStoreOwner
+
 }
 
 @Stable
 internal open class ScopingNavHostScopeImpl<out T, S>(
     override val hostEntries: List<NavHostEntry<T>>,
     override val scopedHostEntries: Map<S, ScopedNavHostEntry<S>>
-) : ScopingNavHostScope<T, S>
+) : ScopingNavHostScope<T, S> {
+
+    @Deprecated("Access scopedHostEntries directly", ReplaceWith("scopedHostEntries[scope]!!"))
+    override fun getScopedViewModelStoreOwner(scope: S): ViewModelStoreOwner =
+        scopedHostEntries[scope] ?: error(
+            "You should associate the scope ($scope) with the destination " +
+                    "(${currentHostEntry.destination}) in a scopeSpec"
+        )
+
+}
 
 /**
  * Currently displayed [NavHostEntry]. Its destination is the one that is being passed into
@@ -62,6 +79,7 @@ val <T> NavHostScope<T>.currentHostEntry: NavHostEntry<T> get() = hostEntries.la
  * items. By default, the last matching item from the start of the [NavHostScope.hostEntries]
  * will be returned.
  */
+@Deprecated("Access hostEntries directly")
 fun <T> NavHostScope<T>.findHostEntry(
     match: Match = Match.Last,
     predicate: (T) -> Boolean
@@ -75,13 +93,3 @@ fun <T> NavHostScope<T>.findHostEntry(
     }
 }
 
-/**
- * Returns [ViewModelStoreOwner] for the [scope]. This scope should be associated with the
- * current destination in `scopeSpec` of [ScopingNavHost], [ScopingAnimatedNavHost] or
- * other `Scoping...NavHost` implementation. Otherwise, [IllegalStateException] will be thrown.
- */
-fun <S> ScopingNavHostScope<*, S>.getScopedViewModelStoreOwner(scope: S): ViewModelStoreOwner =
-    scopedHostEntries[scope] ?: error(
-        "You should associate the scope ($scope) with the destination " +
-                "(${currentHostEntry.destination}) in a scopeSpec"
-    )
