@@ -138,15 +138,15 @@ sealed interface NavHostState<T> {
     val backstack: NavBackstack<T>
 
     /**
-     * Get [NavHostEntry] for the specified [id]. There must be an entry with this id
-     * in the current [backstack]. Otherwise, [IllegalArgumentException] will be thrown.
+     * Get [NavHostEntry] for the specified [id]. If there is no entry with this id
+     * in the current [backstack], `null` will be returned.
      *
      * This method is intended to provide access to NavHostEntries outside of the current NavHost,
      * e.g. for communication between several NavHosts. If you want to access NavHostEntries
      * in the current NavHost you should access them through [NavHostScope].
      */
     @ExperimentalReimaginedApi
-    fun getHostEntry(id: NavId): NavHostEntry<T>
+    fun getHostEntry(id: NavId): NavHostEntry<T>?
 
 }
 
@@ -158,9 +158,8 @@ sealed interface NavHostState<T> {
 sealed interface ScopingNavHostState<T, S> : NavHostState<T> {
 
     /**
-     * Get [ScopedNavHostEntry] for the specified [scope]. There must be at least one entry
-     * associated with this scope in the current [backstack]. Otherwise, [IllegalArgumentException]
-     * will be thrown.
+     * Get [ScopedNavHostEntry] for the specified [scope]. If there is no entry
+     * associated with this scope in the current [backstack], `null` will be returned.
      *
      * This method is intended to provide access to ScopedNavHostEntries outside of the current
      * ScopingNavHost, e.g. for communication between several NavHosts. If you want to access
@@ -168,7 +167,7 @@ sealed interface ScopingNavHostState<T, S> : NavHostState<T> {
      * [ScopingNavHostScope].
      */
     @ExperimentalReimaginedApi
-    fun getScopedHostEntry(scope: S): ScopedNavHostEntry<S>
+    fun getScopedHostEntry(scope: S): ScopedNavHostEntry<S>?
 
 }
 
@@ -406,24 +405,23 @@ internal class NavHostStateImpl<T, S>(
     }
 
     @ExperimentalReimaginedApi
-    override fun getHostEntry(id: NavId): NavHostEntry<T> {
+    override fun getHostEntry(id: NavId): NavHostEntry<T>? {
         val entry = backstack.entries.find { it.id == id }
-        requireNotNull(entry) {
-            "There must be an entry with the specified id in the current backstack"
-        }
-        return hostEntriesMap.getOrPut(entry.id) {
-            newHostEntry(entry)
+        return entry?.let {
+            hostEntriesMap.getOrPut(entry.id) {
+                newHostEntry(entry)
+            }
         }
     }
 
     @ExperimentalReimaginedApi
-    override fun getScopedHostEntry(scope: S): ScopedNavHostEntry<S> {
-        require(backstack.entries.any { scope in scopeSpec.getScopes(it.destination) }) {
-            "There must be at least one entry associated with the specified scope ($scope) " +
-                    "in the current backstack"
-        }
-        return scopedHostEntriesMap.getOrPut(scope) {
-            newScopedHostEntry(id = NavId(), scope = scope)
+    override fun getScopedHostEntry(scope: S): ScopedNavHostEntry<S>? {
+        return if (backstack.entries.any { scope in scopeSpec.getScopes(it.destination) }) {
+            scopedHostEntriesMap.getOrPut(scope) {
+                newScopedHostEntry(id = NavId(), scope = scope)
+            }
+        } else {
+            null
         }
     }
 
