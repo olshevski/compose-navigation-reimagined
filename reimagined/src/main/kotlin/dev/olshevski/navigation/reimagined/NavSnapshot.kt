@@ -32,6 +32,10 @@ data class NavSnapshotItem<out T, S> internal constructor(
     val scopedHostEntries: Map<S, ScopedNavHostEntry<S>>
 )
 
+/**
+ * The CompositionLocal containing all current scoped [ViewModelStoreOwners][ViewModelStoreOwner]
+ * associated with the current navigation destination.
+ */
 val LocalScopedViewModelStoreOwners =
     compositionLocalOf<Map<out Any?, ViewModelStoreOwner>> { emptyMap() }
 

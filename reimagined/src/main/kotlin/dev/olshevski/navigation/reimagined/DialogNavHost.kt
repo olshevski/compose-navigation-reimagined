@@ -7,7 +7,7 @@ import androidx.compose.animation.with
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.ViewModelStore
 
 @ExperimentalAnimationApi
 private val NoneTransitionSpec = NavTransitionSpec<Any?> { _, _, _ ->
@@ -104,22 +104,8 @@ fun <T> DialogNavHost(
  * Note that DialogNavHost doesn't wrap your composables into a [Dialog]. You need to use
  * either `Dialog` or `AlertDialog` composable inside a [contentSelector] yourself.
  *
- * **Scoping:**
- *
- * This version of DialogNavHost gives you the ability to define scoped
- * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
- *
- * To do so, you must return a desired set of scopes for each requested destination in
- * [scopeSpec]. This information will then be used to associate different entries to specified
- * scopes and keep each scoped ViewModelStoreOwner until any of its associated entries is present
- * in the backstack. When none of the entries are present anymore, the scoped ViewModelStoreOwner
- * and all of its ViewModels will be cleared.
- *
- * To access a scoped ViewModelStoreOwner, you may call
- * [ScopingNavHostScope.getScopedViewModelStoreOwner] inside [contentSelector] with the same scope
- * object you've returned in [scopeSpec]. Then you may pass this scoped ViewModelStoreOwner
- * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
- * easily accessible from different destinations.
+ * **Scoping:** This version of DialogNavHost gives you the ability to define scopes.
+ * Read more about it in [NavScopeSpec].
  *
  * @param controller the navigation controller that will provide its backstack to this
  * DialogNavHost. The last entry of the backstack is always the currently displayed entry.
@@ -127,7 +113,7 @@ fun <T> DialogNavHost(
  * but setting a different [NavController] will be handled correctly.
  *
  * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
- * create and access scoped [ViewModelStoreOwners][ViewModelStoreOwner].
+ * create and access scoped [ViewModelStores][ViewModelStore].
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
  * be displayed when the backstack is empty. In the majority of cases you don't need
@@ -163,22 +149,8 @@ fun <T, S> ScopingDialogNavHost(
  * Note that DialogNavHost doesn't wrap your composables into a [Dialog]. You need to use
  * either `Dialog` or `AlertDialog` composable inside a [contentSelector] yourself.
  *
- * **Scoping:**
- *
- * This version of DialogNavHost gives you the ability to define scoped
- * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
- *
- * To do so, you must return a desired set of scopes for each requested destination in
- * [scopeSpec]. This information will then be used to associate different entries to specified
- * scopes and keep each scoped ViewModelStoreOwner until any of its associated entries is present
- * in the backstack. When none of the entries are present anymore, the scoped ViewModelStoreOwner
- * and all of its ViewModels will be cleared.
- *
- * To access a scoped ViewModelStoreOwner, you may call
- * [ScopingNavHostScope.getScopedViewModelStoreOwner] inside [contentSelector] with the same scope
- * object you've returned in [scopeSpec]. Then you may pass this scoped ViewModelStoreOwner
- * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
- * easily accessible from different destinations.
+ * **Scoping:** This version of DialogNavHost gives you the ability to define scopes.
+ * Read more about it in [NavScopeSpec].
  *
  * @param backstack the backstack from a [NavController] that will be used to observe navigation
  * changes. The last entry of the backstack is always the currently displayed entry.
@@ -186,7 +158,7 @@ fun <T, S> ScopingDialogNavHost(
  * but using a different [NavController] and setting its backstack will be handled correctly.
  *
  * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
- * create and access scoped [ViewModelStoreOwners][ViewModelStoreOwner].
+ * create and access scoped [ViewModelStores][ViewModelStore].
  *
  * @param emptyBackstackPlaceholder an optional placeholder composable that will
  * be displayed when the backstack is empty. In the majority of cases you don't need

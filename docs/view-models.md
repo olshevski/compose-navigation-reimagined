@@ -16,13 +16,15 @@ fun SomeScreen() {
 
 ## Accessing ViewModels of backstack entries
 
-It is possible to access ViewModelStoreOwner of any entry that is currently present on the backstack. It is done through the `NavHostScope` receiver of `contentSelector` function parameter of NavHost:
+It is possible to access ViewModelStoreOwner of any entry that is currently present on the backstack. It is done through the the `NavHostScope` receiver of the `contentSelector` parameter of NavHost:
 
 ```kotlin
 @Composable
 fun NavHostScope<Screen>.SomeScreen() {
     val previousViewModel = viewModel<PreviousViewModel>(
-        viewModelStoreOwner = findHostEntry { it is Screen.Previous }!!
+        viewModelStoreOwner = hostEntries.find {
+            it.destination is Screen.Previous
+        }!!
     )
     // ...
 }

@@ -1,28 +1,37 @@
 package dev.olshevski.navigation.reimagined
 
-import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 /**
  * Specifies scopes for every destination. This gives you the ability to easily create and access
- * scoped [ViewModelStoreOwners][ViewModelStoreOwner].
+ * scoped [ViewModelStore][ViewModelStore].
  *
- * To do so, you must return a desired set of scopes for each requested destination in
+ * To do so, you must return a set of desired scopes for each requested destination from
  * [getScopes]. This information will then be used to associate different entries to specified
  * scopes and keep each scoped ViewModelStoreOwner until any of its associated entries is present
- * in the backstack. When none of the entries are present anymore, the scoped ViewModelStoreOwner
+ * in the backstack. When none of the entries are present anymore, the scoped ViewModelStore
  * and all of its ViewModels will be cleared.
  *
- * To access a scoped ViewModelStoreOwner, you may call
- * [ScopingNavHostScope.getScopedViewModelStoreOwner] inside `contentSelector` of [ScopingNavHost],
- * [ScopingAnimatedNavHost] or other `Scoping...NavHost` implementation with the same scope
- * object you've returned in [getScopes]. Then you may pass this scoped ViewModelStoreOwner
- * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
- * easily accessible from different destinations.
+ * Scoped ViewModelStoreOwner is implemented by [ScopedNavHostEntry] class. You can acquire all
+ * scoped entries associated with the current destination through the [ScopingNavHostScope]
+ * receiver of the `contentSelector` parameter. To be specific, the map of all scoped entries is
+ * accessible through [ScopingNavHostScope.scopedHostEntries] property. Keys in this map
+ * are the same scope objects you've returned from [getScopes].
+ *
+ * You may pass then any ScopedNavHostEntry into [viewModel] method as
+ * the `viewModelStoreOwner` parameter and create shared ViewModels, accessible
+ * from different destinations.
+ *
+ * Alternatively, you can access scoped ViewModelStoreOwners through the
+ * [LocalScopedViewModelStoreOwners] composition local.
  */
 fun interface NavScopeSpec<in T, out S> {
 
     /**
-     * Returns the set of scopes associated with this [destination].
+     * Returns the set of scopes associated with this [destination]. Each returned object
+     * in the set must be immutable and writable to Parcel - it could be Parcelable, Serializable,
+     * string/primitive, or other supported type.
      */
     fun getScopes(destination: T): Set<S>
 

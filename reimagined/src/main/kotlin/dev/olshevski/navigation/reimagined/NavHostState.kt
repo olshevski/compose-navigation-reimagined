@@ -60,7 +60,7 @@ fun <T> rememberNavHostState(
  * but using a different [NavController] and setting its backstack will be handled correctly.
  *
  * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
- * create and access scoped [ViewModelStoreOwners][ViewModelStoreOwner].
+ * create and access scoped [ViewModelStores][ViewModelStore].
  */
 @ExperimentalReimaginedApi
 @Composable

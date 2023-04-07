@@ -80,13 +80,13 @@ private fun FirstScreen(
     )
 
     CenteredText(
-        text = """To create it, you need to associate selected destinations with a scope in
-             a scopeSpec block. Then you can call getScopedViewModelStoreOwner() from different 
-             destinations with the specified scope.""".singleLine(),
+        text = """To create it, you need to associate selected destinations with a scope.
+            You can then access the scoped ViewModelStoreOwner from all
+            destinations belonging to the same scope.""".singleLine(),
     )
 
     CenteredText(
-        text = """Only when all entries from the same scope are removed,
+        text = """Only when all backstack entries belonging to the same scope are removed,
             the scoped ViewModelStore and all its ViewModels will be cleared.""".singleLine(),
     )
 
@@ -122,7 +122,7 @@ private fun ScopingNavHostScope<ScopedViewModelsDestination, Scope>.SecondScreen
     )
 
     CenteredText(
-        text = "Please enter some text. It will be stored in a ScopedViewModel.",
+        text = "Please enter some text. It will be stored in the ScopedViewModel.",
     )
 
     val text by scopedViewModel.text.collectAsState()
