@@ -10,7 +10,7 @@ A small and simple, yet fully fledged and customizable navigation library for [J
 - Own Lifecycle, ViewModelStore and SavedStateRegistry for every backstack entry
 - Animated transitions
 - Dialog and bottom sheet navigation
-- Ability to define scopes for easy sharing of ViewModels
+- Scopes for easier ViewModel sharing 
 - No builders, no obligatory superclasses for your composables
 
 ## Quick start
@@ -79,6 +79,26 @@ fun NavHostScreen() {
 
 As you can see, `NavController` is used for switching between screens, `NavBackHandler` handles back presses and `NavHost` provides a composable corresponding to the last destination in the backstack. As simple as that.
 
+### What about animations?
+
+Just replace `NavHost` with `AnimatedNavHost`. The default transition between destinations is a simple crossfade, but you can customize each transition with the `transitionSpec` parameter:
+
+```kotlin
+AnimatedNavHost(
+    controller = navController,
+    transitionSpec = { action, _, _ ->
+        val direction = if (action == NavAction.Pop) {
+            AnimatedContentScope.SlideDirection.End
+        } else {
+            AnimatedContentScope.SlideDirection.Start
+        }
+        slideIntoContainer(direction) with slideOutOfContainer(direction)
+    }
+) { screen ->
+    // ...
+}
+```
+
 ## Documentation
 
 Full documentation is available [here](https://olshevski.github.io/compose-navigation-reimagined).
@@ -94,12 +114,10 @@ implementation("dev.olshevski.navigation:reimagined-hilt:<latest-version>")
 `BottomSheetNavHost` implementation:
 
 ```koltin
+// if you are using Material
 implementation("dev.olshevski.navigation:reimagined-material:<latest-version>")
-```
 
-`BottomSheetNavHost`, but only with Material 3 dependencies:
-
-```koltin
+// if you are using Material 3
 implementation("dev.olshevski.navigation:reimagined-material3:<latest-version>")
 ```
 
@@ -122,8 +140,6 @@ I've been thinking about Android app architecture and navigation in particular f
 
 I hope it can help you as well.
 
-<p align="center">
-    <img width="600" src="https://user-images.githubusercontent.com/5606565/227801130-39bee5cf-cf75-47c1-8791-f7753b5c7c0d.svg" />
-</p>
+*If you like this library and find it useful, please star the project and share it with your fellow developers. You can also buy me a coffee to support the development:*
 
-*If you like this library and find it useful, please star the project and share it with your fellow developers. You can also [buy me a coffee](https://www.buymeacoffee.com/olshevski).*
+<p align="center"><a href="https://www.buymeacoffee.com/olshevski" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="60px"></a></p>

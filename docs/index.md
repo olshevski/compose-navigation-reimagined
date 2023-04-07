@@ -12,7 +12,7 @@ A small and simple, yet fully fledged and customizable navigation library for [J
 - Own Lifecycle, ViewModelStore and SavedStateRegistry for every backstack entry
 - Animated transitions
 - Dialog and bottom sheet navigation
-- Ability to define scopes for easy sharing of ViewModels
+- Scopes for easier ViewModel sharing 
 - No builders, no obligatory superclasses for your composables
 
 ## Quick start
