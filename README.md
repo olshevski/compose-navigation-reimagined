@@ -144,6 +144,6 @@ I hope it can help you as well.
     <img width="600" src="https://user-images.githubusercontent.com/5606565/227801130-39bee5cf-cf75-47c1-8791-f7753b5c7c0d.svg" />
 </p>
 
-*If you like this library and find it useful, please star the project and share it with your fellow developers. You can also buy me a coffee to support the development:*
+*If you like this library and find it useful, please star the project and share it with your fellow developers. You can also buy me a coffee:*
 
 <p align="center"><a href="https://www.buymeacoffee.com/olshevski" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="60px"></a></p>
