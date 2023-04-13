@@ -5,7 +5,7 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModelStore
 
 @Stable
-class ScopedNavHostEntry<S> internal constructor(
+class ScopedNavHostEntry<out S> internal constructor(
     id: NavId,
     val scope: S,
     viewModelStore: ViewModelStore,
