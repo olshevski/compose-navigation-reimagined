@@ -1,5 +1,5 @@
 <p align="center">
-    <img width="600" src="https://user-images.githubusercontent.com/5606565/153590758-1591f745-be66-42f5-bd1a-3ef3c5b2453c.svg" />
+    <img width="600" src="https://user-images.githubusercontent.com/5606565/234915659-afe98551-5439-4381-aab5-5147fcb8e079.svg" />
 </p>
 
 A small and simple, yet fully fledged and customizable navigation library for [Jetpack Compose](https://developer.android.com/jetpack/compose):
