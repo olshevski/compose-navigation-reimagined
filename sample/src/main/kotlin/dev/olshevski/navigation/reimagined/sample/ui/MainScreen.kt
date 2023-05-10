@@ -6,7 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
@@ -35,14 +35,14 @@ private val MainNavHostTransitionSpec =
             val outDuration = 100
             fadeIn(
                 animationSpec = tween(durationMillis = 200, delayMillis = outDuration)
-            ) with fadeOut(
+            ) togetherWith fadeOut(
                 animationSpec = tween(durationMillis = outDuration)
             ) + scaleOut(
                 targetScale = 2f,
                 animationSpec = tween(durationMillis = outDuration)
             )
         } else {
-            fadeIn(tween()) with fadeOut(tween())
+            fadeIn(tween()) togetherWith fadeOut(tween())
         }
     }
 
@@ -55,9 +55,11 @@ fun MainScreen() {
             uri != null && uri.containsSupportedDeeplink() -> {
                 uri.constructBackstack()
             }
+
             activity.intent.getBooleanExtra(MainActivity.SkipSplash, false) -> {
                 listOf(MainDestination.DemoSelection)
             }
+
             else -> {
                 listOf(MainDestination.Splash)
             }
@@ -77,9 +79,11 @@ fun MainScreen() {
                     navController.replaceAll(MainDestination.DemoSelection)
                 }
             )
+
             MainDestination.DemoSelection -> DemoSelectionScreen(
                 onDemoSelected = navController::navigate
             )
+
             MainDestination.PassValues -> PassValuesScreen()
             MainDestination.ReturnResults -> ReturnResultsScreen()
             MainDestination.AnimatedNavHost -> AnimatedNavHostScreen()
@@ -107,6 +111,7 @@ private fun Uri.constructBackstack(): List<MainDestination> {
                 )
             )
         }
+
         this.pathSegments.getOrNull(1) == "third" -> {
             MainDestination.Deeplinks(
                 listOf(
@@ -118,6 +123,7 @@ private fun Uri.constructBackstack(): List<MainDestination> {
                 )
             )
         }
+
         else -> MainDestination.Deeplinks()
     }
     return listOf(MainDestination.DemoSelection, deeplinksDestination)

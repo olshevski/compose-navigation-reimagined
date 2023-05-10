@@ -2,16 +2,14 @@ package dev.olshevski.navigation.reimagined
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.ViewModelStore
 
-@ExperimentalAnimationApi
 private val NoneTransitionSpec = NavTransitionSpec<Any?> { _, _, _ ->
-    EnterTransition.None with ExitTransition.None
+    EnterTransition.None togetherWith ExitTransition.None
 }
 
 /**
@@ -40,7 +38,6 @@ private val NoneTransitionSpec = NavTransitionSpec<Any?> { _, _, _ ->
  * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
  * provides additional functionality of the DialogNavHost through the [NavHostScope].
  */
-@ExperimentalAnimationApi
 @Composable
 fun <T> DialogNavHost(
     controller: NavController<T>,
@@ -78,7 +75,6 @@ fun <T> DialogNavHost(
  * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
  * provides additional functionality of the DialogNavHost through the [NavHostScope].
  */
-@ExperimentalAnimationApi
 @Composable
 fun <T> DialogNavHost(
     backstack: NavBackstack<T>,
@@ -123,7 +119,6 @@ fun <T> DialogNavHost(
  * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
  * provides additional functionality of the ScopingDialogNavHost through the [ScopingNavHostScope].
  */
-@ExperimentalAnimationApi
 @Composable
 fun <T, S> ScopingDialogNavHost(
     controller: NavController<T>,
@@ -168,7 +163,6 @@ fun <T, S> ScopingDialogNavHost(
  * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
  * provides additional functionality of the ScopingDialogNavHost through the [ScopingNavHostScope].
  */
-@ExperimentalAnimationApi
 @Composable
 fun <T, S> ScopingDialogNavHost(
     backstack: NavBackstack<T>,

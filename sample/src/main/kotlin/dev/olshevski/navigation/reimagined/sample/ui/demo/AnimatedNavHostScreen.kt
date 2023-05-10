@@ -1,7 +1,7 @@
 package dev.olshevski.navigation.reimagined.sample.ui.demo
 
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.with
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.togetherWith
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -22,20 +22,21 @@ private val SlideTransitionSpec = NavTransitionSpec<Int> { action, from, to ->
     val directionsCount = 4
     val direction = when (action) {
         NavAction.Pop -> when (from.mod(directionsCount)) {
-            0 -> AnimatedContentScope.SlideDirection.End
-            1 -> AnimatedContentScope.SlideDirection.Down
-            2 -> AnimatedContentScope.SlideDirection.Start
-            else -> AnimatedContentScope.SlideDirection.Up
+            0 -> AnimatedContentTransitionScope.SlideDirection.End
+            1 -> AnimatedContentTransitionScope.SlideDirection.Down
+            2 -> AnimatedContentTransitionScope.SlideDirection.Start
+            else -> AnimatedContentTransitionScope.SlideDirection.Up
         }
+
         else -> when (to.mod(directionsCount)) {
             // opposite directions
-            0 -> AnimatedContentScope.SlideDirection.Start
-            1 -> AnimatedContentScope.SlideDirection.Up
-            2 -> AnimatedContentScope.SlideDirection.End
-            else -> AnimatedContentScope.SlideDirection.Down
+            0 -> AnimatedContentTransitionScope.SlideDirection.Start
+            1 -> AnimatedContentTransitionScope.SlideDirection.Up
+            2 -> AnimatedContentTransitionScope.SlideDirection.End
+            else -> AnimatedContentTransitionScope.SlideDirection.Down
         }
     }
-    slideIntoContainer(direction) with slideOutOfContainer(direction)
+    slideIntoContainer(direction) togetherWith slideOutOfContainer(direction)
 }
 
 @Composable

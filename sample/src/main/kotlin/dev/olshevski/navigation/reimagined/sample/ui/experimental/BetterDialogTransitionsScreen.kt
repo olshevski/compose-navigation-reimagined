@@ -5,7 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -49,7 +49,7 @@ private val DialogTransitionSpec = NavTransitionSpec<DialogDestination> { action
         ) + scaleIn(
             animationSpec = animationSpec,
             initialScale = 1.5f
-        ) with fadeOut(
+        ) togetherWith fadeOut(
             animationSpec = animationSpec
         ) + scaleOut(
             animationSpec = animationSpec,
@@ -61,7 +61,7 @@ private val DialogTransitionSpec = NavTransitionSpec<DialogDestination> { action
         ) + scaleIn(
             animationSpec = animationSpec,
             initialScale = 0.5f
-        ) with fadeOut(
+        ) togetherWith fadeOut(
             animationSpec = animationSpec
         ) + scaleOut(
             animationSpec = animationSpec,
@@ -87,11 +87,13 @@ fun BetterDialogTransitionsScreen() = ScreenLayout(title = "Better dialog transi
                     navController.navigate(DialogDestination.Second)
                 }
             )
+
             DialogDestination.Second -> SecondDialogLayout(
                 onOpenThirdDialogButtonClick = {
                     navController.navigate(DialogDestination.Third)
                 }
             )
+
             DialogDestination.Third -> ThirdDialogLayout()
         }
     }

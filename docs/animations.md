@@ -7,11 +7,11 @@ Here is one possible implementation of NavTransitionSpec:
 ```kotlin
 val CustomTransitionSpec = NavTransitionSpec<Any?> { action, _, _ ->
     val direction = if (action == NavAction.Pop) {
-        AnimatedContentScope.SlideDirection.End
+        AnimatedContentTransitionScope.SlideDirection.End
     } else {
-        AnimatedContentScope.SlideDirection.Start
+        AnimatedContentTransitionScope.SlideDirection.Start
     }
-    slideIntoContainer(direction) with slideOutOfContainer(direction)
+    slideIntoContainer(direction) togetherWith slideOutOfContainer(direction)
 }
 ```
 

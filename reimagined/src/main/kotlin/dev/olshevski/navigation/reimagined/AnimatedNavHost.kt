@@ -1,14 +1,13 @@
 package dev.olshevski.navigation.reimagined
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.updateTransition
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -50,7 +49,6 @@ import androidx.lifecycle.ViewModelStore
  * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
  * provides additional functionality of the AnimatedNavHost through the [AnimatedNavHostScope].
  */
-@ExperimentalAnimationApi
 @Composable
 fun <T> AnimatedNavHost(
     controller: NavController<T>,
@@ -103,7 +101,6 @@ fun <T> AnimatedNavHost(
  * in the backstack. In other words, here is where you select UI to show (e.g. a screen). Also,
  * provides additional functionality of the AnimatedNavHost through the [AnimatedNavHostScope].
  */
-@ExperimentalAnimationApi
 @Composable
 fun <T> AnimatedNavHost(
     backstack: NavBackstack<T>,
@@ -156,7 +153,6 @@ fun <T> AnimatedNavHost(
  * provides additional functionality of the AnimatedNavHost through the [AnimatedNavHostScope].
  */
 @ExperimentalReimaginedApi
-@ExperimentalAnimationApi
 @Composable
 fun <T> AnimatedNavHost(
     state: NavHostState<T>,
@@ -217,7 +213,6 @@ fun <T> AnimatedNavHost(
  * provides additional functionality of the ScopingAnimatedNavHost through
  * the [ScopingAnimatedNavHostScope].
  */
-@ExperimentalAnimationApi
 @Composable
 fun <T, S> ScopingAnimatedNavHost(
     controller: NavController<T>,
@@ -276,7 +271,6 @@ fun <T, S> ScopingAnimatedNavHost(
  * provides additional functionality of the ScopingAnimatedNavHost through
  * the [ScopingAnimatedNavHostScope].
  */
-@ExperimentalAnimationApi
 @Composable
 fun <T, S> ScopingAnimatedNavHost(
     backstack: NavBackstack<T>,
@@ -334,7 +328,6 @@ fun <T, S> ScopingAnimatedNavHost(
  * the [ScopingAnimatedNavHostScope].
  */
 @ExperimentalReimaginedApi
-@ExperimentalAnimationApi
 @Composable
 fun <T, S> ScopingAnimatedNavHost(
     state: ScopingNavHostState<T, S>,
@@ -380,8 +373,7 @@ fun <T, S> ScopingAnimatedNavHost(
     return@BaseNavHost transition.currentState
 }
 
-@ExperimentalAnimationApi
-private fun <T, S> AnimatedContentScope<NavSnapshot<T, S>>.selectTransition(
+private fun <T, S> AnimatedContentTransitionScope<NavSnapshot<T, S>>.selectTransition(
     transitionSpec: NavTransitionSpec<T>,
     action: NavAction,
 ): ContentTransform {
@@ -399,10 +391,12 @@ private fun <T, S> AnimatedContentScope<NavSnapshot<T, S>>.selectTransition(
                     action = action,
                     to = targetStateLastEntry!!.destination
                 )
+
                 targetStateLastEntry == null -> scope.toEmptyBackstack(
                     action = action,
                     from = initialStateLastEntry.destination
                 )
+
                 else -> scope.getContentTransform(
                     action = action,
                     from = initialStateLastEntry.destination,
@@ -411,6 +405,6 @@ private fun <T, S> AnimatedContentScope<NavSnapshot<T, S>>.selectTransition(
             }
         }
     } else {
-        EnterTransition.None with ExitTransition.None
+        EnterTransition.None togetherWith ExitTransition.None
     }
 }

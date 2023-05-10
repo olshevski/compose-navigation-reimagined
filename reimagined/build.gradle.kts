@@ -14,6 +14,7 @@ dependencies {
     api(Libs.AndroidX.Activity.Compose)
     api(Libs.AndroidX.Compose.Animation)
     api(Libs.AndroidX.Lifecycle.ViewModel.Compose)
+    implementation("androidx.tracing:tracing:1.1.0")
 
     testImplementation(Libs.JUnit.Juniper)
     testImplementation(Libs.Google.Truth)

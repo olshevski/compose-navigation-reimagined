@@ -59,9 +59,11 @@ fun ScopedViewModelsScreen() = ScreenLayout(
             ScopedViewModelsDestination.First -> FirstScreen(
                 onOpenSecondScreenButtonClick = { navController.navigate(ScopedViewModelsDestination.Second) }
             )
+
             ScopedViewModelsDestination.Second -> SecondScreen(
                 onOpenThirdScreenButtonClick = { navController.navigate(ScopedViewModelsDestination.Third) }
             )
+
             ScopedViewModelsDestination.Third -> ThirdScreen()
         }
     }
@@ -112,7 +114,7 @@ private fun ScopingNavHostScope<ScopedViewModelsDestination, Scope>.SecondScreen
     title = stringResource(R.string.scoped_view_models__second_screen_title)
 ) {
     val scopedViewModel = viewModel<ScopedViewModel>(
-        viewModelStoreOwner = getScopedViewModelStoreOwner(Scope)
+        viewModelStoreOwner = scopedHostEntries[Scope]!!
     )
 
     CenteredText(

@@ -33,7 +33,7 @@ android {
             storeFile = rootProject.file("debug.keystore")
         }
     }
-    
+
     buildFeatures {
         compose = true
     }
@@ -42,7 +42,7 @@ android {
         kotlinCompilerExtensionVersion = Libs.AndroidX.Compose.CompilerVersion
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }

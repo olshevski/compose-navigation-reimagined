@@ -1,11 +1,10 @@
 package dev.olshevski.navigation.reimagined
 
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.AnimatedContentScope.SlideDirection
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.VisibilityThreshold
@@ -16,7 +15,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.ui.unit.IntOffset
 
-@ExperimentalAnimationApi
 interface NavTransitionScope {
 
     /**
@@ -35,7 +33,7 @@ interface NavTransitionScope {
      * [animationSpec] defines the animation that will be used to animate the slide-out.
      */
     fun slideOutOfContainer(
-        towards: SlideDirection,
+        towards: AnimatedContentTransitionScope.SlideDirection,
         animationSpec: FiniteAnimationSpec<IntOffset> = spring(
             visibilityThreshold = IntOffset.VisibilityThreshold
         ),
@@ -59,7 +57,7 @@ interface NavTransitionScope {
      * [animationSpec] defines the animation that will be used to animate the slide-in.
      */
     fun slideIntoContainer(
-        towards: SlideDirection,
+        towards: AnimatedContentTransitionScope.SlideDirection,
         animationSpec: FiniteAnimationSpec<IntOffset> = spring(
             visibilityThreshold = IntOffset.VisibilityThreshold
         ),
@@ -73,24 +71,23 @@ interface NavTransitionScope {
 
 }
 
-@ExperimentalAnimationApi
 internal class NavTransitionScopeImpl<S>(
-    private val animatedContentScope: AnimatedContentScope<S>
+    private val animatedContentTransitionScope: AnimatedContentTransitionScope<S>
 ) : NavTransitionScope {
 
     override fun slideOutOfContainer(
-        towards: SlideDirection,
+        towards: AnimatedContentTransitionScope.SlideDirection,
         animationSpec: FiniteAnimationSpec<IntOffset>,
         targetOffset: (offsetForFullSlide: Int) -> Int
-    ) = animatedContentScope.slideOutOfContainer(towards, animationSpec, targetOffset)
+    ) = animatedContentTransitionScope.slideOutOfContainer(towards, animationSpec, targetOffset)
 
     override fun slideIntoContainer(
-        towards: SlideDirection,
+        towards: AnimatedContentTransitionScope.SlideDirection,
         animationSpec: FiniteAnimationSpec<IntOffset>,
         initialOffset: (offsetForFullSlide: Int) -> Int
-    ) = animatedContentScope.slideIntoContainer(towards, animationSpec, initialOffset)
+    ) = animatedContentTransitionScope.slideIntoContainer(towards, animationSpec, initialOffset)
 
     override fun ContentTransform.using(sizeTransform: SizeTransform?) =
-        with(animatedContentScope) { using(sizeTransform) }
+        with(animatedContentTransitionScope) { using(sizeTransform) }
 
 }

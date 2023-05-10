@@ -1,6 +1,5 @@
 package dev.olshevski.navigation.reimagined.param
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
 import dev.olshevski.navigation.reimagined.ExperimentalReimaginedApi
@@ -14,7 +13,7 @@ enum class NavHostParam {
 }
 
 @Suppress("TestFunctionName")
-@OptIn(ExperimentalAnimationApi::class, ExperimentalReimaginedApi::class)
+@OptIn(ExperimentalReimaginedApi::class)
 @Composable
 internal fun <T> ParamNavHost(
     param: NavHostParam,

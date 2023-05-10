@@ -1,20 +1,18 @@
 package dev.olshevski.navigation.reimagined
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 
 /**
  * The specification of all animated transition between destinations. Used in [AnimatedNavHost].
  */
-@ExperimentalAnimationApi
 fun interface NavTransitionSpec<in T> {
 
     /**
@@ -25,7 +23,7 @@ fun interface NavTransitionSpec<in T> {
      * methods [NavTransitionScope.slideOutOfContainer],
      * [NavTransitionScope.slideIntoContainer]
      * and [NavTransitionScope.using]. This is the same methods that you would be
-     * using in [AnimatedContentScope] from [AnimatedContent] composable. In fact,
+     * using in [AnimatedContentTransitionScope] from [AnimatedContent] composable. In fact,
      * [AnimatedNavHost] uses `AnimatedContent` under the hood, so you may explore documentation
      * of `AnimatedContent` for better understanding of the API.
      *
@@ -42,7 +40,7 @@ fun interface NavTransitionSpec<in T> {
      * @param from a target visible destination
      *
      * @see AnimatedContent
-     * @see AnimatedContentScope
+     * @see AnimatedContentTransitionScope
      */
     fun NavTransitionScope.getContentTransform(
         action: NavAction,
@@ -60,7 +58,7 @@ fun interface NavTransitionSpec<in T> {
     fun NavTransitionScope.toEmptyBackstack(
         action: NavAction,
         from: T
-    ): ContentTransform = EnterTransition.None with ExitTransition.None
+    ): ContentTransform = EnterTransition.None togetherWith ExitTransition.None
 
     /**
      * Returns a [ContentTransform] that describes the desired transition between
@@ -72,14 +70,13 @@ fun interface NavTransitionSpec<in T> {
     fun NavTransitionScope.fromEmptyBackstack(
         action: NavAction,
         to: T
-    ): ContentTransform = EnterTransition.None with ExitTransition.None
+    ): ContentTransform = EnterTransition.None togetherWith ExitTransition.None
 
 }
 
-@ExperimentalAnimationApi
 internal val CrossfadeTransitionSpec = object : NavTransitionSpec<Any?> {
 
-    private fun crossfade() = fadeIn(tween()) with fadeOut(tween())
+    private fun crossfade() = fadeIn(tween()) togetherWith fadeOut(tween())
 
     override fun NavTransitionScope.getContentTransform(
         action: NavAction,
