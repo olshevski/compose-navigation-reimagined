@@ -199,8 +199,8 @@ class BottomSheetState internal constructor(
 
     /**
      * Show the bottom sheet with animation and suspend until it's shown. If the sheet is taller
-     * than 50% of the parent's height, the bottom sheet will be half expanded. Otherwise it will be
-     * fully expanded.
+     * than 50% of the parent's height, the bottom sheet will be half expanded. Otherwise, it will
+     * be fully expanded.
      *
      * @throws [CancellationException] if the animation is interrupted
      */

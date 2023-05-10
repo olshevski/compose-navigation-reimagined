@@ -32,10 +32,17 @@ interface NavHostScope<out T> {
 interface ScopingNavHostScope<out T, S> : NavHostScope<T> {
 
     /**
+     * [ScopedNavHostEntries][ScopedNavHostEntry] for all scopes associated with the current
+     * destination in `scopeSpec`
+     */
+    val scopedHostEntries: Map<S, ScopedNavHostEntry<S>>
+
+    /**
      * Returns [ViewModelStoreOwner] for the [scope]. This scope should be associated with the
      * current destination in `scopeSpec` of [ScopingNavHost], [ScopingAnimatedNavHost] or
      * other `Scoping...NavHost` implementation. Otherwise, [IllegalStateException] will be thrown.
      */
+    @Deprecated("Access scopedHostEntries directly", ReplaceWith("scopedHostEntries[scope]!!"))
     fun getScopedViewModelStoreOwner(scope: S): ViewModelStoreOwner
 
 }
@@ -43,12 +50,15 @@ interface ScopingNavHostScope<out T, S> : NavHostScope<T> {
 @Stable
 internal open class ScopingNavHostScopeImpl<out T, S>(
     override val hostEntries: List<NavHostEntry<T>>,
-    private val scopedHostEntries: Map<S, ScopedNavHostEntry<S>>
+    override val scopedHostEntries: Map<S, ScopedNavHostEntry<S>>
 ) : ScopingNavHostScope<T, S> {
 
+    @Deprecated("Access scopedHostEntries directly", ReplaceWith("scopedHostEntries[scope]!!"))
     override fun getScopedViewModelStoreOwner(scope: S): ViewModelStoreOwner =
-        scopedHostEntries[scope]
-            ?: error("You should associate the scope ($scope) with the destination (${currentHostEntry.destination}) in a scopeSpec")
+        scopedHostEntries[scope] ?: error(
+            "You should associate the scope ($scope) with the destination " +
+                    "(${currentHostEntry.destination}) in a scopeSpec"
+        )
 
 }
 
@@ -69,6 +79,7 @@ val <T> NavHostScope<T>.currentHostEntry: NavHostEntry<T> get() = hostEntries.la
  * items. By default, the last matching item from the start of the [NavHostScope.hostEntries]
  * will be returned.
  */
+@Deprecated("Access hostEntries directly")
 fun <T> NavHostScope<T>.findHostEntry(
     match: Match = Match.Last,
     predicate: (T) -> Boolean
@@ -81,3 +92,4 @@ fun <T> NavHostScope<T>.findHostEntry(
         }
     }
 }
+

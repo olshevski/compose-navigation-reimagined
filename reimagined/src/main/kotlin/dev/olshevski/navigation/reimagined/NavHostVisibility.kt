@@ -109,7 +109,7 @@ fun NavHostAnimatedVisibility(
             val lastSnapshotItem =
                 transition.currentState.items.lastOrNull() ?: transition.targetState.items.last()
             key(lastSnapshotItem.hostEntry.id) {
-                lastSnapshotItem.hostEntry.ComponentsProvider {
+                lastSnapshotItem.ComponentsProvider {
                     content()
                 }
             }

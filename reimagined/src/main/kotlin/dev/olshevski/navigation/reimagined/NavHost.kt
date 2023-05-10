@@ -7,7 +7,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.ViewModelStore
 
 /**
  * A basic navigation host that selects UI for every destination and provides saved state and
@@ -151,22 +151,8 @@ fun <T> NavHost(
  * If you need animated transitions use [AnimatedNavHost] instead. For smoother transitions
  * between dialogs use [DialogNavHost].
  *
- * **Scoping:**
- *
- * This version of NavHost gives you the ability to define scoped
- * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
- *
- * To do so, you must return a desired set of scopes for each requested destination in
- * [scopeSpec]. This information will then be used to associate different entries to specified
- * scopes and keep each scoped ViewModelStoreOwner until any of its associated entries is present
- * in the backstack. When none of the entries are present anymore, the scoped ViewModelStoreOwner
- * and all of its ViewModels will be cleared.
- *
- * To access a scoped ViewModelStoreOwner, you may call
- * [ScopingNavHostScope.getScopedViewModelStoreOwner] inside [contentSelector] with the same scope
- * object you've returned in [scopeSpec]. Then you may pass this scoped ViewModelStoreOwner
- * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
- * easily accessible from different destinations.
+ * **Scoping:** This version of NavHost gives you the ability to define scopes.
+ * Read more about it in [NavScopeSpec].
  *
  * @param controller the navigation controller that will provide its backstack to this NavHost.
  * The last entry of the backstack is always the currently displayed entry.
@@ -174,7 +160,7 @@ fun <T> NavHost(
  * but setting a different [NavController] will be handled correctly.
  *
  * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
- * create and access scoped [ViewModelStoreOwners][ViewModelStoreOwner].
+ * create and access scoped [ViewModelStores][ViewModelStore].
  *
  * @param modifier the modifier to be applied to NavHost
  *
@@ -215,22 +201,8 @@ fun <T, S> ScopingNavHost(
  * If you need animated transitions use [AnimatedNavHost] instead. For smoother transitions
  * between dialogs use [DialogNavHost].
  *
- * **Scoping:**
- *
- * This version of NavHost gives you the ability to define scoped
- * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
- *
- * To do so, you must return a desired set of scopes for each requested destination in
- * [scopeSpec]. This information will then be used to associate different entries to specified
- * scopes and keep each scoped ViewModelStoreOwner until any of its associated entries is present
- * in the backstack. When none of the entries are present anymore, the scoped ViewModelStoreOwner
- * and all of its ViewModels will be cleared.
- *
- * To access a scoped ViewModelStoreOwner, you may call
- * [ScopingNavHostScope.getScopedViewModelStoreOwner] inside [contentSelector] with the same scope
- * object you've returned in [scopeSpec]. Then you may pass this scoped ViewModelStoreOwner
- * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
- * easily accessible from different destinations.
+ * **Scoping:** This version of NavHost gives you the ability to define scopes.
+ * Read more about it in [NavScopeSpec].
  *
  * @param backstack the backstack from a [NavController] that will be used to observe navigation
  * changes. The last entry of the backstack is always the currently displayed entry.
@@ -238,7 +210,7 @@ fun <T, S> ScopingNavHost(
  * but using a different [NavController] and setting its backstack will be handled correctly.
  *
  * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
- * create and access scoped [ViewModelStoreOwners][ViewModelStoreOwner].
+ * create and access scoped [ViewModelStores][ViewModelStore].
  *
  * @param modifier the modifier to be applied to NavHost
  *
@@ -279,22 +251,8 @@ fun <T, S> ScopingNavHost(
  * If you need animated transitions use [AnimatedNavHost] instead. For smoother transitions
  * between dialogs use [DialogNavHost].
  *
- * **Scoping:**
- *
- * This version of NavHost gives you the ability to define scoped
- * [ViewModelStoreOwners][ViewModelStoreOwner] that can be shared between arbitrary destinations.
- *
- * To do so, you must return a desired set of scopes for each requested destination in
- * `scopeSpec`. This information will then be used to associate different entries to specified
- * scopes and keep each scoped ViewModelStoreOwner until any of its associated entries is present
- * in the backstack. When none of the entries are present anymore, the scoped ViewModelStoreOwner
- * and all of its ViewModels will be cleared.
- *
- * To access a scoped ViewModelStoreOwner, you may call
- * [ScopingNavHostScope.getScopedViewModelStoreOwner] inside [contentSelector] with the same scope
- * object you've returned in `scopeSpec`. Then you may pass this scoped ViewModelStoreOwner
- * as a parameter into a ViewModel provider method of choice and create shared ViewModels,
- * easily accessible from different destinations.
+ * **Scoping:** This version of NavHost gives you the ability to define scopes.
+ * Read more about it in [NavScopeSpec].
  *
  * @param state the holder of all internal ScopingNavHost state. Stores and manages saved state
  * and all Android architecture components (Lifecycle, ViewModelStore, SavedStateRegistry)
@@ -331,7 +289,7 @@ fun <T, S> ScopingNavHost(
         val lastSnapshotItem = snapshot.items.lastOrNull()
         key(lastSnapshotItem?.hostEntry?.id) {
             if (lastSnapshotItem != null) {
-                lastSnapshotItem.hostEntry.ComponentsProvider {
+                lastSnapshotItem.ComponentsProvider {
                     val scope = remember(snapshot) {
                         ScopingNavHostScopeImpl(
                             hostEntries = snapshot.items.map { it.hostEntry },

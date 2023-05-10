@@ -2,14 +2,10 @@ package dev.olshevski.navigation.reimagined
 
 import android.app.Application
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.saveable.SaveableStateHolder
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.platform.LocalSavedStateRegistryOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.savedstate.SavedStateRegistry
 
 /**
@@ -39,15 +35,4 @@ class NavHostEntry<out T> internal constructor(
 
     override fun toString() = "NavHostEntry(id=$id, destination=$destination)"
 
-}
-
-@Composable
-fun <T> NavHostEntry<T>.ComponentsProvider(
-    content: @Composable () -> Unit
-) = CompositionLocalProvider(
-    LocalViewModelStoreOwner provides this,
-    LocalLifecycleOwner provides this,
-    LocalSavedStateRegistryOwner provides this
-) {
-    this.SaveableStateProvider(content)
 }

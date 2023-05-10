@@ -18,7 +18,7 @@ The default NavHost implementation by itself doesn't provide any animated transi
 
 Each NavEntry from the backstack is mapped to NavHostEntry within NavHost. NavHostEntry is what actually implements `LifecycleOwner`, `SavedStateRegistryOwner` and `ViewModelStoreOwner` interfaces.
 
-Usually, you don't need to interact with NavHostEntries directly, everything just works out of the box. But if you have a situation when you need to access all NavHostEntries from the current backstack, e.g. [trying to access a ViewModel of neighbour entry](/compose-navigation-reimagined/view-models/#accessing-viewmodels-of-backstack-entries), you could do it through `NavHostScope` receiver of `contentSelector` function parameter.
+Usually, you don't need to interact with NavHostEntries directly, everything just works out of the box. But if you have a situation when you need to access all NavHostEntries from the current backstack, e.g. [trying to access a ViewModel of neighbour entry](/compose-navigation-reimagined/view-models/#accessing-viewmodels-of-backstack-entries), you could do it through the `NavHostScope` receiver of the `contentSelector` parameter.
 
 ## NavHostState
 

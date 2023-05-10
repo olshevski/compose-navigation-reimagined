@@ -46,4 +46,4 @@ And this is how it looks in the regular NavHost:
 </p>
 
 !!! note
-    DialogNavHost doesn't wrap your composables into a Dialog. You need to use either Dialog or AlertDialog composable inside a `contentSelector` yourself.
+    DialogNavHost doesn't wrap your composables into a Dialog. You need to use either Dialog or AlertDialog composable inside `contentSelector` yourself.

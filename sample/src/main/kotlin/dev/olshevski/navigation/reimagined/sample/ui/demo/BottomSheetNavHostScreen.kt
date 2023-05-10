@@ -1,6 +1,5 @@
 package dev.olshevski.navigation.reimagined.sample.ui.demo
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.rememberScrollState
@@ -16,9 +15,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import dev.olshevski.navigation.reimagined.NavBackHandler
+import dev.olshevski.navigation.reimagined.material.BottomSheetNavHost
 import dev.olshevski.navigation.reimagined.material.BottomSheetNavHostScope
 import dev.olshevski.navigation.reimagined.material.BottomSheetValue
-import dev.olshevski.navigation.reimagined.material.BottomSheetNavHost
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.popAll
@@ -42,10 +42,6 @@ fun BottomSheetNavHostScreen() = Box {
         initialBackstack = emptyList()
     )
 
-    BackHandler(navController.backstack.entries.isNotEmpty()) {
-        navController.pop()
-    }
-
     ScreenLayout(
         title = stringResource(R.string.bottom_sheet_nav_host__demo_screen_title)
     ) {
@@ -63,6 +59,11 @@ fun BottomSheetNavHostScreen() = Box {
             }
         }
     }
+
+    NavBackHandler(
+        controller = navController,
+        allowEmptyBackstack = true
+    )
 
     BottomSheetNavHost(
         controller = navController,

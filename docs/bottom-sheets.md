@@ -61,4 +61,4 @@ fun NavHostScreen() {
 BottomSheetNavHost is based on the source code of [ModalBottomSheetLayout](https://developer.android.com/reference/kotlin/androidx/compose/material/package-summary#ModalBottomSheetLayout(kotlin.Function1,androidx.compose.ui.Modifier,androidx.compose.material.ModalBottomSheetState,androidx.compose.ui.graphics.Shape,androidx.compose.ui.unit.Dp,androidx.compose.ui.graphics.Color,androidx.compose.ui.graphics.Color,androidx.compose.ui.graphics.Color,kotlin.Function0)), but with some improvements for switching between multiple bottom sheets. The API also has some similarities.
 
 !!! tip
-    You can access current `sheetState` through `BottomSheetNavHostScope` receiver of `contentSelector` function parameter.
+    You can access current `sheetState` through the `BottomSheetNavHostScope` receiver of the `contentSelector` parameter.

@@ -4,7 +4,7 @@ import androidx.compose.material.ModalBottomSheetDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.ViewModelStore
 import dev.olshevski.navigation.reimagined.EmptyScopeSpec
 import dev.olshevski.navigation.reimagined.InternalReimaginedApi
 import dev.olshevski.navigation.reimagined.NavBackstack
@@ -131,13 +131,16 @@ fun <T> BottomSheetNavHost(
  * Unlike in ModalBottomSheetLayout, you need to use Surface inside [contentSelector] yourself.
  * This allows you to customize Surface for each destination.
  *
+ * **Scoping:** This version of BottomSheetNavHost gives you the ability to define scopes.
+ * Read more about it in [NavScopeSpec].
+ *
  * @param controller the navigation controller that will provide its backstack to this
  * BottomSheetNavHost. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but setting a different [NavController] will be handled correctly.
  *
  * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
- * create and access scoped [ViewModelStoreOwners][ViewModelStoreOwner].
+ * create and access scoped [ViewModelStores][ViewModelStore].
  *
  * @param onDismissRequest dismiss request caused by user interaction. Called either when the scrim
  * is clicked or when the bottom sheet is hidden with swipe. You should handle it and remove
@@ -189,13 +192,16 @@ fun <T, S> ScopingBottomSheetNavHost(
  * Unlike in ModalBottomSheetLayout, you need to use Surface inside [contentSelector] yourself.
  * This allows you to customize Surface for each destination.
  *
+ * **Scoping:** This version of BottomSheetNavHost gives you the ability to define scopes.
+ * Read more about it in [NavScopeSpec].
+ *
  * @param backstack the backstack from a [NavController] that will be used to observe navigation
  * changes. The last entry of the backstack is always the currently displayed entry.
  * You should do all backstack modifications through the same instance of [NavController],
  * but using a different [NavController] and setting its backstack will be handled correctly.
  *
  * @param scopeSpec specifies scopes for every destination. This gives you the ability to easily
- * create and access scoped [ViewModelStoreOwners][ViewModelStoreOwner].
+ * create and access scoped [ViewModelStores][ViewModelStore].
  *
  * @param onDismissRequest dismiss request caused by user interaction. Called either when the scrim
  * is clicked or when the bottom sheet is hidden with swipe. You should handle it and remove
