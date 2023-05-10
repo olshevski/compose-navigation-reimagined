@@ -14,7 +14,7 @@ object Libs {
             const val Foundation = "androidx.compose.foundation:foundation"
             const val Material = "androidx.compose.material:material"
             const val MaterialIconsExtended = "androidx.compose.material:material-icons-extended"
-            const val Material3 = "androidx.compose.material3:material3:1.1.0-beta01"
+            const val Material3 = "androidx.compose.material3:material3"
             const val Runtime = "androidx.compose.runtime:runtime"
             const val UiTooling = "androidx.compose.ui:ui-tooling"
             const val UiToolingPreview = "androidx.compose.ui:ui-tooling-preview"
