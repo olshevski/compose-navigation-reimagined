@@ -322,12 +322,18 @@ internal fun BottomSheetLayout(
                 .align(Alignment.TopCenter) // We offset from the top, so we'll center from there
                 .widthIn(max = MaxModalBottomSheetWidth)
                 .fillMaxWidth()
-                .nestedScroll(
-                    remember(sheetState.swipeableState) {
-                        ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
-                            state = sheetState.swipeableState,
-                            orientation = Orientation.Vertical
+                .then(
+                    if (!sheetState.isTransitionRunning) {
+                        Modifier.nestedScroll(
+                            remember(sheetState.swipeableState) {
+                                ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
+                                    state = sheetState.swipeableState,
+                                    orientation = Orientation.Vertical
+                                )
+                            }
                         )
+                    } else {
+                        Modifier
                     }
                 )
                 .offset {
@@ -507,6 +513,7 @@ private fun ModalBottomSheetAnchorChangeHandler(
                 else -> Hidden
             }
         }
+
         Expanded -> {
             when {
                 newAnchors.containsKey(Expanded) -> Expanded
