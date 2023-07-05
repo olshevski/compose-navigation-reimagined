@@ -21,19 +21,19 @@ Add a single dependency to your project:
 implementation("dev.olshevski.navigation:reimagined:1.4.0")
 ```
 
-Define a set of screens. It is convenient to use a sealed class for this:
+Define a set of destinations. It is convenient to use a sealed class for this:
 
 ```kotlin
-sealed class Screen : Parcelable {
+sealed class Destination : Parcelable {
 
     @Parcelize
-    object First : Screen()
+    object First : Destination()
 
     @Parcelize
-    data class Second(val id: Int) : Screen()
+    data class Second(val id: Int) : Destination()
 
     @Parcelize
-    data class Third(val text: String) : Screen()
+    data class Third(val text: String) : Destination()
 
 }
 ```
@@ -43,41 +43,41 @@ Create a composable with `NavController`, `NavBackHandler` and `NavHost`:
 ```kotlin
 @Composable
 fun NavHostScreen() {
-    val navController = rememberNavController<Screen>(
-        startDestination = Screen.First
+    val navController = rememberNavController<Destination>(
+        startDestination = Destination.First
     )
 
     NavBackHandler(navController)
 
-    NavHost(navController) { screen ->
-        when (screen) {
-            is Screen.First -> Column {
-                Text("First screen")
+    NavHost(navController) { destination ->
+        when (destination) {
+            is Destination.First -> Column {
+                Text("First destination")
                 Button(onClick = {
-                    navController.navigate(Screen.Second(id = 42))
+                    navController.navigate(Destination.Second(id = 42))
                 }) {
-                    Text("Open Second screen")
+                    Text("Open Second destination")
                 }
             }
 
-            is Screen.Second -> Column {
-                Text("Second screen: ${screen.id}")
+            is Destination.Second -> Column {
+                Text("Second destination: ${destination.id}")
                 Button(onClick = {
-                    navController.navigate(Screen.Third(text = "Hello"))
+                    navController.navigate(Destination.Third(text = "Hello"))
                 }) {
-                    Text("Open Third screen")
+                    Text("Open Third destination")
                 }
             }
 
-            is Screen.Third -> {
-                Text("Third screen: ${screen.text}")
+            is Destination.Third -> {
+                Text("Third destination: ${destination.text}")
             }
         }
     }
 }
 ```
 
-As you can see, `NavController` is used for switching between screens, `NavBackHandler` handles back presses and `NavHost` provides a composable corresponding to the last destination in the backstack. As simple as that.
+As you can see, `NavController` is used for switching between destinations, `NavBackHandler` handles back presses and `NavHost` provides a composable corresponding to the last destination in the backstack. As simple as that.
 
 ### What about animations?
 

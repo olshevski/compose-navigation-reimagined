@@ -2,7 +2,7 @@
 
 As destination types are not strictly required to be Immutable, you may change them while they are in the backstack. This may be used for returning values from other destinations. Just make a mutable property backed up by `mutableStateOf` and change it when required.
 
-For example, we want to return a string from the second screen. Here is how destinations may be defined:
+For example, we want to return a string from the Second screen. Here is how destinations may be defined:
 
 ```kotlin
 interface AcceptsResultFromSecond {
@@ -10,15 +10,15 @@ interface AcceptsResultFromSecond {
 }
 
 @Stable
-sealed class NavHostDestination : Parcelable {
+sealed class Destination : Parcelable {
 
     @Parcelize
     data class First(
         override val resultFromSecond: @RawValue MutableState<String?> = mutableStateOf(null)
-    ) : NavHostDestination(), AcceptsResultFromSecond
+    ) : Destination(), AcceptsResultFromSecond
 
     @Parcelize
-    object Second : NavHostDestination()
+    object Second : Destination()
 
 }
 ```

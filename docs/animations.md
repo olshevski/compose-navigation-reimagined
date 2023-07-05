@@ -38,10 +38,10 @@ In NavTransitionSpec you get the parameters:
 - `from` - a previous visible destination
 - `to` - a target visible destination
 
-This information is plenty enough to choose a transition for every possible combination of screens and navigation actions.
+This information is plenty enough to choose a transition for every possible combination of destinations and navigation actions.
 
 !!! tip
-    You can add more enter/exit animations to the composables inside your screens through the `AnimatedNavHostScope` receiver of the `contentSelector` parameter. AnimatedNavHostScope gives you access to the current `transition` and to `animateEnterExit` modifier.
+    You can add more enter/exit animations to the composables through the `AnimatedNavHostScope` receiver of the `contentSelector` parameter. AnimatedNavHostScope gives you access to the current `transition` and to `animateEnterExit` modifier.
 
 ## NavAction
 

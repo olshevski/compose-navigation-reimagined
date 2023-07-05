@@ -11,28 +11,28 @@ NavController may be created with `rememberNavController` method in a composable
 Both `rememberNavController` and `navController` methods accept `startDestination` as a parameter:
 
 ```kotlin
-val navController = rememberNavController<Screen>(
-    startDestination = Screen.First
+val navController = rememberNavController<Destination>(
+    startDestination = Destination.First
 )
 ```
 
 If you want to create NavController with an arbitrary number of backstack items, you may use `initialBackstack` parameter instead:
 
 ```kotlin
-val navController = rememberNavController<Screen>(
-    initialBackstack = listOf(Screen.First, Screen.Second, Screen.Third)
+val navController = rememberNavController<Destination>(
+    initialBackstack = listOf(Destination.First, Destination.Second, Destination.Third)
 )
 ```
 
-`Screen.Third` will become the currently displayed item. `Screen.First` and `Screen.Second` will be stored in the backstack.
+`Destination.Third` will become the currently displayed item. `Destination.First` and `Destination.Second` will be stored in the backstack.
 
 If you want to store NavController in a ViewModel use `saveable` delegate for SavedStateHandle:
 
 ```kotlin
 class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
-    val navController by savedStateHandle.saveable<NavController<Screen>> {
-        navController(startDestination = Screen.First)
+    val navController by savedStateHandle.saveable<NavController<Destination>> {
+        navController(startDestination = Destination.First)
     }
 
 }
@@ -55,7 +55,7 @@ Other than that, you are not limited to any particular type.
     You may also define your own base interface for destinations, for example:
  
     ```kotlin
-    interface Screen : Parcelable {
+    interface Destination : Parcelable {
         
         @Composable
         fun Content()

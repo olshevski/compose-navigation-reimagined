@@ -10,9 +10,9 @@ There may be different reasons for nesting your NavHosts:
 
 - It may be useful when you need to have several backstacks at once, as in case of [BottomNavigation](https://developer.android.com/reference/kotlin/androidx/compose/material/package-summary#BottomNavigation(androidx.compose.ui.Modifier,androidx.compose.ui.graphics.Color,androidx.compose.ui.graphics.Color,androidx.compose.ui.unit.Dp,kotlin.Function1)), [TabRow](https://developer.android.com/reference/kotlin/androidx/compose/material/package-summary#TabRow(kotlin.Int,androidx.compose.ui.Modifier,androidx.compose.ui.graphics.Color,androidx.compose.ui.graphics.Color,kotlin.Function1,kotlin.Function0,kotlin.Function0)), or similar, where each item has it's own inner independent layer of navigation.
 
-- You want to contain some particular flow of screens within a single composable function. This flow may also contain some shared static layout elements. 
+- You want to contain some particular flow of destinations within a single composable function. This flow may also contain some shared static layout elements. 
 
-- You want to share a ViewModel between several screens that logically and visually may be grouped into a single flow.
+- You want to share a ViewModel between several destinations that logically and visually may be grouped into a single flow.
 
 !!! note
     There is no depth limit for nesting NavHosts. In fact, each NavHost is completely oblivious to its placement in the hierarchy.

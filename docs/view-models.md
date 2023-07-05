@@ -20,10 +20,10 @@ It is possible to access ViewModelStoreOwner of any entry that is currently pres
 
 ```kotlin
 @Composable
-fun NavHostScope<Screen>.SomeScreen() {
+fun NavHostScope<Destination>.SomeScreen() {
     val previousViewModel = viewModel<PreviousViewModel>(
         viewModelStoreOwner = hostEntries.find {
-            it.destination is Screen.Previous
+            it.destination is Destination.Previous
         }!!
     )
     // ...
