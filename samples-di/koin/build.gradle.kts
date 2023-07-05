@@ -5,9 +5,6 @@ plugins {
 
 android {
     namespace = "${project.group}.reimagined.sample.koin"
-    defaultConfig {
-        applicationId = namespace
-    }
 }
 
 dependencies {

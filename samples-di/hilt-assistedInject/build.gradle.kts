@@ -7,9 +7,6 @@ plugins {
 
 android {
     namespace = "${project.group}.reimagined.sample.hilt.assistedinject"
-    defaultConfig {
-        applicationId = namespace
-    }
 }
 
 dependencies {

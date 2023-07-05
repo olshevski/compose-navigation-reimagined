@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `kotlin-dsl`
-    id("dev.olshevski.versions") version "1.0.4"
+    id("dev.olshevski.versions") version "1.0.5"
 }
 
 java {
@@ -16,8 +16,8 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-    implementation("com.android.tools.build:gradle:8.0.1")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.21")
+    implementation("com.android.tools.build:gradle:8.0.2")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.22")
 
     // fix the issue with Hilt down the line: https://github.com/google/dagger/issues/3068
     implementation("com.squareup:javapoet:1.13.0")

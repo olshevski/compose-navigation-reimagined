@@ -7,9 +7,6 @@ plugins {
 
 android {
     namespace = "${project.group}.reimagined.sample.anvil"
-    defaultConfig {
-        applicationId = namespace
-    }
 }
 
 dependencies {

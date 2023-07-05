@@ -7,9 +7,6 @@ plugins {
 
 android {
     namespace = "${project.group}.reimagined.sample.hilt.hiltviewmodel"
-    defaultConfig {
-        applicationId = namespace
-    }
 }
 
 dependencies {

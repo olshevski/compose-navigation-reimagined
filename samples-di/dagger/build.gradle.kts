@@ -6,9 +6,6 @@ plugins {
 
 android {
     namespace = "${project.group}.reimagined.sample.dagger"
-    defaultConfig {
-        applicationId = namespace
-    }
 }
 
 dependencies {

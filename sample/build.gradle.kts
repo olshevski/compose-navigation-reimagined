@@ -5,10 +5,6 @@ plugins {
 
 android {
     namespace = "${project.group}.reimagined.sample"
-    defaultConfig {
-        applicationId = namespace
-    }
-
     kotlinOptions {
         freeCompilerArgs = freeCompilerArgs + listOf(
             "-opt-in=androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi",
