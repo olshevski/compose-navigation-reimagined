@@ -62,6 +62,7 @@ import kotlin.math.abs
  *
  * Changes:
  * - all ExperimentalMaterialApi annotations are removed
+ * - added `swipePriority` parameter to `animateTo` method
  */
 
 /**
@@ -350,11 +351,12 @@ internal class SwipeableV2State<T>(
     suspend fun animateTo(
         targetValue: T,
         velocity: Float = lastVelocity,
+        swipePriority: MutatePriority = MutatePriority.Default
     ) {
         val targetOffset = anchors[targetValue]
         if (targetOffset != null) {
             try {
-                swipe {
+                swipe(swipePriority) {
                     animationTarget = targetValue
                     var prev = offset ?: 0f
                     animate(prev, targetOffset, velocity, animationSpec) { value, velocity ->

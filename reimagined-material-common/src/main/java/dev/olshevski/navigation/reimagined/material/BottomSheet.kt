@@ -21,6 +21,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -32,7 +33,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -104,7 +104,6 @@ enum class BottomSheetValue {
 class BottomSheetState internal constructor(
     internal val hostEntryId: NavId,
     initialValue: BottomSheetValue,
-    isTransitionRunningState: State<Boolean>,
     animationSpec: AnimationSpec<Float>,
     internal val skipHalfExpanded: Boolean,
     confirmValueChange: (BottomSheetValue) -> Boolean
@@ -122,18 +121,14 @@ class BottomSheetState internal constructor(
     internal constructor(
         hostEntryId: NavId,
         initialValue: BottomSheetValue,
-        isTransitionRunningState: State<Boolean>,
         sheetProperties: BottomSheetProperties
     ) : this(
         hostEntryId = hostEntryId,
         initialValue = initialValue,
-        isTransitionRunningState = isTransitionRunningState,
         animationSpec = sheetProperties.animationSpec,
         skipHalfExpanded = sheetProperties.skipHalfExpanded,
         confirmValueChange = sheetProperties.confirmValueChange
     )
-
-    internal val isTransitionRunning by isTransitionRunningState
 
     internal val swipeableState = SwipeableV2State(
         initialValue = initialValue,
@@ -222,7 +217,7 @@ class BottomSheetState internal constructor(
      * @throws [CancellationException] if the animation is interrupted
      */
     suspend fun halfExpand() {
-        if (!hasHalfExpandedState || isTransitionRunning) {
+        if (!hasHalfExpandedState) {
             return
         }
         animateTo(HalfExpanded)
@@ -238,7 +233,7 @@ class BottomSheetState internal constructor(
      * @throws [CancellationException] if the animation is interrupted
      */
     suspend fun expand() {
-        if (!swipeableState.hasAnchorForValue(Expanded) || isTransitionRunning) {
+        if (!swipeableState.hasAnchorForValue(Expanded)) {
             return
         }
         animateTo(Expanded)
@@ -250,7 +245,9 @@ class BottomSheetState internal constructor(
      *
      * @throws [CancellationException] if the animation is interrupted
      */
-    internal suspend fun hide() = animateTo(Hidden)
+    internal suspend fun hide(
+        swipePriority: MutatePriority = MutatePriority.Default
+    ) = animateTo(Hidden, swipePriority = swipePriority)
 
     /**
      * Animate to a [targetValue].
@@ -264,8 +261,9 @@ class BottomSheetState internal constructor(
      */
     internal suspend fun animateTo(
         targetValue: BottomSheetValue,
-        velocity: Float = swipeableState.lastVelocity
-    ) = swipeableState.animateTo(targetValue, velocity)
+        velocity: Float = swipeableState.lastVelocity,
+        swipePriority: MutatePriority = MutatePriority.Default
+    ) = swipeableState.animateTo(targetValue, velocity, swipePriority)
 
     /**
      * Snap to a [targetValue] without any animation.
@@ -322,18 +320,12 @@ internal fun BottomSheetLayout(
                 .align(Alignment.TopCenter) // We offset from the top, so we'll center from there
                 .widthIn(max = MaxModalBottomSheetWidth)
                 .fillMaxWidth()
-                .then(
-                    if (!sheetState.isTransitionRunning) {
-                        Modifier.nestedScroll(
-                            remember(sheetState.swipeableState) {
-                                ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
-                                    state = sheetState.swipeableState,
-                                    orientation = Orientation.Vertical
-                                )
-                            }
+                .nestedScroll(
+                    remember(sheetState.swipeableState) {
+                        ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
+                            state = sheetState.swipeableState,
+                            orientation = Orientation.Vertical
                         )
-                    } else {
-                        Modifier
                     }
                 )
                 .offset {
@@ -352,7 +344,7 @@ internal fun BottomSheetLayout(
                 .swipeableV2(
                     state = sheetState.swipeableState,
                     orientation = Orientation.Vertical,
-                    enabled = sheetState.isVisible && !sheetState.isTransitionRunning,
+                    enabled = sheetState.isVisible,/* && !sheetState.isTransitionRunning*/
                 )
                 .swipeAnchors(
                     state = sheetState.swipeableState,
@@ -373,7 +365,7 @@ internal fun BottomSheetLayout(
                     }
                 }
                 .semantics {
-                    if (sheetState.isVisible && !sheetState.isTransitionRunning) {
+                    if (sheetState.isVisible) {
                         dismiss {
                             if (sheetState.swipeableState.confirmValueChange(Hidden)) {
                                 onDismissRequest()

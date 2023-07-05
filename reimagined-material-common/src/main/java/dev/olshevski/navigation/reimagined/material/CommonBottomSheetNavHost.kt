@@ -1,6 +1,7 @@
 package dev.olshevski.navigation.reimagined.material
 
 import android.os.Parcelable
+import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -52,12 +53,6 @@ fun <T, S> CommonBottomSheetNavHost(
 ) { snapshot ->
     val targetSnapshot by rememberUpdatedState(snapshot)
     var currentSnapshot by remember { mutableStateOf(targetSnapshot) }
-
-    // isTransitionRunning marks the switch from targetSnapshot to currentSnapshot,
-    // while isTransitionAnimating is for the whole animation of the sheet change
-    val isTransitionRunning = remember {
-        derivedStateOf { currentSnapshot != targetSnapshot }
-    }
     var isTransitionAnimating by remember { mutableStateOf(false) }
 
     var sheetState: BottomSheetState? by rememberSaveable(
@@ -80,7 +75,6 @@ fun <T, S> CommonBottomSheetNavHost(
                         BottomSheetState(
                             hostEntryId = lastEntry.id,
                             initialValue = savedState.value,
-                            isTransitionRunningState = isTransitionRunning,
                             sheetProperties = sheetPropertiesSpec.getBottomSheetProperties(lastEntry.destination)
                         )
                     )
@@ -101,7 +95,6 @@ fun <T, S> CommonBottomSheetNavHost(
                     } else {
                         BottomSheetValue.HalfExpanded
                     },
-                    isTransitionRunningState = isTransitionRunning,
                     sheetProperties = sheetProperties
                 )
             }
@@ -110,7 +103,7 @@ fun <T, S> CommonBottomSheetNavHost(
 
     val isScrimVisible by remember {
         derivedStateOf {
-            if (isTransitionRunning.value) {
+            if (currentSnapshot != targetSnapshot) {
                 targetSnapshot.items.isNotEmpty()
             } else {
                 currentSnapshot.items.isNotEmpty()
@@ -153,14 +146,13 @@ fun <T, S> CommonBottomSheetNavHost(
         if (targetSnapshot.lastEntry != currentSnapshot.lastEntry) {
             try {
                 isTransitionAnimating = true
-                sheetState?.hide()
+                sheetState?.hide(swipePriority = MutatePriority.PreventUserInput)
 
                 currentSnapshot = targetSnapshot
                 sheetState = currentSnapshot.lastEntry?.let { lastEntry ->
                     BottomSheetState(
                         hostEntryId = lastEntry.id,
                         initialValue = BottomSheetValue.Hidden,
-                        isTransitionRunningState = isTransitionRunning,
                         sheetProperties = sheetPropertiesSpec.getBottomSheetProperties(lastEntry.destination)
                     )
                 }
