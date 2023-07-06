@@ -94,7 +94,7 @@ AnimatedNavHost(
         }
         slideIntoContainer(direction) togetherWith slideOutOfContainer(direction)
     }
-) { screen ->
+) { destination ->
     // ...
 }
 ```
