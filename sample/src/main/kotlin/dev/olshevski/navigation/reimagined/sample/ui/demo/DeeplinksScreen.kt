@@ -25,10 +25,10 @@ import kotlinx.parcelize.Parcelize
 sealed class DeeplinksDestination : Parcelable {
 
     @Parcelize
-    object First : DeeplinksDestination()
+    data object First : DeeplinksDestination()
 
     @Parcelize
-    object Second : DeeplinksDestination()
+    data object Second : DeeplinksDestination()
 
     @Parcelize
     data class Third(val id: String) : DeeplinksDestination()
@@ -52,11 +52,13 @@ fun DeeplinksScreen(
                     navController.navigate(DeeplinksDestination.Second)
                 }
             )
+
             DeeplinksDestination.Second -> SecondScreen(
                 onOpenThirdScreenButtonClick = {
                     navController.navigate(DeeplinksDestination.Third("Hi"))
                 }
             )
+
             is DeeplinksDestination.Third -> ThirdScreen(destination.id)
         }
     }

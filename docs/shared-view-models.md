@@ -36,7 +36,7 @@ In order to use scoping NavHost, you need to implement `NavScopeSpec` and pass i
 
 ```kotlin
 @Parcelize
-object ScopeX : Parcelable
+data object ScopeX : Parcelable
 
 val DestinationScopeSpec = NavScopeSpec<Destination, ScopeX> { destination ->  
     when (destination) {

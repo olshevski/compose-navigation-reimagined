@@ -18,7 +18,7 @@ sealed class Destination : Parcelable {
     ) : Destination(), AcceptsResultFromSecond
 
     @Parcelize
-    object Second : Destination()
+    data object Second : Destination()
 
 }
 ```

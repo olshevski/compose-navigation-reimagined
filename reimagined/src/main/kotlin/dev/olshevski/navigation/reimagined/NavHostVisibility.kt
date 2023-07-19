@@ -15,7 +15,7 @@ import androidx.compose.runtime.key
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-private object VisibilityUnit : Parcelable {
+private data object VisibilityUnit : Parcelable {
     override fun toString() = this::class.simpleName!!
 }
 
@@ -24,6 +24,7 @@ private fun NavController<VisibilityUnit>.setVisibility(visible: Boolean) {
         visible && backstack.entries.isEmpty() -> {
             setNewBackstack(listOf(navEntry(VisibilityUnit)))
         }
+
         !visible && backstack.entries.isNotEmpty() -> {
             setNewBackstack(emptyList())
         }

@@ -28,7 +28,7 @@ import kotlinx.parcelize.Parcelize
 private sealed class PassValuesDestination : Parcelable {
 
     @Parcelize
-    object A : PassValuesDestination()
+    data object A : PassValuesDestination()
 
     @Parcelize
     data class B(val id: Int) : PassValuesDestination()
@@ -63,6 +63,7 @@ fun PassValuesScreen() = ScreenLayout(
                     }
                 )
             }
+
             is PassValuesDestination.B -> ScreenB(
                 id = destination.id,
                 onOpenScreenBPlusOneButtonClick = {
@@ -72,6 +73,7 @@ fun PassValuesScreen() = ScreenLayout(
                     navController.popUpTo { it is PassValuesDestination.A }
                 }
             )
+
             is PassValuesDestination.C -> ScreenC(destination.text)
         }
     }

@@ -33,7 +33,7 @@ private enum class ScopedViewModelsDestination {
 }
 
 @Parcelize
-private object Scope : Parcelable
+private data object Scope : Parcelable
 
 private val ScopeSpec = NavScopeSpec<ScopedViewModelsDestination, Scope> {
     if (it == ScopedViewModelsDestination.Second || it == ScopedViewModelsDestination.Third) {

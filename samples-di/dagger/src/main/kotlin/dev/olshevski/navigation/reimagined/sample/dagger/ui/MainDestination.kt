@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 sealed class MainDestination : Parcelable {
 
     @Parcelize
-    object First : MainDestination()
+    data object First : MainDestination()
 
     @Parcelize
     data class Second(val id: Int) : MainDestination()

@@ -27,7 +27,7 @@ Define a set of destinations. It is convenient to use a sealed class for this:
 sealed class Destination : Parcelable {
 
     @Parcelize
-    object First : Destination()
+    data object First : Destination()
 
     @Parcelize
     data class Second(val id: Int) : Destination()

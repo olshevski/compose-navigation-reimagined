@@ -47,7 +47,7 @@ private sealed class ReturnResultsDestination : Parcelable {
 
     @Immutable
     @Parcelize
-    object Second : ReturnResultsDestination()
+    data object Second : ReturnResultsDestination()
 
 }
 
@@ -76,6 +76,7 @@ fun ReturnResultsScreen() = ScreenLayout(
                     }
                 )
             }
+
             is ReturnResultsDestination.Second -> {
                 var text by rememberSaveable { mutableStateOf("") }
                 SecondScreen(
