@@ -7,7 +7,7 @@ object Libs {
         }
 
         object Compose {
-            const val CompilerVersion = "1.4.8"
+            const val CompilerVersion = "1.5.0"
             const val Bom = "androidx.compose:compose-bom:2023.06.01"
             private const val BetaVersion = "1.5.0-beta03"
             const val Animation = "androidx.compose.animation:animation:$BetaVersion"
@@ -45,7 +45,7 @@ object Libs {
         const val Truth = "com.google.truth:truth:1.1.5"
 
         object Dagger {
-            const val Version = "2.46.1"
+            const val Version = "2.47"
             const val Api = "com.google.dagger:dagger:$Version"
             const val Compiler = "com.google.dagger:dagger-compiler:$Version"
             const val HiltAndroid = "com.google.dagger:hilt-android:$Version"
