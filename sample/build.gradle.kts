@@ -5,10 +5,13 @@ plugins {
 
 android {
     namespace = "${project.group}.reimagined.sample"
-    kotlinOptions {
-        freeCompilerArgs = freeCompilerArgs + listOf(
-            "-opt-in=androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi",
-            "-opt-in=dev.olshevski.navigation.reimagined.ExperimentalReimaginedApi"
+}
+
+kotlin {
+    compilerOptions {
+        optIn.addAll(
+            "androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi",
+            "dev.olshevski.navigation.reimagined.ExperimentalReimaginedApi"
         )
     }
 }
