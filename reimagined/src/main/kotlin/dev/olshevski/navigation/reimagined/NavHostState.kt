@@ -7,6 +7,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.SaveableStateHolder
@@ -44,7 +45,7 @@ import kotlinx.parcelize.Parcelize
 @Composable
 fun <T> rememberNavHostState(
     backstack: NavBackstack<T>
-): NavHostState<T> = rememberScopingNavHostState(backstack, EmptyScopeSpec)
+): NavHostState<T> = rememberNavHostStateImpl(backstack, EmptyScopeSpec)
 
 /**
  * Remembers [ScopingNavHostState]. This allows you to hoist the state of ScopingNavHost and
@@ -130,23 +131,16 @@ internal fun <T, S> rememberNavHostStateImpl(
  * ViewModelStore, SavedStateRegistry) for every entry.
  */
 @Stable
-sealed interface NavHostState<T> {
+sealed interface NavHostState<out T> {
 
     /**
-     * The current backstack.
-     */
-    val backstack: NavBackstack<T>
-
-    /**
-     * Get [NavHostEntry] for the specified [id]. If there is no entry with this id
-     * in the current [backstack], `null` will be returned.
+     * List of all current [NavHostEntries][NavHostEntry] in the same order their associated
+     * [entries][NavEntry] appear in the backstack.
      *
-     * This method is intended to provide access to NavHostEntries outside of the current NavHost,
-     * e.g. for communication between several NavHosts. If you want to access NavHostEntries
-     * in the current NavHost you should access them through [NavHostScope].
+     * The last entry of this list is always the currently displayed entry.
      */
     @ExperimentalReimaginedApi
-    fun getHostEntry(id: NavId): NavHostEntry<T>?
+    val hostEntries: List<NavHostEntry<T>>
 
 }
 
@@ -155,19 +149,17 @@ sealed interface NavHostState<T> {
  * ViewModelStore, SavedStateRegistry) for every entry and every scope.
  */
 @Stable
-sealed interface ScopingNavHostState<T, S> : NavHostState<T> {
+sealed interface ScopingNavHostState<out T, S> : NavHostState<T> {
 
     /**
-     * Get [ScopedNavHostEntry] for the specified [scope]. If there is no entry
-     * associated with this scope in the current [backstack], `null` will be returned.
+     * [ScopedNavHostEntries][ScopedNavHostEntry] for all scopes present in the backstack.
      *
-     * This method is intended to provide access to ScopedNavHostEntries outside of the current
-     * ScopingNavHost, e.g. for communication between several NavHosts. If you want to access
-     * ScopedNavHostEntries in the current ScopingNavHost you should access them through
-     * [ScopingNavHostScope].
+     * Note that unlike [ScopingNavHostScope.scopedHostEntries], this property provides access to
+     * ALL scopes that are associated with current destinations in the backstack, not just the last
+     * (current) destination.
      */
     @ExperimentalReimaginedApi
-    fun getScopedHostEntry(scope: S): ScopedNavHostEntry<S>?
+    val scopedHostEntries: Map<S, ScopedNavHostEntry<S>>
 
 }
 
@@ -186,10 +178,9 @@ internal class NavHostStateImpl<T, S>(
 
     val hostId: NavHostId = savedState?.hostId ?: NavHostId()
 
-    override var backstack by mutableStateOf(initialBackstack)
+    var backstack by mutableStateOf(initialBackstack)
 
-    @VisibleForTesting
-    val hostEntriesMap = mutableMapOf<NavId, NavHostEntry<T>>()
+    private val hostEntriesMap = mutableMapOf<NavId, NavHostEntry<T>>()
 
     private val scopedHostEntriesMap = mutableMapOf<S, ScopedNavHostEntry<S>>()
 
@@ -268,7 +259,7 @@ internal class NavHostStateImpl<T, S>(
             .mapNotNull { hostEntriesMap.remove(it) }
 
         val backstackEntryScopes = snapshot.items
-            .flatMap { it.scopedHostEntries.keys }.toHashSet()
+            .flatMapTo(hashSetOf()) { it.scopedHostEntries.keys }
         val outdatedScopedHostEntries = scopedHostEntriesMap.keys
             .filter { it !in backstackEntryScopes }
             .mapNotNull { scopedHostEntriesMap.remove(it) }
@@ -393,7 +384,7 @@ internal class NavHostStateImpl<T, S>(
         outdatedHostEntryIds = outdatedHostEntriesQueue.getAllHostEntries().map { it.id }
     )
 
-    @ExperimentalReimaginedApi
+    @InternalReimaginedApi
     fun clear() {
         getAllHostEntries().forEach { entry ->
             entry.maxLifecycleState = Lifecycle.State.DESTROYED
@@ -405,24 +396,22 @@ internal class NavHostStateImpl<T, S>(
     }
 
     @ExperimentalReimaginedApi
-    override fun getHostEntry(id: NavId): NavHostEntry<T>? {
-        val entry = backstack.entries.find { it.id == id }
-        return entry?.let {
+    override val hostEntries: List<NavHostEntry<T>> by derivedStateOf {
+        backstack.entries.map { entry ->
             hostEntriesMap.getOrPut(entry.id) {
-                newHostEntry(entry)
+                newHostEntry(entry = entry)
             }
         }
     }
 
     @ExperimentalReimaginedApi
-    override fun getScopedHostEntry(scope: S): ScopedNavHostEntry<S>? {
-        return if (backstack.entries.any { scope in scopeSpec.getScopes(it.destination) }) {
-            scopedHostEntriesMap.getOrPut(scope) {
-                newScopedHostEntry(id = NavId(), scope = scope)
+    override val scopedHostEntries: Map<S, ScopedNavHostEntry<S>> by derivedStateOf {
+        backstack.entries.flatMapTo(hashSetOf()) { scopeSpec.getScopes(it.destination) }
+            .associateWith { scope ->
+                scopedHostEntriesMap.getOrPut(scope) {
+                    newScopedHostEntry(id = NavId(), scope = scope)
+                }
             }
-        } else {
-            null
-        }
     }
 
 }

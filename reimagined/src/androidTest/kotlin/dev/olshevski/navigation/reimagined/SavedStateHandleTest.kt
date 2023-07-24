@@ -76,7 +76,7 @@ class SavedStateHandleTest(
         }
 
         lateinit var screenController: NavController<Screen>
-        internal lateinit var screenState: NavHostStateImpl<Screen, *>
+        internal lateinit var screenState: NavHostState<Screen>
 
         lateinit var subScreenController: NavController<SubScreen>
         internal lateinit var subScreenState: NavHostStateImpl<SubScreen, *>
@@ -93,10 +93,8 @@ class SavedStateHandleTest(
 
             setContent {
                 screenController = rememberNavController(Screen.A)
-                screenState = rememberNavHostStateImpl(
-                    backstack = screenController.backstack,
-                    scopeSpec = EmptyScopeSpec
-                )
+                @OptIn(ExperimentalReimaginedApi::class)
+                screenState = rememberNavHostState(screenController.backstack,)
                 ParamNavHost(hostParam, screenState) { screen ->
                     paramViewModel(
                         factoryParam = factoryParam,

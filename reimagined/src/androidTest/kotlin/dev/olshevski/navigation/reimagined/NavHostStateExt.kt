@@ -1,4 +1,5 @@
 package dev.olshevski.navigation.reimagined
 
-internal fun <T, S> NavHostStateImpl<T, S>.findHostEntry(destination: T) =
-    hostEntriesMap.values.find { it.destination == destination }!!
+@OptIn(ExperimentalReimaginedApi::class)
+internal fun <T> NavHostState<T>.findHostEntry(destination: T) =
+    hostEntries.find { it.destination == destination }!!
