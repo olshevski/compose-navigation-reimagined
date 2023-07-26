@@ -1,7 +1,7 @@
 # NavHost
 
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/5606565/209186284-7a1e4861-6c73-46d7-89ba-502470908ce1.svg" />
+    <img src="https://github.com/olshevski/compose-navigation-reimagined/assets/5606565/2dc31921-c822-4dfa-bf92-620feedc5e9f" />
 </p>
 
 NavHost is a composable that shows the last entry of a backstack, manages saved state and provides all Android architecture components associated with the entry: [Lifecycle](https://developer.android.com/reference/androidx/lifecycle/Lifecycle), [ViewModelStore](https://developer.android.com/reference/androidx/lifecycle/ViewModelStore) and [SavedStateRegistry](https://developer.android.com/reference/androidx/savedstate/SavedStateRegistry). All these components are provided through [CompositionLocalProvider](https://developer.android.com/jetpack/compose/compositionlocal) within their corresponding owners: `LocalLifecycleOwner`, `LocalViewModelStoreOwner` and `LocalSavedStateRegistryOwner`.
