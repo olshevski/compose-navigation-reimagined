@@ -206,29 +206,25 @@ internal class NavHostStateImpl<T, S>(
 
     private fun restoreState(savedState: NavHostSavedState<S>) {
         // remove components of the entries that are no longer present in the backstack
-        val backstackEntryIds = backstack.entries.map { it.id }.toHashSet()
+        val backstackEntryIds = backstack.entries.mapTo(hashSetOf()) { it.id }
         savedState.hostEntryIds.filter { it !in backstackEntryIds }.forEach {
             removeComponents(it)
         }
         // all other entries are restored
         val restoredEntryIds = savedState.hostEntryIds.toHashSet()
         backstack.entries.filter { it.id in restoredEntryIds }.forEach { entry ->
-            hostEntriesMap.getOrPut(entry.id) {
-                newHostEntry(entry = entry)
-            }
+            getOrCreateNewHostEntry(entry)
         }
 
         val backstackEntryScopes = backstack.entries
-            .flatMap { scopeSpec.getScopes(it.destination) }.toHashSet()
+            .flatMapTo(hashSetOf()) { scopeSpec.getScopes(it.destination) }
         val (scopedRecordsToRestore, scopedRecordsToRemove) =
             savedState.scopedHostEntryRecords.partition { it.scope in backstackEntryScopes }
         scopedRecordsToRemove.forEach {
             removeComponents(it.id)
         }
         scopedRecordsToRestore.forEach {
-            scopedHostEntriesMap.getOrPut(it.scope) {
-                newScopedHostEntry(id = it.id, scope = it.scope)
-            }
+            getOrCreateNewScopedHostEntry(id = it.id, scope = it.scope)
         }
 
         savedState.outdatedHostEntryIds.forEach {
@@ -239,21 +235,16 @@ internal class NavHostStateImpl<T, S>(
     fun createSnapshot() = NavSnapshot(
         items = backstack.entries.map { entry ->
             NavSnapshotItem(
-                hostEntry = hostEntriesMap.getOrPut(entry.id) {
-                    newHostEntry(entry)
-                },
+                hostEntry = getOrCreateNewHostEntry(entry),
                 scopedHostEntries = scopeSpec.getScopes(entry.destination)
                     .associateWith { scope ->
-                        scopedHostEntriesMap.getOrPut(scope) {
-                            newScopedHostEntry(id = NavId(), scope = scope)
-                        }
+                        getOrCreateNewScopedHostEntry(id = NavId(), scope = scope)
                     }
             )
         },
         action = backstack.action
     ).also { snapshot ->
-        val backstackEntryIds = snapshot.items
-            .map { it.hostEntry.id }.toHashSet()
+        val backstackEntryIds = snapshot.items.mapTo(hashSetOf()) { it.hostEntry.id }
         val outdatedHostEntries = hostEntriesMap.keys
             .filter { it !in backstackEntryIds }
             .mapNotNull { hostEntriesMap.remove(it) }
@@ -278,27 +269,31 @@ internal class NavHostStateImpl<T, S>(
         outdatedHostEntriesQueue.getAllHostEntries()
     ).flatten()
 
-    private fun newHostEntry(entry: NavEntry<T>) = NavHostEntry(
-        id = entry.id,
-        destination = entry.destination,
-        saveableStateHolder = saveableStateHolder,
-        viewModelStore = viewModelStoreProvider.getViewModelStore(entry.id),
-        application = application
-    ).also {
-        initComponents(it)
-        onHostEntryCreated?.invoke(it)
+    private fun getOrCreateNewHostEntry(entry: NavEntry<T>) = hostEntriesMap.getOrPut(entry.id) {
+        NavHostEntry(
+            id = entry.id,
+            destination = entry.destination,
+            saveableStateHolder = saveableStateHolder,
+            viewModelStore = viewModelStoreProvider.getViewModelStore(entry.id),
+            application = application
+        ).also {
+            initComponents(it)
+            onHostEntryCreated?.invoke(it)
+        }
     }
 
-    private fun newScopedHostEntry(
+    private fun getOrCreateNewScopedHostEntry(
         id: NavId,
         scope: S
-    ) = ScopedNavHostEntry(
-        id = id,
-        scope = scope,
-        viewModelStore = viewModelStoreProvider.getViewModelStore(id),
-        application = application
-    ).also {
-        initComponents(it)
+    ) = scopedHostEntriesMap.getOrPut(scope) {
+        ScopedNavHostEntry(
+            id = id,
+            scope = scope,
+            viewModelStore = viewModelStoreProvider.getViewModelStore(id),
+            application = application
+        ).also {
+            initComponents(it)
+        }
     }
 
     private fun initComponents(baseEntry: BaseNavHostEntry) {
@@ -398,9 +393,7 @@ internal class NavHostStateImpl<T, S>(
     @ExperimentalReimaginedApi
     override val hostEntries: List<NavHostEntry<T>> by derivedStateOf {
         backstack.entries.map { entry ->
-            hostEntriesMap.getOrPut(entry.id) {
-                newHostEntry(entry = entry)
-            }
+            getOrCreateNewHostEntry(entry)
         }
     }
 
@@ -408,9 +401,7 @@ internal class NavHostStateImpl<T, S>(
     override val scopedHostEntries: Map<S, ScopedNavHostEntry<S>> by derivedStateOf {
         backstack.entries.flatMapTo(hashSetOf()) { scopeSpec.getScopes(it.destination) }
             .associateWith { scope ->
-                scopedHostEntriesMap.getOrPut(scope) {
-                    newScopedHostEntry(id = NavId(), scope = scope)
-                }
+                getOrCreateNewScopedHostEntry(id = NavId(), scope = scope)
             }
     }
 
