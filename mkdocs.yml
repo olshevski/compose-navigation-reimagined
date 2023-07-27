@@ -3,7 +3,7 @@ site_description: "Type-safe navigation library for Jetpack Compose"
 site_author: "Vitali Olshevski"
 site_url: "https://olshevski.github.io/compose-navigation-reimagined"
 edit_uri: ""
-copyright: Copyright &copy; 2022 Vitali Olshevski
+copyright: Copyright &copy; 2022-2023 Vitali Olshevski
 repo_name: "olshevski/compose-navigation-reimagined"
 repo_url: "https://github.com/olshevski/compose-navigation-reimagined"
 
@@ -16,6 +16,7 @@ theme:
   features:
     - navigation.instant
     - navigation.expand
+    - navigation.footer
 
 extra:
   social:
