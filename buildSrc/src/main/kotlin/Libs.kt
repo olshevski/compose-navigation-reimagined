@@ -7,20 +7,19 @@ object Libs {
         }
 
         object Compose {
-            const val CompilerVersion = "1.5.0"
-            const val Bom = "androidx.compose:compose-bom:2023.06.01"
-            private const val BetaVersion = "1.5.0-beta03"
-            const val Animation = "androidx.compose.animation:animation:$BetaVersion"
-            const val Foundation = "androidx.compose.foundation:foundation:$BetaVersion"
-            const val Material = "androidx.compose.material:material:$BetaVersion"
+            const val CompilerVersion = "1.5.1"
+            const val Bom = "androidx.compose:compose-bom:2023.08.00"
+            const val Animation = "androidx.compose.animation:animation"
+            const val Foundation = "androidx.compose.foundation:foundation"
+            const val Material = "androidx.compose.material:material"
             const val MaterialIconsExtended =
-                "androidx.compose.material:material-icons-extended:$BetaVersion"
+                "androidx.compose.material:material-icons-extended"
             const val Material3 = "androidx.compose.material3:material3"
-            const val Runtime = "androidx.compose.runtime:runtime:$BetaVersion"
-            const val UiTooling = "androidx.compose.ui:ui-tooling:$BetaVersion"
-            const val UiToolingPreview = "androidx.compose.ui:ui-tooling-preview:$BetaVersion"
-            const val UiTestJunit4 = "androidx.compose.ui:ui-test-junit4:$BetaVersion"
-            const val UiTestManifest = "androidx.compose.ui:ui-test-manifest:$BetaVersion"
+            const val Runtime = "androidx.compose.runtime:runtime"
+            const val UiTooling = "androidx.compose.ui:ui-tooling"
+            const val UiToolingPreview = "androidx.compose.ui:ui-tooling-preview"
+            const val UiTestJunit4 = "androidx.compose.ui:ui-test-junit4"
+            const val UiTestManifest = "androidx.compose.ui:ui-test-manifest"
 
             // note to self, dependencies go as follows:
             // runtime <- ui <- foundation-layout <- animation <- foundation <- material
@@ -58,7 +57,7 @@ object Libs {
     }
 
     object Koin {
-        const val Compose = "io.insert-koin:koin-androidx-compose:3.4.5"
+        const val Compose = "io.insert-koin:koin-androidx-compose:3.4.6"
     }
 
 }

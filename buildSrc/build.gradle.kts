@@ -16,7 +16,7 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-    implementation("com.android.tools.build:gradle:8.0.2")
+    implementation("com.android.tools.build:gradle:8.1.0")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
 
     // fix the issue with Hilt down the line: https://github.com/google/dagger/issues/3068
