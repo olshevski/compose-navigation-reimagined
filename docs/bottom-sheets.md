@@ -38,9 +38,10 @@ fun NavHostScreen() {
         }
     }
 
-    BackHandler(enabled = sheetController.backstack.entries.isNotEmpty()) {
-        sheetController.pop()
-    }
+    NavBackHandler(
+        controller = sheetController,
+        allowEmptyBackstack = true
+    )
 
     BottomSheetNavHost(
         controller = sheetController,
