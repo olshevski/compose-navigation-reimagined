@@ -11,7 +11,6 @@ import dev.olshevski.navigation.reimagined.NavHost
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.sample.koin.R
-import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -35,12 +34,14 @@ fun MainScreen() = ScreenLayout(
                     navController.navigate(MainDestination.Second(DemoId))
                 }
             )
+
             is MainDestination.Second -> SecondScreen(
                 id = destination.id,
                 onOpenThirdScreenButtonClick = {
                     navController.navigate(MainDestination.Third(DemoText))
                 }
             )
+
             is MainDestination.Third -> ThirdScreen(destination.text)
         }
     }
@@ -52,7 +53,7 @@ private fun FirstScreen(
 ) = ContentLayout(
     title = stringResource(R.string.first_screen_title)
 ) {
-    val viewModel = getViewModel<FirstViewModel>()
+    val viewModel = koinViewModel<FirstViewModel>()
 
     Button(
         onClick = { onOpenSecondScreenButtonClick() }
@@ -68,7 +69,7 @@ private fun SecondScreen(
 ) = ContentLayout(
     title = stringResource(R.string.second_screen_title, id)
 ) {
-    val viewModel = getViewModel<SecondViewModel> { parametersOf(id) }
+    val viewModel = koinViewModel<SecondViewModel> { parametersOf(id) }
 
     Button(
         onClick = { onOpenThirdScreenButtonClick() }
