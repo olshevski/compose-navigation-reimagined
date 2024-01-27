@@ -17,18 +17,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":reimagined"))
-    implementation(project(":reimagined-material"))
-    implementation(Libs.AndroidX.Activity.Compose)
-    implementation(Libs.AndroidX.Compose.Material)
-    implementation(Libs.AndroidX.Compose.MaterialIconsExtended)
-    debugImplementation(Libs.AndroidX.Compose.UiTooling)
-    implementation(Libs.AndroidX.Compose.UiToolingPreview)
-    implementation(Libs.AndroidX.Lifecycle.ViewModel.Compose)
-
-    androidTestImplementation(project(":test-utils"))
-    androidTestImplementation(Libs.AndroidX.Test.Runner)
-    androidTestImplementation(Libs.AndroidX.Test.Espresso)
-    androidTestImplementation(Libs.AndroidX.Compose.UiTestJunit4)
-    androidTestImplementation(Libs.Google.Truth)
+    implementation(projects.reimaginedMaterial)
+    implementation(libs.compose.material.icons.extended)
+    androidTestImplementation(projects.testUtils)
 }

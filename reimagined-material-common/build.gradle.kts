@@ -9,6 +9,6 @@ android {
 }
 
 dependencies {
-    api(project(":reimagined"))
-    api(Libs.AndroidX.Compose.Foundation)
+    api(projects.reimagined)
+    api(libs.compose.foundation)
 }

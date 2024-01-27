@@ -1,10 +1,11 @@
 plugins {
-    plugin(Plugins.Versions)
-    plugin(Plugins.NexusPublishing)
+    alias(libs.plugins.versions)
+    alias(libs.plugins.versions.config)
+    alias(libs.plugins.nexus.publish)
 }
 
 tasks.register<Delete>("clean").configure {
-    delete(rootProject.buildDir)
+    delete(rootProject.layout.buildDirectory)
 }
 
 nexusPublishing {

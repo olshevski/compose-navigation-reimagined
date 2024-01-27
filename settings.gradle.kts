@@ -15,6 +15,8 @@ dependencyResolutionManagement {
     }
 }
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 rootProject.name = "compose-navigation-reimagined"
 include(":test-utils")
 include(":reimagined")

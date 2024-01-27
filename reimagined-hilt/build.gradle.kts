@@ -8,6 +8,6 @@ android {
 }
 
 dependencies {
-    api(project(":reimagined"))
-    api(Libs.Google.Dagger.HiltAndroid)
+    api(projects.reimagined)
+    api(libs.hilt.android)
 }

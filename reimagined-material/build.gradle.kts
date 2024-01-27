@@ -8,6 +8,6 @@ android {
 }
 
 dependencies {
-    api(project(":reimagined-material-common"))
-    api(Libs.AndroidX.Compose.Material)
+    api(projects.reimaginedMaterialCommon)
+    api(libs.compose.material)
 }

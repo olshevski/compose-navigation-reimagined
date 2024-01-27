@@ -6,12 +6,10 @@ plugins {
 }
 
 android {
-    compileSdk = AndroidSdkVersion.Compile
+    compileSdk = libs.versions.android.sdk.compile.get().toInt()
 
     defaultConfig {
-        minSdk = AndroidSdkVersion.Min
-        @Suppress("DEPRECATION")
-        targetSdk = AndroidSdkVersion.Target
+        minSdk = libs.versions.android.sdk.min.get().toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -33,10 +31,11 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Libs.AndroidX.Compose.CompilerVersion
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 
     testOptions {
+        targetSdk = libs.versions.android.sdk.target.get().toInt()
         unitTests.all {
             it.useJUnitPlatform()
         }
@@ -47,4 +46,15 @@ kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_1_8)
     }
+}
+
+dependencies {
+    testImplementation(libs.junit.juniper)
+    testImplementation(libs.truth)
+
+    androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.test.runner)
+    androidTestImplementation(libs.compose.ui.test.junit4)
+    androidTestImplementation(libs.compose.ui.test.manifest)
+    androidTestImplementation(libs.truth)
 }

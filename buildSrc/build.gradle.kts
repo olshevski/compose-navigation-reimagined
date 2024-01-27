@@ -3,7 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `kotlin-dsl`
-    id("dev.olshevski.versions") version "1.0.5"
+    alias(libs.plugins.versions)
+    alias(libs.plugins.versions.config)
 }
 
 java {
@@ -16,9 +17,12 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-    implementation("com.android.tools.build:gradle:8.1.0")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
+    implementation(libs.android.gradle.plugin)
+    implementation(libs.kotlin.gradle.plugin)
+
+    // version catalog access from precompiled scripts
+    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 
     // fix the issue with Hilt down the line: https://github.com/google/dagger/issues/3068
-    implementation("com.squareup:javapoet:1.13.0")
+    implementation(libs.javapoet)
 }
