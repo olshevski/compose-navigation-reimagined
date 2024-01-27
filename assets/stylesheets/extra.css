@@ -1,0 +1,17 @@
+.md-header__topic:first-child {
+    font-weight: normal;
+}
+
+:root {
+    --md-primary-fg-color:        #5F6AB2;
+    --md-primary-fg-color--light: #818AC3;
+    --md-primary-fg-color--dark:  #495497;
+}
+
+.md-container > footer {
+    background-color: var(--md-primary-fg-color);
+}
+
+.md-container > footer > .md-footer-meta {
+    background-color: #161616;
+}
